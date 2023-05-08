@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@images/*": ["../public/images/*"],
+      "@components/*": ["./components/*"],
+      "@hooks/*": ["./hooks/*"]
+    },
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/indexes/profile"],
+  "exclude": ["node_modules"]
+}

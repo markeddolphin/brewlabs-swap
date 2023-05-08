@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Your default theme */
+  --background: white;
+  --foreground: black;
+}
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  display: none !important;
+}
+html.dark a,
+html.dark p,
+html.dark h3 {
+  color: #d1d5db; /* gray-300 */
+}
+
+.wave1 use {
+  animation: move-forever1 20s linear infinite;
+  animation-delay: -2s;
+}
+
+.wave2 use {
+  animation: move-forever2 16s linear infinite;
+  animation-delay: -2s;
+}
+
+.wave3 use {
+  animation: move-forever3 12s linear infinite;
+  animation-delay: -2s;
+}
+
+@keyframes move-forever1 {
+  0% {
+    transform: translate(85px, 0%);
+  }
+  100% {
+    transform: translate(-90px, 0%);
+  }
+}
+
+@keyframes move-forever2 {
+  0% {
+    transform: translate(-90px, 0%);
+  }
+  100% {
+    transform: translate(85px, 0%);
+  }
+}
+
+@keyframes move-forever3 {
+  0% {
+    transform: translate(-90px, 0%);
+  }
+  100% {
+    transform: translate(85px, 0%);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.shadow-right {
+  box-shadow: 15px 0 15px -5px rgba(0, 0, 0, 0.85);
+}
+
+.max-w-md {
+  max-width: 30rem;
+}
+
+.btn-protocol-shadow {
+  box-shadow: 0px 4px 4px 0px rgb(0 0 0 / 25%);
+}
+.staking-button-shadow {
+  box-shadow: 0px 0px 3px #eebb19;
+}

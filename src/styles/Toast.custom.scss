@@ -1,0 +1,57 @@
+.Toastify {
+    .toast {
+        &__background-primary {
+            background: #FBDB03;
+            border-radius: 10px;
+        }
+
+        &__custom-layout {
+            padding: 0px;
+            margin: 0px;
+            font-family: "Questrial";
+            text-align: right;
+            color: black;
+
+            .message {
+                .msg-text {
+                    font-size: 20px;
+                }
+            }
+
+            .link {
+                margin-top: -5px;
+                text-align: right;
+                display: inline-flex;
+
+                .down-text {
+                    display: flex;
+                    color: black;
+                    font-size: 10px;
+                }
+
+                img {
+                    width: 8px;
+                    height: 8px;
+                    margin-top: auto;
+                    margin-bottom: auto;
+                }
+            }
+        }
+    }
+
+    &__toast-container {
+        width: 310px;
+    }
+
+    &__progress-bar--error {
+        background: #50638c;
+    }
+
+    &__progress-bar--success {
+        background: #50638c;
+    }
+
+    &__toast-icon {
+        width: 50px;
+    }
+}

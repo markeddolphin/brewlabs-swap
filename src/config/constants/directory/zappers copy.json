@@ -1,0 +1,39 @@
+[
+  {
+    "type": 4,
+    "chainId": 56,
+    "address": "0xdee79028336238d6bc14d6fbc7709ba073f2684f",
+    "chainLogo": "/images/directory/bsc.svg",
+    "stakingToken": {
+      "address": "0xc9cC6515a1df94AAed156F3bD6EFe86a100308fA",
+      "symbol": "CAKE-BNB LP",
+      "name": "CAKE-BNB LP",
+      "decimals": 18,
+      "logo": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png",
+      "pair": {
+        "token0": { "address": "0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7", "decimals": 9 },
+        "token1": { "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c", "decimals": 18 }
+      }
+    },
+    "earningToken": {
+      "chainId": 56,
+      "address": "0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7",
+      "symbol": "CAKE",
+      "name": "CAKE",
+      "decimals": 9,
+      "logo": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png"
+    },
+    "convertToken": {
+      "address": "0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7",
+      "symbol": "BUSD",
+      "name": "BUSD",
+      "decimals": 9,
+      "logo": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png"
+    },
+    "duration": 0,
+    "depositFee": 0,
+    "withdrawFee": 0,
+    "performanceFee": "3500000000000000",
+    "website": "https://brewlabs.info/"
+  }
+]
