@@ -52,7 +52,7 @@ export const useSwapAggregator = (
         const outputValue = response.amounts[response.amounts.length - 1];
         const outputAmount =
           currencies[Field.OUTPUT] instanceof Token
-            ? new TokenAmount(currencies[Field.OUTPUT], outputValue)
+            ? new TokenAmount(currencies[Field.OUTPUT] as Token, outputValue)
             : new CurrencyAmount(currencies[Field.OUTPUT], outputValue);
         if (outputAmount) setQuery({ amount: outputAmount });
       })

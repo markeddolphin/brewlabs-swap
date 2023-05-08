@@ -3,7 +3,6 @@ import React from "react";
 type SolidButtonProps = {
   children: React.ReactNode;
   onClick?: (e: any) => void;
-  disabled: boolean;
   className?: string;
   disabled?: boolean;
 };

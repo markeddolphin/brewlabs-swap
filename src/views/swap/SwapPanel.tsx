@@ -232,7 +232,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
           buyTax={buyTax}
           sellTax={sellTax}
           currencies={currencies}
-          disable={noLiquidity}
+          disableInput={noLiquidity}
         />
       </div>
       {account &&

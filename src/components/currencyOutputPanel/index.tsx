@@ -12,7 +12,7 @@ import TradeCard from "./TradeCard";
 interface CurrencyOutputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
-  onCurrencySelect: (currency: Currency) => void;
+  onCurrencySelect?: (currency: Currency) => void;
   label?: string;
   currency?: Currency | null;
   balance: CurrencyAmount | undefined;
@@ -22,7 +22,7 @@ interface CurrencyOutputPanelProps {
   buyTax?: number;
   sellTax?: number;
   currencies: any;
-  disable: boolean;
+  disableInput: boolean;
 }
 
 const CurrencyOutputPanel = ({
@@ -38,7 +38,7 @@ const CurrencyOutputPanel = ({
   buyTax,
   sellTax,
   currencies,
-  disable,
+  disableInput,
 }: CurrencyOutputPanelProps) => {
   const { chainId } = useActiveWeb3React();
   const tokenAddress = currency?.wrapped?.address?.toLowerCase();
@@ -57,7 +57,7 @@ const CurrencyOutputPanel = ({
                 onUserInput(val);
               }}
               decimals={currency?.decimals}
-              disable={disable}
+              disable={disableInput}
             />
             <CurrencySelectButton inputCurrencySelect={false} currencies={currencies} />
           </div>
