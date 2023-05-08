@@ -2,7 +2,6 @@ import { Currency, CurrencyAmount, TokenAmount, Token } from "@brewlabs/sdk";
 import useENS from "@hooks/ENS/useENS";
 import { ethers } from "ethers";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
-import common from "mocha/lib/interfaces/common";
 import { useEffect, useMemo, useState } from "react";
 import { Field } from "state/swap/actions";
 import { tryParseAmount } from "state/swap/hooks";
