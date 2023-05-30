@@ -16,7 +16,7 @@ import { SkeletonComponent } from "components/SkeletonComponent";
 import WordHighlight from "components/text/WordHighlight";
 
 import { AppId, Chef } from "config/constants/types";
-import { earningTokens, quoteTokens } from "config/constants/tokens";
+import { earningTokens, quoteTokens, tokens } from "config/constants/tokens";
 import { DashboardContext } from "contexts/DashboardContext";
 import { useTranslation } from "contexts/localization";
 import { useActiveChainId } from "hooks/useActiveChainId";
@@ -209,13 +209,7 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                         ""
                       )}
                       <div className="ml-3 flex w-full max-w-fit flex-col justify-end sm:ml-[30px] sm:max-w-[520px] sm:flex-row">
-                        {/* <a className="h-[32px] w-[140px]" href={data?.website} target="_blank" rel="noreferrer">
-                          <StyledButton>
-                            <div>Website</div>
-                            <div className="absolute right-2 top-2.5 scale-125">{LinkSVG}</div>
-                          </StyledButton>
-                        </a> */}
-                        <Link
+                        <a
                           className="ml-0 mt-2 h-[32px] w-[140px] sm:ml-5 sm:mt-0"
                           target="_blank"
                           href={`/add/${data.chainId}/${
@@ -233,20 +227,20 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                             <div>Make LP</div>
                             <div className="absolute right-2 top-[7px] -scale-100">{chevronLeftSVG}</div>
                           </StyledButton>
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
-                    <div className="mt-4 flex w-fit items-center justify-center md:w-[160px]">
+                    <div className="flex w-[160px] items-center justify-center md:mb-0 mb-4 mt-4">
                       <img
-                        src={getTokenLogoURL(token.address, data.chainId, data.appId)}
+                        src={getTokenLogoURL(data.token.address, data.token.chainId, data.token.logo, data.appId)}
                         onError={onError}
                         alt={""}
                         className="w-[70px] rounded-full"
                       />
                       <img
-                        src={getTokenLogoURL(quoteToken.address, data.chainId, data.appId)}
+                        src={getTokenLogoURL(data.quoteToken.address, data.quoteToken.chainId, data.token.logo, data.appId)}
                         onError={onError}
                         alt={""}
                         className="-ml-3 w-[70px] rounded-full"
@@ -368,7 +362,7 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                         type={"secondary"}
                         boxShadow={curGraph === 0 ? "primary" : null}
                       >
-                        <div>Total Staked Value</div>
+                        <div>Total Zapper Position Value</div>
                         <div className="flex">
                           {history !== undefined && history.length ? (
                             `$${numberWithCommas(history[history.length - 1].toFixed(2))}`
@@ -405,7 +399,10 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                               type="teritary"
                               disabled={!data.userData || !Number(data.userData.earnings) || pending}
                               boxShadow={!(!data.userData || !Number(data.userData.earnings))}
-                              onClick={() => handleHarvest(RewardType.QUOTE_TOKEN)}
+                              onClick={() => {
+                                setTokenId(0);
+                                handleHarvest(RewardType.QUOTE_TOKEN);
+                              }}
                             >
                               <div className="whitespace-nowrap text-sm">
                                 Convert
@@ -420,7 +417,37 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                                 {prices[data.appId] && data.userData !== undefined ? (
                                   <span className="text-primary">
                                     ${(prices[data.appId] * data.userData.earnings).toFixed(2)}{" "}
-                                    {data.chainId === 1 ? "USDT" : "BUSD"}
+                                    {data.chainId === 1 ? "USDC" : "BUSD"}
+                                  </span>
+                                ) : (
+                                  <SkeletonComponent />
+                                )}
+                              </div>
+                            </StyledButton>
+                          </div>
+                          <div className="mt-1.5 h-[56px] w-full">
+                            <StyledButton
+                              type="teritary"
+                              disabled={!data.userData || !Number(data.userData.earnings) || pending}
+                              boxShadow={!(!data.userData || !Number(data.userData.earnings))}
+                              onClick={() => {
+                                setTokenId(1);
+                                handleHarvest(RewardType.QUOTE_TOKEN);
+                              }}
+                            >
+                              <div className="whitespace-nowrap text-sm">
+                                Convert
+                                {data.userData !== undefined ? (
+                                  <span className="text-primary">
+                                    &nbsp;{Number(data.userData.earnings).toFixed(0)} {data.earningToken.symbol}&nbsp;
+                                  </span>
+                                ) : (
+                                  <SkeletonComponent />
+                                )}
+                                &nbsp;to&nbsp;
+                                {prices[data.appId] && data.userData !== undefined ? (
+                                  <span className="text-primary">
+                                    ${(prices[data.appId] * data.userData.earnings).toFixed(2)} USDT
                                   </span>
                                 ) : (
                                   <SkeletonComponent />

@@ -99,6 +99,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "prevMgr",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newMgr",
+        "type": "address"
+      }
+    ],
+    "name": "SetNFTDiscountManager",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address[]",
         "name": "_newAdapters",
         "type": "address[]"
@@ -657,6 +676,19 @@
       }
     ],
     "name": "setMinFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_discountMgr",
+        "type": "address"
+      }
+    ],
+    "name": "setNFTDiscountManager",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

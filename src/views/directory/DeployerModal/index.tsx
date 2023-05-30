@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { AnimatePresence, motion } from "framer-motion";
-import { Dialog } from "@headlessui/react";
-import styled from "styled-components";
-import StyledButton from "../StyledButton";
-import { checkCircleSVG, chevronLeftSVG, UploadSVG } from "components/dashboard/assets/svgs";
 import { useEffect, useState } from "react";
-
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Dialog } from "@headlessui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
+import styled from "styled-components";
+
+import { checkCircleSVG, chevronLeftSVG, UploadSVG } from "components/dashboard/assets/svgs";
+
+import StyledButton from "../StyledButton";
 import FarmDeployer from "./FarmDeployer";
 import PoolDeployer from "./PoolDeployer";
 import IndexDeployer from "./IndexDeployer";
@@ -53,7 +54,7 @@ const HeroSection = ({
   };
   return (
     <div className="text-white">
-      <div className="mt-3.5">
+      <div className="mb-2 mt-3.5">
         Welcome to the Brewlabs product deployer wizard. Using this wizard will allow you to deploy a range of Brewlabs
         products.
       </div>
@@ -69,12 +70,12 @@ const HeroSection = ({
           customRightArrow={<CustomRightArrow onClick={undefined} />}
           customLeftArrow={<CustomLeftArrow onClick={undefined} />}
         >
-          {["Staking Pool", "Yield Farm", "Token Index", "Zapper"].map((data, i) => {
+          {["Staking Pool", "Yield Farm", "Index", "Token"].map((data, i) => {
             return (
               <DeployItem
                 key={i}
                 className="flex h-[140px] w-[140px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#FFFFFFBF] transition-all hover:border-solid hover:border-primary"
-                onClick={() => setDeployType(data)}
+                onClick={() => setDeployType("Yield Farm")}
                 active={deployType === data}
               >
                 <div>{data}</div>
@@ -91,11 +92,8 @@ const HeroSection = ({
       </div>
       <div className="mb-5 h-[1px] w-full bg-[#FFFFFF80]" />
       <div className="mx-auto h-12 max-w-[500px]">
-        <StyledButton type="primary" onClick={() => setStep(1)} className="relative">
+        <StyledButton type="quaternary" onClick={() => setStep(1)} className="relative" /*disabled={true}*/>
           Next
-          <div className="absolute -right-4 -top-2 z-10 flex h-5 w-10 items-center	 justify-center rounded-[30px] bg-primary font-roboto text-xs font-bold tracking-normal text-black">
-            Soon
-          </div>
         </StyledButton>
       </div>
     </div>
@@ -103,18 +101,19 @@ const HeroSection = ({
 };
 
 const DeployerModal = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
-  const [deployType, setDeployType] = useState("Staking Pool");
   const [step, setStep] = useState(0);
+  const [deployType, setDeployType] = useState("Yield Farm");
 
   useEffect(() => {
     setStep(0);
   }, [open]);
+
   return (
     <AnimatePresence exitBeforeEnter>
       <Dialog
         open={open}
-        className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
-        onClose={() => setOpen(false)}
+        className="fixed inset-0 z-10 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
+        onClose={() => step <= 2 && setOpen(false)}
       >
         <div className="flex min-h-full items-center justify-center p-4 ">
           <motion.div
@@ -143,29 +142,21 @@ const DeployerModal = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
             <StyledPanel>
               <div className="flex items-center justify-between border-b border-[#FFFFFF80] pb-2.5">
                 <div className="text-primary">Brewlabs Project Deployer</div>
-                <div className="h-10 min-w-[150px]">
-                  <StyledButton type="secondary" onClick={() => (step > 0 ? setStep(step - 1) : setOpen(false))}>
-                    <div className="flex items-center text-[#FFFFFFBF]">
-                      {chevronLeftSVG}
-                      <div className="ml-2">Back a page</div>
-                    </div>
-                  </StyledButton>
-                </div>
               </div>
               {step === 0 ? (
                 <HeroSection deployType={deployType} setDeployType={setDeployType} setStep={setStep} />
               ) : deployType === "Staking Pool" ? (
-                <PoolDeployer step={step} setStep={setStep} setOpen={setOpen} />
+                <PoolDeployer setOpen={setOpen} />
               ) : deployType === "Yield Farm" ? (
-                <FarmDeployer step={step} setStep={setStep} setOpen={setOpen} />
-              ) : deployType === "Token Index" ? (
-                <IndexDeployer step={step} setStep={setStep} setOpen={setOpen} />
+                <FarmDeployer setOpen={setOpen} step={step} setStep={setStep} />
+              ) : deployType === "Index" ? (
+                <IndexDeployer setOpen={setOpen} />
               ) : (
                 ""
               )}
 
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => step <= 2 && setOpen(false)}
                 className="absolute -right-2 -top-2 rounded-full bg-white p-2 dark:bg-zinc-900 sm:dark:bg-zinc-800"
               >
                 <span className="sr-only">Close</span>

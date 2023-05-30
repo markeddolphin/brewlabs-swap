@@ -207,7 +207,7 @@ const TotalStakedChart = ({
           options={chartData.options}
           series={chartData.series}
           type="area"
-          height={curGraph === 0 ? 250 - 10 * data[0].length : curGraph === 2 ? 250 - 10 * data.length : 250}
+          height={curGraph === 0 ? 250 - 10 * data[0].length : curGraph === 2 ? 250 - 12 * data.length : 250}
         />
       </div>
     </StyledContainer>

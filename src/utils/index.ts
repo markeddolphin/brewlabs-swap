@@ -1,26 +1,24 @@
 import { CurrencyAmount, JSBI, Percent } from "@brewlabs/sdk";
 import { getAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
-import { AddressZero } from "@ethersproject/constants";
-import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
-import { Contract } from "ethers";
-import { ROUTER_ADDRESS } from "config/constants";
-import IUniswapV2Router02ABI from "config/abi/swap/IUniswapV2Router02.json"
 
-export function isAddress(value: any): string | false {
+import { BLOCKS_PER_DAY } from "config/constants";
+import { Category } from "config/constants/types";
+
+export function isAddress(value: any): string {
   try {
     return getAddress(value);
   } catch {
-    return false;
+    return "";
   }
 }
 
 export function shortenAddress(address: string, chars = 4): string {
-  const parsed = isAddress(address)
+  const parsed = isAddress(address);
   if (!parsed) {
-    throw Error(`Invalid 'address' parameter '${address}'.`)
+    throw Error(`Invalid 'address' parameter '${address}'.`);
   }
-  return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`
+  return `${parsed.substring(0, chars + 2)}...${parsed.substring(42 - chars)}`;
 }
 
 export const truncateHash = (hash: string) => {
@@ -56,4 +54,47 @@ export function calculateSlippageAmount(value: CurrencyAmount, slippage: number)
     JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000)),
     JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 + slippage)), JSBI.BigInt(10000)),
   ];
+}
+
+export function filterPoolsByStatus(pools, currentBlocks, status) {
+  let chosenPools = pools;
+  switch (status) {
+    case "finished":
+      chosenPools = chosenPools.filter(
+        (pool) =>
+          pool.isFinished ||
+          pool.multiplier === 0 ||
+          (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier === "0X")
+      );
+      break;
+    case "new":
+      chosenPools = chosenPools.filter(
+        (pool) =>
+          !pool.isFinished &&
+          ((pool.type === Category.POOL &&
+            (!pool.startBlock ||
+              +pool.startBlock === 0 ||
+              +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
+            (pool.type === Category.FARM &&
+              (!pool.startBlock ||
+                +pool.startBlock > currentBlocks[pool.chainId] ||
+                +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
+            (pool.type === Category.INDEXES && new Date(pool.createdAt).getTime() + 86400 * 1000 >= Date.now()))
+      );
+      break;
+    default:
+      chosenPools = chosenPools.filter(
+        (pool) =>
+          !pool.isFinished &&
+          ((pool.type === Category.POOL && +pool.startBlock > 0) ||
+            (pool.type === Category.FARM &&
+              pool.multiplier > 0 &&
+              +pool.startBlock > 0 &&
+              +pool.startBlock < currentBlocks[pool.chainId]) ||
+            pool.type === Category.INDEXES ||
+            (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier !== "0X"))
+      );
+  }
+
+  return chosenPools;
 }

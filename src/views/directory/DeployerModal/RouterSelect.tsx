@@ -1,19 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
+import { EXCHANGE_MAP, FACTORY_ADDRESS_MAP, ROUTER_ADDRESS_MAP } from "@brewlabs/sdk";
 import { CheckIcon, ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { AnimatePresence, motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useState } from "react";
 
-import { useSwitchNetwork } from "hooks/useSwitchNetwork";
+import { SUPPORTED_DEXES } from "config/constants/swap";
 import { useActiveChainId } from "hooks/useActiveChainId";
-import { routers } from "utils/functions";
+import { getDexLogo } from "utils/functions";
 
-const RouterSelect = () => {
-  const { switchNetwork } = useSwitchNetwork();
+const RouterSelect = ({ router, setRouter }) => {
   const { chainId } = useActiveChainId();
 
   const [open, setOpen] = useState(false);
+  const [supportedRouters, setSupportedRouters] = useState([]);
+
+  useEffect(() => {
+    setSupportedRouters(EXCHANGE_MAP[chainId].filter((dex) => SUPPORTED_DEXES[chainId]?.includes(dex.id)));
+  }, [chainId]);
+
+  useEffect(() => {
+    setRouter({
+      ...supportedRouters[0],
+      address: ROUTER_ADDRESS_MAP[supportedRouters[0]?.key]?.[chainId],
+      factory: FACTORY_ADDRESS_MAP[supportedRouters[0]?.key]?.[chainId],
+    });
+  }, [supportedRouters]);
+
+  const handleRouterSelected = (index) => {
+    setRouter({
+      ...supportedRouters[index],
+      address: ROUTER_ADDRESS_MAP[supportedRouters[index]?.key]?.[chainId],
+      factory: FACTORY_ADDRESS_MAP[supportedRouters[index]?.key]?.[chainId],
+    });
+
+    setOpen(false)
+  };
 
   return (
     <motion.div className="mb-4 rounded-full border border-gray-600 border-transparent bg-opacity-60 py-2 pl-2 pr-4 font-brand text-gray-400 focus-within:border-amber-300 hover:border-amber-300 dark:bg-zinc-900 dark:bg-opacity-60 dark:text-white">
@@ -53,21 +77,23 @@ const RouterSelect = () => {
                   <p className="dark:text-gray-500">Select a router</p>
 
                   <ul role="list" className="mt-4 divide-y divide-gray-200 dark:divide-gray-700">
-                    {routers[chainId] &&
-                      routers[chainId].map((router: any) => (
-                        <li key={router.name}>
-                          <button className="flex w-full items-center py-4 hover:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
-                            <img className="h-10 w-10 rounded-full" src={router.image} alt={router.name} />
-                            <div className="ml-4 flex-col text-left">
-                              <p className="text-sm font-medium text-gray-900">{router.name}</p>
-                            </div>
+                    {supportedRouters.map((data, index) => (
+                      <li key={data.id}>
+                        <button
+                          className="flex w-full items-center py-4 hover:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900"
+                          onClick={() => handleRouterSelected(index)}
+                        >
+                          <img className="h-10 w-10 rounded-full" src={getDexLogo(data.id)} alt={data.name} />
+                          <div className="ml-4 flex-col text-left">
+                            <p className="text-sm font-medium text-gray-900">{data.name}</p>
+                          </div>
 
-                            <div className="ml-auto">
-                              <CheckIcon className="text-green-600 mr-2 h-6 w-6" />
-                            </div>
-                          </button>
-                        </li>
-                      ))}
+                          <div className="ml-auto">
+                            {data.id === router.id && <CheckIcon className="text-green-600 mr-2 h-6 w-6" />}
+                          </div>
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <button
@@ -93,10 +119,10 @@ const RouterSelect = () => {
           <div
             className="-mr-4 h-6 w-6 overflow-hidden rounded-full bg-cover bg-no-repeat dark:bg-slate-800"
             style={{
-              backgroundImage: `url(${routers[chainId] && routers[chainId][0].image})`,
+              backgroundImage: `url(${getDexLogo(router?.id)})`,
             }}
           ></div>
-          <span className="pl-4 pr-1">{routers[chainId] && routers[chainId][0].name}</span>
+          <span className="pl-4 pr-1">{router?.name}</span>
         </div>
         <ChevronDownIcon className="ml-2 h-5 w-5 dark:text-brand" />
       </button>

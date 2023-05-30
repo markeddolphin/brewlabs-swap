@@ -1,11 +1,12 @@
 import { memoize } from "lodash";
+import { BASE_URL } from "config";
 import { PageMeta } from "./types";
 
 export const DEFAULT_META: PageMeta = {
   title: "Brewlabs Earn",
   description:
     "Stake your tokens on the Brewlabs staking platform to earn passive income, compound or  harvest your rewards and reflections anytime!",
-  image: "https://bridge.brewlabs.info/images/brewlabs-earn-poster.jpg",
+  image: `${BASE_URL}/images/brewlabs-earn-poster.jpg`,
 };
 
 interface PathList {

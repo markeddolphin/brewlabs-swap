@@ -115,7 +115,7 @@ const TotalStakedChart = ({
     <StyledContainer>
       <div className="text-xl text-[#FFFFFFBF]">{getTitle(curGraph)}</div>
       <div className="leading-none text-[#FFFFFF80]">
-        {curGraph !== 3 ? (
+        {curGraph !== 4 ? (
           <span>
             {data !== undefined && data.length ? (
               `$${BigNumberFormat(data[data.length - 1] * price)}`
@@ -129,7 +129,7 @@ const TotalStakedChart = ({
         )}
         <span className="flex text-primary">
           {data !== undefined && data.length ? (
-            numberWithCommas(data[data.length - 1].toFixed(curGraph === 2 ? 2 : 0))
+            numberWithCommas(data[data.length - 1].toFixed(curGraph !== 4 ? 2 : 0))
           ) : (
             <SkeletonComponent />
           )}

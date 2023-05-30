@@ -82,7 +82,7 @@ const PoolHeader = styled.div`
 const PoolPanel = styled.div`
   overflow-y: scroll;
   display: flex;
-  height: 400px;
+  max-height: 400px;
   flex-direction: column;
   padding: 8px 0;
   ::-webkit-scrollbar {

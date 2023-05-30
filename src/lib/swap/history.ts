@@ -1,24 +1,23 @@
 import { ChainId } from "@brewlabs/sdk";
-import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
+import { waitForTransaction } from '@wagmi/core'
 
 const pageSize = 1000;
 
 const swapLogQuery = gql`
   query getSwapLogs($caller: String!, $first: Int!, $skip: Int!) {
-    logs: swapTokens(where: { caller: $caller }, orderDirection: desc, first: $first, skip: $skip) {
+    logs: brewlabsSwaps(orderDirection: desc, first: $first, skip: $skip) {
       id
-      caller
-      srcToken
-      dstToken
-      spentAmount
-      returnAmount
+      _tokenIn
+      _tokenOut
+      _amountIn
+      _amountOut
       transactionHash
     }
   }
 `;
 
-export const getSwapLogs = async (graphEndpoint: string, caller: string) => {
+export const getSwapLogs = async (graphEndpoint: string, caller: string, chainId: ChainId) => {
   let logs: any[] = [];
   let page = 0;
   const first = pageSize;
@@ -27,7 +26,7 @@ export const getSwapLogs = async (graphEndpoint: string, caller: string) => {
   while (true) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const data = await request(graphEndpoint, swapLogQuery, {
+      const data: any = await request(graphEndpoint, swapLogQuery, {
         first,
         skip: page * pageSize,
         caller,
@@ -42,6 +41,10 @@ export const getSwapLogs = async (graphEndpoint: string, caller: string) => {
       break;
     }
   }
-
-  return logs;
+  const senders = await Promise.all(logs.map(async (log) => {
+    const {transactionHash} = log;
+    const receipt = await waitForTransaction({chainId, hash: transactionHash})
+    return receipt.from;
+  }))
+  return logs.filter((log, index) => senders[index] === caller).slice(0, 10);
 };

@@ -7,7 +7,7 @@
     "patch": 0
   },
   "tags": {},
-  "logoURI": "https://bridge.brewlabs.info/logo.png",
+  "logoURI": "https://earn.brewlabs.info/logo.png",
   "keywords": ["brewlabs", "default"],
   "tokens": [
     {
@@ -1505,7 +1505,7 @@
       "decimals": 18,
       "chainId": 1,
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0x3E9D9124596af6D8FaaeFc9B3e07b3cE397d34F7/logo.png"
-    },    
+    },
     {
       "name": "Grove Token",
       "symbol": "GVR",
@@ -1697,6 +1697,14 @@
       "chainId": 1,
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0xb8b4b66852275355d591B90E5B75f84cAeffF392/logo.png"
+    },
+    {
+      "name": "JACY",
+      "symbol": "JACY",
+      "address": "0x916c5DE09cF63f6602d1e1793FB41F6437814A62",
+      "chainId": 1,
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0x916c5DE09cF63f6602d1e1793FB41F6437814A62/logo.png"
     },
     {
       "name": "Pomeranian",
@@ -2275,6 +2283,22 @@
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x09c704c1EB9245Af48f058878e72129557a10F04/logo.png"
     },
     {
+      "name": "NanoMatic",
+      "symbol": "NANO",
+      "address": "0xB15488af39bD1de209D501672a293Bcd05f82Ab4",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0xB15488af39bD1de209D501672a293Bcd05f82Ab4/logo.png"
+    },
+    {
+      "name": "MetaSetGO",
+      "symbol": "MSGO",
+      "address": "0xd4bC850c0B3cDcb2417cfD77fAABEa1f47F09fd8",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0xd4bC850c0B3cDcb2417cfD77fAABEa1f47F09fd8/logo.png"
+    },
+    {
       "name": "Matic Token",
       "symbol": "MATIC",
       "address": "0xCC42724C6683B7E57334c4E856f4c9965ED682bD",
@@ -2457,6 +2481,727 @@
       "chainId": 97,
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "WETH",
+      "name": "Wrapped ETH",
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "logoURI": "https://app.camelot.exchange/images/tokens/weth.svg",
+      "decimals": 18,
+      "isWNative": true,
+      "quote": "native",
+      "priceChartPair": "0xb7dd20f3fbf4db42fd85c839ac0241d09f72955f"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "GRAIL",
+      "name": "Camelot GRAIL",
+      "address": "0x3d9907F9a368ad0a51Be60f7Da3b97cf940982D8",
+      "logoURI": "https://app.camelot.exchange/images/tokens/grail.svg",
+      "decimals": 18,
+      "common": true,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "ARB",
+      "name": "Arbitrum",
+      "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      "logoURI": "https://app.camelot.exchange/images/tokens/arb.jpg",
+      "decimals": 18,
+      "common": true,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "xGRAIL",
+      "name": "Camelot xGRAIL",
+      "address": "0x3CAaE25Ee616f2C8E13C74dA0813402eae3F496b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/xgrail.svg",
+      "decimals": 18,
+      "quote": "other",
+      "excludeFromExchange": true,
+      "priceOf": "0x3d9907F9a368ad0a51Be60f7Da3b97cf940982D8"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "BFR",
+      "name": "Buffer Token",
+      "address": "0x1A5B0aaF478bf1FDA7b934c76E7692D722982a6D",
+      "logoURI": "https://app.camelot.exchange/images/tokens/bfr.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "cmUMAMI",
+      "name": "Compounded Marinated UMAMI",
+      "address": "0x1922C36F3bc762Ca300b4a46bB2102F84B1684aB",
+      "logoURI": "https://app.camelot.exchange/images/tokens/cmumami.svg",
+      "decimals": 9,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "DAI",
+      "name": "DAI",
+      "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      "logoURI": "https://app.camelot.exchange/images/tokens/dai.svg",
+      "decimals": 18,
+      "quote": "derived_stable"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "GMX",
+      "name": "GMX",
+      "address": "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+      "logoURI": "https://app.camelot.exchange/images/tokens/gmx.svg",
+      "decimals": 18,
+      "common": true,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "GMD",
+      "name": "GMD",
+      "address": "0x4945970EfeEc98D393b4b979b9bE265A3aE28A8B",
+      "logoURI": "https://app.camelot.exchange/images/tokens/gmd.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "JONES",
+      "name": "Jones DAO",
+      "address": "0x10393c20975cF177a3513071bC110f7962CD67da",
+      "logoURI": "https://app.camelot.exchange/images/tokens/jones.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "MIM",
+      "name": "Magic Internet Money",
+      "address": "0xFEa7a6a0B346362BF88A9e4A88416B77a57D6c2A",
+      "logoURI": "https://app.camelot.exchange/images/tokens/mim.svg",
+      "decimals": 18,
+      "quote": "derived_stable"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "PREMIA",
+      "name": "Premia",
+      "address": "0x51fC0f6660482Ea73330E414eFd7808811a57Fa2",
+      "logoURI": "https://app.camelot.exchange/images/tokens/premia.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "SPA",
+      "name": "Sperax",
+      "address": "0x5575552988A3A80504bBaeB1311674fCFd40aD4B",
+      "logoURI": "https://app.camelot.exchange/images/tokens/spa.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "SPELL",
+      "name": "Spell Token",
+      "address": "0x3E6648C5a70A150A88bCE65F4aD4d506Fe15d2AF",
+      "logoURI": "https://app.camelot.exchange/images/tokens/spell.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "UMAMI",
+      "name": "Umami",
+      "address": "0x1622bF67e6e5747b81866fE0b85178a93C7F86e3",
+      "logoURI": "https://app.camelot.exchange/images/tokens/umami.svg",
+      "decimals": 9,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "USDC",
+      "name": "USDC",
+      "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+      "logoURI": "https://app.camelot.exchange/images/tokens/usdc.svg",
+      "decimals": 6,
+      "common": true,
+      "quote": "stable",
+      "priceChartPair": "0x8dbbc03de7701cf3336a035695f8d3225418e79f"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "USDs",
+      "name": "Sperax USD",
+      "address": "0xD74f5255D557944cf7Dd0E45FF521520002D5748",
+      "logoURI": "https://app.camelot.exchange/images/tokens/usds.svg",
+      "decimals": 18,
+      "quote": "derived_stable"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "USDT",
+      "name": "USDT",
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "logoURI": "https://app.camelot.exchange/images/tokens/usdt.svg",
+      "decimals": 6,
+      "common": true,
+      "quote": "derived_stable",
+      "priceChartPair": "0x8dbbc03de7701cf3336a035695f8d3225418e79f"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "WBTC",
+      "name": "Wrapped BTC",
+      "address": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
+      "logoURI": "https://app.camelot.exchange/images/tokens/wbtc.svg",
+      "decimals": 8,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "lEXC",
+      "name": "Excalibur legacy token",
+      "address": "0x83BBC9C4C436BD7A4B4A1c5d42B00CaaE113c3b5",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lexc.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LDO",
+      "name": "Lido DAO Token",
+      "address": "0x13Ad51ed4F1B7e9Dc168d8a00cB3f4dDD85EfA60",
+      "logoURI": "https://app.camelot.exchange/images/tokens/ldo.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "wstETH",
+      "name": "Wrapped liquid staked Ether 2.0",
+      "address": "0x5979D7b546E38E414F7E9822514be443A4800529",
+      "logoURI": "https://app.camelot.exchange/images/tokens/wsteth.svg",
+      "decimals": 18,
+      "quote": "derived_native"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LUSD",
+      "name": "LUSD Stablecoin",
+      "address": "0x93b346b6BC2548dA6A1E7d98E9a421B42541425b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lusd.svg",
+      "decimals": 18,
+      "quote": "derived_stable"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "OATH",
+      "name": "Oath Token",
+      "address": "0xa1150db5105987CEC5Fd092273d1e3cbb22b378b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/oath.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "MOD",
+      "name": "Modular",
+      "address": "0x244Ae62439C1Ef3187f244d8604ac2c391eF2b53",
+      "logoURI": "https://app.camelot.exchange/images/tokens/mod.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "HOP",
+      "name": "Hop",
+      "address": "0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC",
+      "logoURI": "https://app.camelot.exchange/images/tokens/hop.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "TAROT",
+      "name": "Tarot",
+      "address": "0x6688b00f0c23a4a546BEaAE51a7c90C439895D48",
+      "logoURI": "https://app.camelot.exchange/images/tokens/tarot.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "NEU",
+      "name": "Neutra token",
+      "address": "0xdA51015b73cE11F77A115Bb1b8a7049e02dDEcf0",
+      "logoURI": "https://app.camelot.exchange/images/tokens/neu.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "VELA",
+      "name": "Vela",
+      "address": "0x088cd8f5eF3652623c22D48b1605DCfE860Cd704",
+      "logoURI": "https://app.camelot.exchange/images/tokens/vela.png",
+      "decimals": 18,
+      "common": true,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "jUSDC",
+      "name": "Jones USDC",
+      "address": "0xe66998533a1992ecE9eA99cDf47686F4fc8458E0",
+      "logoURI": "https://app.camelot.exchange/images/tokens/jusdc.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "jGLP",
+      "name": "Jones GLP",
+      "address": "0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6",
+      "logoURI": "https://app.camelot.exchange/images/tokens/jglp.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "RELAY",
+      "name": "Relay Token",
+      "address": "0x1426CF37CAA89628C4DA2864e40cF75E6d66Ac6b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/relay.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "pxGMX",
+      "name": "Pirex GMX",
+      "address": "0x9A592B4539E22EeB8B2A3Df679d572C7712Ef999",
+      "logoURI": "https://app.camelot.exchange/images/tokens/pxgmx.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LYRA",
+      "name": "Lyra Token",
+      "address": "0x079504b86d38119F859c4194765029F692b7B7aa",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lyra.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "PLS",
+      "name": "Plutus",
+      "address": "0x51318B7D00db7ACc4026C88c3952B66278B6A67F",
+      "logoURI": "https://app.camelot.exchange/images/tokens/pls.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "DPX",
+      "name": "Dopex Governance Token",
+      "address": "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55",
+      "logoURI": "https://app.camelot.exchange/images/tokens/dpx.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "plsDPX",
+      "name": "Plutus DPX",
+      "address": "0xF236ea74B515eF96a9898F5a4ed4Aa591f253Ce1",
+      "logoURI": "https://app.camelot.exchange/images/tokens/plsdpx.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "PENDLE",
+      "name": "Pendle",
+      "address": "0x0c880f6761F1af8d9Aa9C466984b80DAb9a8c9e8",
+      "logoURI": "https://app.camelot.exchange/images/tokens/pendle.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "TROVE",
+      "name": "Arbitrove Governance Token",
+      "address": "0x982239D38Af50B0168dA33346d85Fb12929c4c07",
+      "logoURI": "https://app.camelot.exchange/images/tokens/trove.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "FCTR",
+      "name": "Factor",
+      "address": "0x6dD963C510c2D2f09d5eDdB48Ede45FeD063Eb36",
+      "logoURI": "https://app.camelot.exchange/images/tokens/fctr.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "VOLTA",
+      "name": "Volta Protocol Token",
+      "address": "0x417a1aFD44250314BffB11ff68E989775e990ab6",
+      "logoURI": "https://app.camelot.exchange/images/tokens/volta.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "DSQ",
+      "name": "DSquared Governance Token",
+      "address": "0xdb0C6fC9E01cD95eb1d3bbAe6689962De489cD7B",
+      "logoURI": "https://app.camelot.exchange/images/tokens/dsq.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "esDSQ",
+      "name": "Escrowed DSquared Governance Token",
+      "address": "0xF76d53dE08C53B891E291D870e543BF8A0F6D314",
+      "logoURI": "https://app.camelot.exchange/images/tokens/esdsq.jpg",
+      "decimals": 18,
+      "excludeFromExchange": true,
+      "quote": "other",
+      "priceOf": "0xdb0C6fC9E01cD95eb1d3bbAe6689962De489cD7B"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "GENE",
+      "name": "GenomesDAO",
+      "address": "0x59A729658e9245B0cF1f8Cb9fb37945D2B06ea27",
+      "logoURI": "https://app.camelot.exchange/images/tokens/gene.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "GNOME",
+      "name": "GenomesDAO Governance",
+      "address": "0x7698Ac5D15bb3Ba7185adCBff32A80ebD9d0709B",
+      "logoURI": "https://app.camelot.exchange/images/tokens/gnome.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "THALES",
+      "name": "Thales DAO Token",
+      "address": "0xE85B662Fe97e8562f4099d8A1d5A92D4B453bF30",
+      "logoURI": "https://app.camelot.exchange/images/tokens/thales.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "EDE",
+      "name": "EDE",
+      "address": "0xCCD3891c1452b7CB0E4632774B9365DC4eE24f20",
+      "logoURI": "https://app.camelot.exchange/images/tokens/ede.jpg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "WINR",
+      "name": "WINR",
+      "address": "0xD77B108d4f6cefaa0Cae9506A934e825BEccA46E",
+      "logoURI": "https://app.camelot.exchange/images/tokens/winr.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "vWINR",
+      "name": "Vested WINR",
+      "address": "0x63097E97BA51b64547Cf1F4Ba154495D7af74582",
+      "logoURI": "https://app.camelot.exchange/images/tokens/vwinr.png",
+      "decimals": 18,
+      "quote": "other",
+      "priceOf": "0xD77B108d4f6cefaa0Cae9506A934e825BEccA46E",
+      "excludeFromExchange": true
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LOTTO",
+      "name": "LOTTO",
+      "address": "0x4A35cA865aBEc4205430081ccDF768610e06BfbC",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lotto.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "fUSDC",
+      "name": "Fluid USDC",
+      "address": "0x4CFA50B7Ce747e2D61724fcAc57f24B748FF2b2A",
+      "logoURI": "https://app.camelot.exchange/images/tokens/fusdc.png",
+      "decimals": 6,
+      "quote": "derived_stable"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "ACID",
+      "name": "Acid",
+      "address": "0x29C1EA5ED7af53094b1a79eF60d20641987c867e",
+      "logoURI": "https://app.camelot.exchange/images/tokens/acid.svg",
+      "decimals": 9,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LODE",
+      "name": "Lodestar",
+      "address": "0xF19547f9ED24aA66b03c3a552D181Ae334FBb8DB",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lode.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "IDIA",
+      "name": "Impossible Finance Launchpad",
+      "address": "0xD91903D548f19C0FC0a6B9ED09D2F72b4dFe7144",
+      "logoURI": "https://app.camelot.exchange/images/tokens/idia.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "PRY",
+      "name": "Perpy token",
+      "address": "0x1824a51C106EFC27d35A74efB56d9BF54dDb22d4",
+      "logoURI": "https://app.camelot.exchange/images/tokens/pry.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "SPOOL",
+      "name": "Spool DAO Token",
+      "address": "0xECA14F81085e5B8d1c9D32Dcb596681574723561",
+      "logoURI": "https://app.camelot.exchange/images/tokens/spool.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "stafi-rETH",
+      "name": "StaFi rETH",
+      "address": "0x6CDA1D3D092811b2d48F7476adb59A6239CA9b95",
+      "logoURI": "https://app.camelot.exchange/images/tokens/stafi-reth.svg",
+      "decimals": 18,
+      "quote": "derived_native"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "FIS",
+      "name": "StaFi",
+      "address": "0x849B40AB2469309117Ed1038c5A99894767C7282",
+      "logoURI": "https://app.camelot.exchange/images/tokens/fis.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "SECT",
+      "name": "Sector",
+      "address": "0x0B63C61bba4a876a6eB8b5e596800F7649A9B71E",
+      "logoURI": "https://app.camelot.exchange/images/tokens/sector.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "lveSECT",
+      "name": "liquid veSECT",
+      "address": "0xf4A90562549b68f59050FE89E725CA8c257b3056",
+      "logoURI": "https://app.camelot.exchange/images/tokens/sector.svg",
+      "decimals": 18,
+      "quote": "other",
+      "excludeFromExchange": true,
+      "priceOf": "0x0B63C61bba4a876a6eB8b5e596800F7649A9B71E"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "WOM",
+      "name": "Wombat Token",
+      "address": "0x7B5EB3940021Ec0e8e463D5dBB4B7B09a89DDF96",
+      "logoURI": "https://app.camelot.exchange/images/tokens/wom.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "WMX",
+      "name": "Wombex Token",
+      "address": "0x5190F06EaceFA2C552dc6BD5e763b81C73293293",
+      "logoURI": "https://app.camelot.exchange/images/tokens/wmx.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "MVD",
+      "name": "Metavault DAO",
+      "address": "0x15a808ed3846D25e88AE868DE79F1bcB1Ac382B5",
+      "logoURI": "https://app.camelot.exchange/images/tokens/mvd.svg",
+      "decimals": 9,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "MZR",
+      "name": "MZR",
+      "address": "0xBBEa044f9e7c0520195e49Ad1e561572E7E1B948",
+      "logoURI": "https://app.camelot.exchange/images/tokens/mzr.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LQTY",
+      "name": "LQTY",
+      "address": "0xfb9E5D956D889D91a82737B9bFCDaC1DCE3e1449",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lqty.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "SILO",
+      "name": "Silo Governance Token",
+      "address": "0x0341C0C0ec423328621788d4854119B97f44E391",
+      "logoURI": "https://app.camelot.exchange/images/tokens/silo.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "LEX",
+      "name": "LEX",
+      "address": "0x6bB7A17AcC227fd1F6781D1EEDEAE01B42047eE0",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lex.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "esLEX",
+      "name": "Escrowed LEX",
+      "address": "0x6fF4F66c85a05d9dA61646fEb725E2136cBB60B6",
+      "logoURI": "https://app.camelot.exchange/images/tokens/lex.svg",
+      "decimals": 18,
+      "quote": "other",
+      "priceOf": "0x6bB7A17AcC227fd1F6781D1EEDEAE01B42047eE0"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "AIDOGE",
+      "name": "AIDOGE",
+      "address": "0x09E18590E8f76b6Cf471b3cd75fE1A1a9D2B2c2b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/aidoge.svg",
+      "decimals": 6,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "AICODE",
+      "name": "AICODE",
+      "address": "0x7C8a1A80FDd00C9Cccd6EbD573E9EcB49BFa2a59",
+      "logoURI": "https://app.camelot.exchange/images/tokens/aicode.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "STRD",
+      "name": "Stride",
+      "address": "0x05931D5e2F7E1C1A710c9c1dCdD94e413652376F",
+      "logoURI": "https://app.camelot.exchange/images/tokens/strd.svg",
+      "decimals": 6,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "stATOM",
+      "name": "Stride Staked Atom",
+      "address": "0x7ba861c07d40e3341B901Fd6F418e96E0132E25b",
+      "logoURI": "https://app.camelot.exchange/images/tokens/statom.svg",
+      "decimals": 6,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "plsJONES",
+      "name": "Plutus JONES",
+      "address": "0xe7f6C3c1F0018E4C08aCC52965e5cbfF99e34A44",
+      "logoURI": "https://app.camelot.exchange/images/tokens/plsjones.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "axlSOMM",
+      "name": "Axelar Wrapped SOMM",
+      "address": "0x4e914bbDCDE0f455A8aC9d59d3bF739c46287Ed2",
+      "logoURI": "https://app.camelot.exchange/images/tokens/somm.png",
+      "decimals": 6,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "CHOKE",
+      "name": "CHOKE",
+      "address": "0x6Fc2680D8ad8e8312191441B4ECa9EfF8D06b45a",
+      "logoURI": "https://app.camelot.exchange/images/tokens/choke.png",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "KUJI",
+      "name": "Kujira",
+      "address": "0x3A18dcC9745eDcD1Ef33ecB93b0b6eBA5671e7Ca",
+      "logoURI": "https://raw.githubusercontent.com/Team-Kujira/docs/main/.gitbook/assets/kuji.svg",
+      "decimals": 6,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "iFARM",
+      "name": "iFARM",
+      "address": "0x9dCA587dc65AC0a043828B0acd946d71eb8D46c1",
+      "logoURI": "https://app.camelot.exchange/images/tokens/ifarm.svg",
+      "decimals": 18,
+      "quote": "other"
+    },
+    {
+      "chainId": 42161,
+      "symbol": "DMT",
+      "name": "DMT",
+      "address": "0x0Be47c0355306Aff6166A62B023Ae0b2bb85ECb0",
+      "logoURI": "https://app.camelot.exchange/images/tokens/dmt.png",
+      "decimals": 18,
+      "quote": "other"
     }
   ]
 }

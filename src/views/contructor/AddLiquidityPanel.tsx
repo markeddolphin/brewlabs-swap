@@ -1,33 +1,37 @@
-import ChainSelect from "views/directory/DeployerModal/ChainSelect";
-import RouterSelect from "views/directory/DeployerModal/RouterSelect";
+import { useEffect, useState } from "react";
+import { TokenAmount } from "@brewlabs/sdk";
+import { BigNumber, TransactionResponse } from "alchemy-sdk";
+import router from "next/router";
+import { toast } from "react-toastify";
+import { useAccount, useConnect, useSigner } from "wagmi";
+
+import { ONE_BIPS } from "config/constants";
+import { useTranslation } from "contexts/localization";
 import { useActiveChainId } from "hooks/useActiveChainId";
-import CurrencyInputPanel from "components/currencyInputPanel";
+import useActiveWeb3React from "hooks/useActiveWeb3React";
+import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
+import useTransactionDeadline from "hooks/useTransactionDeadline";
 import { useDerivedMintInfo, useMintActionHandlers, useMintState } from "state/mint/hooks";
 import { Field } from "state/mint/actions";
-import { TokenAmount } from "@brewlabs/sdk";
-import maxAmountSpend from "utils/maxAmountSpend";
-import { getExplorerLogo, routers } from "utils/functions";
-import { useEffect, useState } from "react";
-import router from "next/router";
-import { useTranslation } from "contexts/localization";
-import SolidButton from "views/swap/components/button/SolidButton";
-import OutlinedButton from "views/swap/components/button/OutlinedButton";
-import { ONE_BIPS, ROUTER_ADDRESS } from "config/constants";
-import { ApprovalState, useApproveCallback } from "hooks/useApproveCallback";
-import { getLpManagerAddress } from "utils/addressHelpers";
-import useActiveWeb3React from "hooks/useActiveWeb3React";
-import { useAccount, useConnect, useSigner } from "wagmi";
-import { calculateGasMargin, calculateSlippageAmount } from "utils";
-import { getNetworkGasPrice } from "utils/getGasPrice";
-import { getLpManagerContract, getBrewlabsRouterContract } from "utils/contractHelpers";
-import useTransactionDeadline from "hooks/useTransactionDeadline";
-import { useUserSlippageTolerance } from "state/user/hooks";
-import { BigNumber, TransactionResponse } from "alchemy-sdk";
-import { wrappedCurrency } from "utils/wrappedCurrency";
 import { useTransactionAdder } from "state/transactions/hooks";
+import { useUserSlippageTolerance } from "state/user/hooks";
+import { calculateGasMargin, calculateSlippageAmount } from "utils";
+import { getLpManagerAddress } from "utils/addressHelpers";
+import { getLpManagerContract, getBrewlabsRouterContract } from "utils/contractHelpers";
+import { getExplorerLogo } from "utils/functions";
+import { getNetworkGasPrice } from "utils/getGasPrice";
+import maxAmountSpend from "utils/maxAmountSpend";
+import { wrappedCurrency } from "utils/wrappedCurrency";
+
+import CurrencyInputPanel from "components/currencyInputPanel";
 import Modal from "components/Modal";
 import WalletSelector from "components/wallet/WalletSelector";
-import { toast } from "react-toastify";
+
+import ChainSelect from "views/directory/DeployerModal/ChainSelect";
+import RouterSelect from "views/directory/DeployerModal/RouterSelect";
+import SolidButton from "views/swap/components/button/SolidButton";
+import OutlinedButton from "views/swap/components/button/OutlinedButton";
+
 import { useCurrencySelectRoute } from "./useCurrencySelectRoute";
 
 export default function AddLiquidityPanel({
@@ -48,7 +52,9 @@ export default function AddLiquidityPanel({
   const addTransaction = useTransactionAdder();
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
   const { isLoading } = useConnect();
+
   const [openWalletModal, setOpenWalletModal] = useState(false);
+  const [dexrouter, setDexRouter] = useState<any>({ name: "" });
 
   const {
     dependentField,
@@ -71,11 +77,11 @@ export default function AddLiquidityPanel({
 
   const [approvalA, approveACallback] = useApproveCallback(
     parsedAmounts[Field.CURRENCY_A],
-    lpManager === "" ? ROUTER_ADDRESS[chainId] : lpManager
+    lpManager === "" ? dexrouter?.address : lpManager
   );
   const [approvalB, approveBCallback] = useApproveCallback(
     parsedAmounts[Field.CURRENCY_B],
-    lpManager === "" ? ROUTER_ADDRESS[chainId] : lpManager
+    lpManager === "" ? dexrouter?.address : lpManager
   );
 
   const { onFieldAInput, onFieldBInput, onCurrencySelection } = useMintActionHandlers(noLiquidity);
@@ -122,7 +128,7 @@ export default function AddLiquidityPanel({
     if (!chainId || !library || !account) return;
     const gasPrice = await getNetworkGasPrice(library, chainId);
 
-    const router = getBrewlabsRouterContract(chainId, signer);
+    const swapRouter = getBrewlabsRouterContract(chainId, dexrouter.address, signer);
     const lpManagerContract = getLpManagerContract(chainId, signer);
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts;
@@ -142,8 +148,8 @@ export default function AddLiquidityPanel({
     if (currencyA.isNative || currencyB.isNative) {
       const tokenBIsETH = currencyB.isNative;
       if (lpManager === "") {
-        estimate = router.estimateGas.addLiquidityETH;
-        method = router.addLiquidityETH;
+        estimate = swapRouter.estimateGas.addLiquidityETH;
+        method = swapRouter.addLiquidityETH;
         args = [
           wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId)?.address ?? "", // token
           (tokenBIsETH ? parsedAmountA : parsedAmountB).raw.toString(), // token desired
@@ -164,8 +170,8 @@ export default function AddLiquidityPanel({
       value = BigNumber.from((tokenBIsETH ? parsedAmountB : parsedAmountA).raw.toString());
     } else {
       if (lpManager === "") {
-        estimate = router.estimateGas.addLiquidity;
-        method = router.addLiquidity;
+        estimate = swapRouter.estimateGas.addLiquidity;
+        method = swapRouter.addLiquidity;
         args = [
           wrappedCurrency(currencyA, chainId)?.address ?? "",
           wrappedCurrency(currencyB, chainId)?.address ?? "",
@@ -231,7 +237,7 @@ export default function AddLiquidityPanel({
         <ChainSelect />
       </div>
       <div className="-mt-2">
-        <RouterSelect />
+        <RouterSelect router={dexrouter} setRouter={setDexRouter} />
       </div>
       <div className="my-2 rounded-[30px] border border-[#FFFFFF80]">
         <CurrencyInputPanel

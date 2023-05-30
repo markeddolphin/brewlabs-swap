@@ -1,5 +1,6 @@
 import { ChainId } from "@brewlabs/sdk";
 import BigNumber from "bignumber.js";
+
 import { BIG_TEN } from "utils/bigNumber";
 
 BigNumber.config({
@@ -113,7 +114,7 @@ export const BLOCK_TIMES = {
 };
 
 export const SECONDS_PER_YEAR = 365 * 86400; // 10512000
-export const BASE_URL = "https://bridge.brewlabs.info";
+export const BASE_URL = "https://earn.brewlabs.info";
 
 export const DEFAULT_TOKEN_DECIMAL = BIG_TEN.pow(18);
 export const DEFAULT_GAS_LIMIT = 200000;

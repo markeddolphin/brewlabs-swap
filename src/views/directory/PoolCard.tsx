@@ -100,7 +100,7 @@ const PoolCard = ({
               {data.type === Category.INDEXES ? (
                 data.priceChanges ? (
                   <div className={data.priceChanges[0].percent >= 0 ? "text-success" : "text-danger"}>
-                    Performance - {data.priceChanges[0].percent.toFixed(2)}% 24hrs
+                    Performance - {Math.abs(data.priceChanges[0].percent).toFixed(2)}% 24hrs
                   </div>
                 ) : (
                   <SkeletonComponent />

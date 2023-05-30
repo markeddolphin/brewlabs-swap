@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAccount, useConnect, useNetwork } from "wagmi";
 import { WalletConfig } from "config/constants/types";
-import { createWallets } from "config/constants/wallets";
+import { wallets } from "config/constants/wallets";
 import { useActiveChainId } from "hooks/useActiveChainId";
 import { setGlobalState } from "state";
 
@@ -10,14 +10,13 @@ interface WalletSelectorProps {
 }
 
 function WalletSelector({ onDismiss }: WalletSelectorProps) {
-  const { connectAsync, connect, connectors, isLoading, error, pendingConnector } = useConnect();
+  const { connect, connectors, isLoading, error, pendingConnector } = useConnect();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
   const { chainId } = useActiveChainId();
 
   const [errorMsg, setErrorMsg] = useState("");
-  const wallets = useMemo(() => createWallets(chainId, connectAsync), [chainId, connectAsync]);
 
   const walletsToShow: WalletConfig[] = wallets.filter((w) => {
     return w.installed !== false || w.deepLink;
@@ -61,7 +60,7 @@ function WalletSelector({ onDismiss }: WalletSelectorProps) {
         {walletsToShow.map((wallet) => (
           <li key={wallet.id}>
             <button
-              disabled={isLoading}
+              disabled={isLoading || !connectors.find((c) => c.id === wallet.connectorId)?.ready}
               onClick={() => {
                 const selectedConnector = connectors.find((c) => c.id === wallet.connectorId);
                 connect({ connector: selectedConnector });

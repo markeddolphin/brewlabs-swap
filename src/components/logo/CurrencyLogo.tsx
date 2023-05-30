@@ -26,15 +26,11 @@ export default function CurrencyLogo({
       if (currency instanceof WrappedTokenInfo) {
         return [...uriLocations, getTokenLogoURL(currency.address, currency.chainId)];
       }
-      return [getTokenLogoURL(currency.address, currency.chainId, appId, currency.symbol)];
+      return [getTokenLogoURL(currency.address, currency.chainId, currency["logo"], appId, currency.symbol)];
     }
 
     return [];
   }, [currency, uriLocations, appId]);
-
-  // if (currency === ETHER) {
-  //   return <BinanceIcon width={size} style={style} />
-  // }
 
   return (
     <Logo

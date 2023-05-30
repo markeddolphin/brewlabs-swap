@@ -5,7 +5,7 @@ import { useGraphEndPoint } from "./useGraphEndPoint";
 import { getSwapLogs } from "lib/swap/history";
 
 export const useSwapHistory = () => {
-  const { account } = useActiveWeb3React();
+  const { account, chainId } = useActiveWeb3React();
 
   const [swapLogs, setSwapLogs] = useState<any[]>([]);
 
@@ -15,7 +15,7 @@ export const useSwapHistory = () => {
     let isSubscribed = true;
 
     async function update() {
-      const _swapLogs = await getSwapLogs(graphEndPoint, account);
+      const _swapLogs = await getSwapLogs(graphEndPoint, account, chainId);
       if (isSubscribed) setSwapLogs(_swapLogs);
     }
 

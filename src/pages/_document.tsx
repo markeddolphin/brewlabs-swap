@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import { BASE_URL } from "config";
 
 export default function Document() {
   return (
@@ -10,7 +11,7 @@ export default function Document() {
           name="twitter:description"
           content="Stake your tokens on the Brewlabs staking platform to earn passive income, compound or harvest your rewards and reflections anytime!"
         />
-        <meta name="twitter:image" content="https://bridge.brewlabs.info/images/brewlabs-earn-poster.jpg" />
+        <meta name="twitter:image" content={`${BASE_URL}/images/brewlabs-earn-poster.jpg`} />
         <meta name="mobile-web-app-capable" content="yes" />
 
         <link rel="icon" href="/favicon.ico" />

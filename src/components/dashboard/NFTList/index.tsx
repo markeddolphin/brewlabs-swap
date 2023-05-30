@@ -37,17 +37,16 @@ const responsive = {
   },
 };
 
-const NFTCard = ({ data }) => {};
 const NFTList = () => {
   const carouselRef = useRef();
   const [isOpen, setIsOpen] = useGlobalState("userSidebarOpen");
   const [nftCount, setNFTCount] = useState(1);
-  const [curPage, setCurPage] = useState(0);
   const { nfts, selectedDeployer }: any = useContext(DashboardContext);
   const { changeAvatar }: any = useContext(UserContext);
 
   useEffect(() => {
-    setNFTCount(Math.max(1, Math.floor((window.innerHeight - 265) / 227) * 3));
+    const _colCount = window.innerWidth >= 590 ? 3 : window.innerWidth >= 415 ? 2 : 1;
+    setNFTCount(Math.max(1, Math.floor((window.innerHeight - 400) / 227) * _colCount));
   }, []);
 
   let nftList = [];
@@ -83,19 +82,23 @@ const NFTList = () => {
                 return (
                   <div
                     key={i}
-                    className="mx-5 my-5 w-[135px] overflow-hidden rounded-[12px] font-roboto text-xs font-medium"
+                    className="mx-5 my-5 w-[135px] overflow-hidden rounded-[12px] font-roboto text-xs font-medium transition-all duration-700 hover:scale-[120%]"
                   >
                     <div className="flex h-[135px] items-center justify-center overflow-hidden">
                       <img
                         src={data.logo}
                         alt={""}
-                        className="h-full max-w-fit cursor-pointer transition-all duration-700 hover:scale-125"
-                        onClick={() => {
+                        className="h-full max-w-fit cursor-pointer"
+                        onClick={(e: any) => {
                           if (isOpen === 2) {
-                            changeAvatar(selectedDeployer, data.logo);
+                            changeAvatar(selectedDeployer, e.target.src);
                             setIsOpen(0);
                           }
                         }}
+                        onError={(e: any) =>
+                          (e.target.src =
+                            "https://maverickbl.mypinata.cloud/ipfs/QmbQXSQQETMcQkAeaMFH5NBNGbYW7Q5QE5476XVbaW3XRs")
+                        }
                       />
                     </div>
                     <div className="flex w-full items-center bg-white px-1.5 py-1">

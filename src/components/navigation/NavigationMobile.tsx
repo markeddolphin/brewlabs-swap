@@ -1,4 +1,5 @@
-import { Fragment } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -42,7 +43,7 @@ const NavigationMobile = () => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <div className="absolute top-0 right-0 pt-2 sm:-mr-12">
+                <div className="absolute right-0 top-0 pt-2 sm:-mr-12">
                   <button
                     type="button"
                     className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-inset focus:ring-white sm:focus:ring-2"

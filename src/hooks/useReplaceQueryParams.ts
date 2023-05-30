@@ -10,8 +10,8 @@ export const useReplaceQueryParams = () => {
     router.push({
       pathname: isLiquidityPage
         ? [...router.asPath.split("/").slice(0, 2), val, ...router.asPath.split("/").splice(3)].join("/")
-        : router.asPath,
-      query: isLiquidityPage ? {} : { [key]: val },
+        : router.pathname,
+      query: isLiquidityPage ? {} : router.query,
     });
   };
 

@@ -1,13 +1,11 @@
 import styled from "styled-components";
 
 import { Category } from "config/constants/types";
-import { BLOCKS_PER_DAY } from "config/constants";
 import { useChainCurrentBlocks } from "state/block/hooks";
+import { filterPoolsByStatus } from "utils";
 
 import DropDown from "./Dropdown";
 import ActivityDropdown from "./ActivityDropdown";
-import { useAppId } from "state/zap/hooks";
-import { useActiveChainId } from "@hooks/useActiveChainId";
 
 const SelectionPanel = ({
   pools,
@@ -40,13 +38,20 @@ const SelectionPanel = ({
   ).length;
 
   const filters = [
-    `My Deploys (${counts[1] + counts[2] + counts[3] + counts[4]})`,
-    `Staking Pools (${counts[1]})`,
-    `Yield Farms (${counts[2]})`,
-    `Indexes (${counts[3]})`,
+    <>
+      My Deploys <span className="text-[11px]">({counts[1] + counts[2] + counts[3] + counts[4]})</span>
+    </>,
+    <>
+      Staking Pools <span className="text-[11px]">({counts[1]})</span>
+    </>,
+    <>
+      Yield Farms <span className="text-[11px]">({counts[2]})</span>
+    </>,
+    <>
+      Indexes <span className="text-[11px]">({counts[3]})</span>
+    </>,
   ];
 
-  let activityCnts = {};
   let filteredPools = pools.filter(
     (data) =>
       curFilter === Category.ALL ||
@@ -54,30 +59,12 @@ const SelectionPanel = ({
       (curFilter === Category.MY_POSITION &&
         (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance.gt(0)))
   );
-  activityCnts["active"] = filteredPools.filter(
-    (pool) =>
-      !pool.isFinished &&
-      ((pool.type === Category.POOL && +pool.startBlock > 0) ||
-        (pool.type === Category.FARM && pool.multiplier > 0 && +pool.startBlock < currentBlocks[pool.chainId]) ||
-        pool.type === Category.INDEXES ||
-        (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier !== "0X"))
-  ).length;
-  activityCnts["finished"] = filteredPools.filter(
-    (pool) =>
-      pool.isFinished ||
-      pool.multiplier === 0 ||
-      (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier === "0X")
-  ).length;
-  activityCnts["new"] = filteredPools.filter(
-    (pool) =>
-      !pool.isFinished &&
-      ((pool.type === Category.POOL &&
-        (+pool.startBlock === 0 || +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-        (pool.type === Category.FARM &&
-          (+pool.startBlock > currentBlocks[pool.chainId] ||
-            +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-        (pool.type === Category.INDEXES && new Date(pool.createdAt).getTime() + 86400 * 1000 >= Date.now()))
-  ).length;
+
+  let activityCnts = {
+    active: filterPoolsByStatus(filteredPools, currentBlocks, "active").length,
+    finished: filterPoolsByStatus(filteredPools, currentBlocks, "finished").length,
+    new: filterPoolsByStatus(filteredPools, currentBlocks, "new").length
+  };
 
   return (
     <div className="flex flex-row items-end md:flex-col md:items-start">

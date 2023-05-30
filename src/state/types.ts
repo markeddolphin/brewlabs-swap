@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
 import { DeserializedFarm, SerializedBigNumber } from "./farms/types";
+import { SerializedPool } from "./pools/types";
 import { SerializedIndex } from "./indexes/types";
+import { DeployConfig } from "./deploy/types";
+import { SwapState } from "./swap/reducer";
 import { ListsState } from "./lists/reducer";
 import { MulticallState } from "./multicall/reducer";
-import { SerializedPool } from "./pools/types";
-import { SwapState } from "./swap/reducer";
 import { TransactionState } from "./transactions/reducer";
 import { UserState } from "./user/reducer";
 import { Address, AppId, DeserializedFarmConfig, SerializedFarmConfig } from "config/constants/types";
@@ -47,6 +48,12 @@ export interface PoolsState {
 export interface IndexesState {
   data: SerializedIndex[];
   userDataLoaded: boolean;
+}
+
+export interface DeployState {
+  farm: DeployConfig[];
+  pool: DeployConfig[];
+  indexes: DeployConfig[];
 }
 
 interface SerializedZapFarmUserData {
@@ -94,6 +101,7 @@ export interface State {
   farms: SerializedFarmsState;
   pools: PoolsState;
   indexes: IndexesState;
+  deploy: DeployState;
   zap: SerializedZapState;
   lists: ListsState;
   multicall: MulticallState;

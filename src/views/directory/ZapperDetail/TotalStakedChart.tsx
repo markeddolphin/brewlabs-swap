@@ -9,7 +9,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const TotalStakedChart = ({ data, symbol }: { data: any; symbol: string }) => {
   const getTitle = () => {
-    return "Total Staked Value";
+    return "Total Zapper Position Value";
   };
 
   const chartData: any = {

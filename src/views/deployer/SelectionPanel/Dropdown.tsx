@@ -3,7 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 
-const DropDown = ({ value, setValue, data }: { setValue?: any; value: number; data: string[] }) => {
+const DropDown = ({ value, setValue, data }: { setValue?: any; value: number; data: any[] }) => {
   const [open, setOpen] = useState(false);
   const dropRef: any = useRef();
 

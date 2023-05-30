@@ -12,6 +12,7 @@ import {
   chevronLeftSVG,
   DetailSVG,
   KYCSVG,
+  NoneKYCSVG,
   UserAddSVG,
   UserSVG,
 } from "components/dashboard/assets/svgs";
@@ -37,9 +38,14 @@ import { Category } from "config/constants/types";
 import { useGlobalState } from "state";
 import { DashboardContext } from "contexts/DashboardContext";
 import { UserContext } from "contexts/UserContext";
+import useWalletNFTs from "@hooks/useWalletNFTs";
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import { WNATIVE } from "@brewlabs/sdk";
+import { BASE_URL } from "config";
 
 const Profile = ({ deployer }: { deployer: string }) => {
-  const [performanceFees, setPerformanceFees] = useState([]);
+  const [performanceFees, setPerformanceFees] = useState([[0], [0], [0]]);
   const [curFilter, setCurFilter] = useState(0);
   const [criteria, setCriteria] = useState("");
   const [status, setStatus] = useState("active");
@@ -51,12 +57,17 @@ const Profile = ({ deployer }: { deployer: string }) => {
   });
   const [, setSortOrder] = useState("default");
   const [, setIsOpen] = useGlobalState("userSidebarOpen");
+  const [isCopied, setIsCopied] = useState(false);
 
   const router = useRouter();
   const { tokenPrices } = useContext(TokenPriceContext);
   const { setSelectedDeployer, setViewType }: any = useContext(DashboardContext);
   const { userData }: any = useContext(UserContext);
   const { indexes, userDataLoaded } = useIndexes();
+
+  const nfts = useWalletNFTs(deployer);
+  const isKYC =
+    nfts.filter((data) => data.address.toLowerCase() === "0x2B09d47D550061f995A3b5C6F0Fd58005215D7c8").length > 0;
 
   const deployerData = userData.visitedIndexes
     ? userData.visitedIndexes.find((data: any) => data.address === deployer.toLowerCase())
@@ -77,28 +88,57 @@ const Profile = ({ deployer }: { deployer: string }) => {
   const bestPool: any = allPools.length ? allPools[0] : [];
 
   const getPriceChange = () => {
+    if (allPools.length === 0) return [[0], [0], [0]];
+
     let priceHistories = [],
       combinedHistories = [];
     for (let i = 0; i < allPools.length; i++) {
-      priceHistories.push(getAverageHistory(allPools[i].priceHistories ?? [[]]));
+      let _histories = [];
+      for (let k = 0; k < 3; k++) {
+        _histories.push(getAverageHistory(allPools[i].price3Histories?.[k] ?? [[]]));
+      }
+      priceHistories.push(_histories);
     }
-    for (let i = 0; i < 24; i++) {
-      combinedHistories.push(0);
-      for (let j = 0; j < allPools.length; j++) combinedHistories[i] += priceHistories[j][i];
-      combinedHistories[i] = !isNaN(combinedHistories[i]) ? combinedHistories[i] / allPools.length : 0;
+    for (let k = 0; k < 3; k++) {
+      let _histories = [];
+      for (let i = 0; i < priceHistories[0]?.[k].length; i++) {
+        _histories.push(0);
+        for (let j = 0; j < allPools.length; j++) _histories[i] += priceHistories[j][k][i];
+        _histories[i] = !isNaN(_histories[i]) ? _histories[i] / allPools.length : 0;
+      }
+      combinedHistories.push(_histories.length === 0 ? [0] : _histories);
     }
     return combinedHistories;
   };
 
   const getPerformanceFees = async () => {
-    let _performanceFees: any = [];
-    const result = await Promise.all(allPools.map((index: any) => fetchIndexFeeHistories(index)));
-    for (let i = 0; i < 24; i++) {
-      let pF = 0;
-      for (let j = 0; j < result.length; j++) pF += result[j].performanceFees[i];
-      _performanceFees.push(pF);
+    if (allPools.length === 0) {
+      setPerformanceFees([[0], [0], [0]]);
+      return;
     }
-    setPerformanceFees(_performanceFees);
+    const result = await Promise.all(allPools.map((index: any) => fetchIndexFeeHistories(index)));
+    let histories = [];
+    for (let k = 0; k < 3; k++) {
+      let _performanceFees: any = [];
+      for (let i = 0; i < result[0].pFee3Histories[k].length; i++) {
+        let pF = 0;
+        for (let j = 0; j < result.length; j++)
+          pF +=
+            result[j].pFee3Histories[k][i] *
+            tokenPrices[getCurrencyId(allPools[j].chainId, WNATIVE[allPools[j].chainId].address)];
+        _performanceFees.push(isNaN(pF) ? 0 : pF);
+      }
+      histories.push(_performanceFees);
+    }
+    setPerformanceFees(histories);
+  };
+
+  const onSharePortfolio = () => {
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1000);
+    navigator.clipboard.writeText(`${BASE_URL}${location.pathname}`);
   };
 
   useEffect(() => {
@@ -184,12 +224,10 @@ const Profile = ({ deployer }: { deployer: string }) => {
                     <StyledButton
                       className="relative h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition hover:border-white hover:text-white xl:flex"
                       type={"default"}
+                      onClick={onSharePortfolio}
                     >
                       <div className="flex items-center">
-                        <div className="mr-1.5">Share portfolio</div> {LinkSVG}
-                      </div>
-                      <div className="absolute -right-3 -top-2 z-10 flex h-4 w-10 items-center justify-center rounded-[30px] bg-primary font-roboto text-xs font-bold text-black">
-                        Soon
+                        <div className="mr-1.5">{isCopied ? "Copied" : "Share portfolio"}</div> {LinkSVG}
                       </div>
                     </StyledButton>
 
@@ -207,7 +245,7 @@ const Profile = ({ deployer }: { deployer: string }) => {
                 <div className="mt-8  min-w-fit md:mt-0 md:min-w-[180px]">
                   <div className="relative h-fit w-fit">
                     <img
-                      src={deployerData ? deployerData.logo : "/images/nfts/default.png"}
+                      src={deployerData ? deployerData.logo : "/images/non-logo.png"}
                       alt={""}
                       className="h-36 w-36 rounded-full"
                     />
@@ -227,21 +265,51 @@ const Profile = ({ deployer }: { deployer: string }) => {
                   <div className="w-full ls:w-[calc(100%-556px)]">
                     <div className="relative text-[25px] text-white">
                       <div>Brewlabs</div>
-                      <div className="absolute -left-6 top-2 text-primary">{KYCSVG}</div>
+                      {/* <div className="absolute -left-6 top-2 text-primary">{KYCSVG}</div> */}
                     </div>
                     <div className="overflow-hidden text-ellipsis text-lg text-[#FFFFFF80]">{deployer}</div>
-                    <div className="mt-1.5 flex items-center">
-                      <div className="mr-3 scale-[200%] text-primary">{UserSVG}</div>
-                      <div className="text-sm">
-                        42 <span className="text-green">(+3) 24HR</span>
+                    <div className="mt-1.5 flex max-w-[260px] items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="mr-3 cursor-pointer text-primary" id={"numberoffollowers"}>
+                          {UserSVG}
+                        </div>
+                        <ReactTooltip anchorId={"numberoffollowers"} place="top" content="Number of followers" />
+                        <div className="text-sm">0</div>
                       </div>
+                      {isKYC ? (
+                        <div className="flex items-center">
+                          <div className="cursor-pointer text-primary" id={"KYC"}>
+                            {KYCSVG}
+                          </div>
+                          <div className="ml-2">KYC</div>
+                          <ReactTooltip anchorId={"KYC"} place="top" content="This wallet is KYC with Binance." />
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <div className="cursor-pointer opacity-70" id={"NoneKYC"}>
+                            {NoneKYCSVG}
+                          </div>
+                          <div className="ml-2 opacity-70">KYC</div>
+                          <ReactTooltip
+                            anchorId={"NoneKYC"}
+                            place="top"
+                            content="This wallet is not KYC with Binance."
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="mt-1.5 flex items-center">
-                      <div className="mr-3 scale-[200%] text-primary">{DetailSVG}</div>
+                      <div className="mr-3 cursor-pointer text-primary" id={"deployedindexes"}>
+                        {DetailSVG}
+                      </div>
+                      <ReactTooltip anchorId={"deployedindexes"} place="top" content="Deployed indexes" />
                       <div className="text-sm">{allPools.length}</div>
                     </div>
                     <div className="mt-1.5 flex items-center">
-                      <div className="mr-3 scale-[200%] text-primary">{BarChartSVG}</div>
+                      <div className="mr-3 cursor-pointer text-primary" id={"bestperformingindex"}>
+                        {BarChartSVG}
+                      </div>
+                      <ReactTooltip anchorId={"bestperformingindex"} place="top" content="Best performing index" />
                       <div className="ml-2">
                         <IndexLogo type={"line"} tokens={bestPool.tokens ?? []} />
                       </div>

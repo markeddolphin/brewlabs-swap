@@ -10,10 +10,11 @@ import { isChainSupported } from "utils/wagmi";
 import { useReplaceQueryParams } from "./useReplaceQueryParams";
 
 export const useQueryChainId = () => {
-  const [queryChainId, setQueryChainId] = useState(-1);
   const router = useRouter();
   const { replaceQueryParams } = useReplaceQueryParams();
   const { query } = router;
+
+  const [queryChainId, setQueryChainId] = useState(-1);
 
   useEffect(() => {
     const page = router.pathname.split("/")[1];
@@ -44,12 +45,12 @@ export function useLocalNetworkChain() {
 }
 
 export const useActiveChainId = (): { chainId: ChainId; isWrongNetwork: any; isNotMatched: any } => {
+  const { chain } = useNetwork();
+
   const localChainId = useLocalNetworkChain();
   const queryChainId = useQueryChainId();
 
-  const { chain } = useNetwork();
   const chainId = localChainId ?? chain?.id ?? (queryChainId <= 0 ? bsc.id : queryChainId);
-
   const isNotMatched = useMemo(() => chain && localChainId && chain.id !== localChainId, [chain, localChainId]);
 
   return {

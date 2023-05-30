@@ -3,7 +3,9 @@ import axios from "axios";
 import BigNumber from "bignumber.js";
 
 import erc20ABI from "config/abi/erc20.json";
-import masterchefABI from "config/abi/staking/masterchef.json";
+import masterchefABI from "config/abi/farm/masterchef.json";
+import farmImplAbi from "config/abi/farm/farmImpl.json";
+
 import { API_URL } from "config/constants";
 import { SerializedFarmConfig } from "config/constants/types";
 import { getMasterChefAddress } from "utils/addressHelpers";
@@ -62,19 +64,59 @@ export const fetchFarmUserStakedBalances = async (
 ) => {
   const masterChefAddress = getMasterChefAddress(chainId);
 
-  const calls = farmsToFetch.map((farm) => {
-    return {
-      address: farm.contractAddress ?? masterChefAddress,
-      name: "userInfo",
-      params: [farm.poolId, account],
-    };
-  });
+  let data = [];
 
-  const rawStakedBalances = await multicall(masterchefABI, calls, chainId);
-  const parsedStakedBalances = rawStakedBalances.map((stakedBalance) => {
-    return new BigNumber(stakedBalance[0]._hex).toJSON();
-  });
-  return parsedStakedBalances;
+  // fetch normal farms
+  let rawStakedBalances = await multicall(
+    masterchefABI,
+    farmsToFetch
+      .filter((f) => !f.category)
+      .map((farm) => ({
+        address: farm.contractAddress ?? masterChefAddress,
+        name: "userInfo",
+        params: [farm.poolId, account],
+      })),
+    chainId
+  );
+
+  farmsToFetch
+    .filter((f) => !f.category)
+    .forEach((farm, index) => {
+      data.push({
+        pid: farm.pid,
+        farmId: farm.farmId,
+        poolId: farm.poolId,
+        chainId: farm.chainId,
+        stakedBalance: rawStakedBalances[index][0].toString(),
+      });
+    });
+
+  // fetch factroy-created farms
+  rawStakedBalances = await multicall(
+    farmImplAbi,
+    farmsToFetch
+      .filter((f) => f.category)
+      .map((farm) => ({
+        address: farm.contractAddress,
+        name: "userInfo",
+        params: [account],
+      })),
+    chainId
+  );
+
+  farmsToFetch
+    .filter((f) => f.category)
+    .forEach((farm, index) => {
+      data.push({
+        pid: farm.pid,
+        farmId: farm.farmId,
+        poolId: farm.poolId,
+        chainId: farm.chainId,
+        stakedBalance: rawStakedBalances[index][0].toString(),
+      });
+    });
+
+  return data;
 };
 
 export const fetchFarmUserEarnings = async (
@@ -85,21 +127,63 @@ export const fetchFarmUserEarnings = async (
   try {
     const masterChefAddress = getMasterChefAddress(chainId);
 
-    const calls = farmsToFetch
-      .filter((f) => !f.enableEmergencyWithdraw)
-      .map((farm) => {
-        return {
+    let data = [];
+
+    // fetch normal farms
+    let rawEarnings = await multicall(
+      masterchefABI,
+      farmsToFetch
+        .filter((f) => !f.enableEmergencyWithdraw)
+        .filter((f) => !f.category)
+        .map((farm) => ({
           address: farm.contractAddress ?? masterChefAddress,
           name: "pendingRewards",
           params: [farm.poolId, account],
-        };
+        })),
+      chainId
+    );
+
+    farmsToFetch
+      .filter((f) => !f.enableEmergencyWithdraw)
+      .filter((f) => !f.category)
+      .forEach((farm, index) => {
+        data.push({
+          pid: farm.pid,
+          farmId: farm.farmId,
+          poolId: farm.poolId,
+          chainId: farm.chainId,
+          earnings: rawEarnings[index][0].toString(),
+        });
       });
 
-    const rawEarnings = await multicall(masterchefABI, calls, chainId);
-    const parsedEarnings = rawEarnings.map((earnings) => {
-      return new BigNumber(earnings).toJSON();
-    });
-    return parsedEarnings;
+    // fetch factroy-created farms
+    rawEarnings = await multicall(
+      farmImplAbi,
+      farmsToFetch
+        .filter((f) => !f.enableEmergencyWithdraw)
+        .filter((f) => f.category)
+        .map((farm) => ({
+          address: farm.contractAddress,
+          name: "pendingRewards",
+          params: [account],
+        })),
+      chainId
+    );
+
+    farmsToFetch
+      .filter((f) => !f.enableEmergencyWithdraw)
+      .filter((f) => f.category)
+      .forEach((farm, index) => {
+        data.push({
+          pid: farm.pid,
+          farmId: farm.farmId,
+          poolId: farm.poolId,
+          chainId: farm.chainId,
+          earnings: rawEarnings[index][0].toString(),
+        });
+      });
+
+    return data;
   } catch (e) {
     return [];
   }
@@ -112,21 +196,63 @@ export const fetchFarmUserReflections = async (
 ) => {
   const masterChefAddress = getMasterChefAddress(chainId);
 
-  const calls = farmsToFetch
-    .filter((f) => !f.enableEmergencyWithdraw)
-    .map((farm) => {
-      return {
+  let data = [];
+
+  // fetch normal farms
+  let rawReflections = await multicall(
+    masterchefABI,
+    farmsToFetch
+      .filter((f) => !f.enableEmergencyWithdraw)
+      .filter((f) => !f.category)
+      .map((farm) => ({
         address: farm.contractAddress ?? masterChefAddress,
         name: "pendingReflections",
         params: [farm.poolId, account],
-      };
+      })),
+    chainId
+  );
+
+  farmsToFetch
+    .filter((f) => !f.enableEmergencyWithdraw)
+    .filter((f) => !f.category)
+    .map((farm, index) => {
+      data.push({
+        pid: farm.pid,
+        farmId: farm.farmId,
+        poolId: farm.poolId,
+        chainId: farm.chainId,
+        reflections: rawReflections[index][0].toString(),
+      });
     });
 
-  const rawReflections = await multicall(masterchefABI, calls, chainId);
-  const parsedReflections = rawReflections.map((reflections) => {
-    return new BigNumber(reflections).toJSON();
-  });
-  return parsedReflections;
+  // fetch factroy-created farms
+  rawReflections = await multicall(
+    farmImplAbi,
+    farmsToFetch
+      .filter((f) => !f.enableEmergencyWithdraw)
+      .filter((f) => f.category)
+      .map((farm) => ({
+        address: farm.contractAddress,
+        name: "pendingReflections",
+        params: [account],
+      })),
+    chainId
+  );
+
+  farmsToFetch
+    .filter((f) => !f.enableEmergencyWithdraw)
+    .filter((f) => f.category)
+    .forEach((farm, index) => {
+      data.push({
+        pid: farm.pid,
+        farmId: farm.farmId,
+        poolId: farm.poolId,
+        chainId: farm.chainId,
+        reflections: rawReflections[index][0].toString(),
+      });
+    });
+
+  return data;
 };
 
 export const fetchFarmUserDeposits = async (farm, account) => {

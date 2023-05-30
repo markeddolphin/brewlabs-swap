@@ -1,4 +1,4 @@
-import { Currency, TokenAmount, NATIVE_CURRENCIES } from "@brewlabs/sdk";
+import { Currency, TokenAmount, NATIVE_CURRENCIES, ROUTER_ADDRESS_MAP, EXCHANGE_MAP } from "@brewlabs/sdk";
 import { utils } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { TransactionResponse } from "@ethersproject/providers";
@@ -55,6 +55,7 @@ export default function BasicLiquidity() {
   const currencyA = currencies[Field.CURRENCY_A];
   const currencyB = currencies[Field.CURRENCY_B];
 
+  const routerAddr = ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId]?.address;
   const isValid = !error;
 
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
@@ -98,7 +99,7 @@ export default function BasicLiquidity() {
 
   const onAdd = async () => {
     if (!chainId || !library || !account) return;
-    const router = getBrewlabsRouterContract(chainId, signer);
+    const router = getBrewlabsRouterContract(chainId, routerAddr, signer);
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts;
     if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB) {

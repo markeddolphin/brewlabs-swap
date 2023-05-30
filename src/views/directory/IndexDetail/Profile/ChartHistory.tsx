@@ -107,7 +107,9 @@ const DrawChart = ({ data, type }: { data: any; type: string }) => {
 };
 const ChartHistory = ({ data, type }: { data: any; type: string }) => {
   const [period, setPeriod] = useState(0);
-  let pricechange = data[data.length - 1] - data[0];
+
+  let curData = data[period];
+  let pricechange = curData[curData.length - 1] - curData[0];
   return (
     <div
       className={`ml-2 h-full w-[270px] rounded-lg border border-dashed ${
@@ -119,15 +121,15 @@ const ChartHistory = ({ data, type }: { data: any; type: string }) => {
           {type === "fee" ? "Fee performance" : "Historic performance"}:{" "}
           <span className={pricechange >= 0 ? "text-green" : "text-danger"}>
             {type === "fee"
-              ? `$${data[data.length - 1] ? data[data.length - 1].toFixed(2) : "0.00"}`
-              : `${data[data.length - 1] ? data[data.length - 1].toFixed(2) : "0.00"}%`}
+              ? `$${curData[curData.length - 1] ? curData[curData.length - 1].toFixed(2) : "0.00"}`
+              : `${curData[curData.length - 1] ? curData[curData.length - 1].toFixed(2) : "0.00"}%`}
           </span>
         </div>
         <div className="w-[60px]">
           <DropDown value={period} setValue={setPeriod} data={["24hrs", "7D", "30D"]} />
         </div>
       </div>
-      <DrawChart data={data} type={type} />
+      <DrawChart data={curData} type={type} />
     </div>
   );
 };

@@ -26,7 +26,7 @@ export const getSwapLogs = async (graphEndpoint: string, caller: string) => {
   while (true) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const data = await request(graphEndpoint, swapLogQuery, {
+      const data: any = await request(graphEndpoint, swapLogQuery, {
         first,
         skip: page * pageSize,
         caller,

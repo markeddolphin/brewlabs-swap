@@ -4,7 +4,9 @@ import { ASSET_PATH } from "config/constants/endpoints";
 import { BAD_SRCS, BAD_SRCS_SUSHI } from "config/constants/lists";
 import { AppId } from "config/constants/types";
 
-const getTokenLogoURL = (address: string, chainId: ChainId, appId?: AppId, tokenSymbol?: string) => {
+const getTokenLogoURL = (address: string, chainId: ChainId, logo?: string, appId?: AppId, tokenSymbol?: string) => {
+  if (logo) return logo;
+
   return appId === AppId.APESWAP
     ? BAD_SRCS.includes(tokenSymbol)
       ? `https://raw.githubusercontent.com/ApeSwapFinance/apeswap-token-lists/main/assets/${tokenSymbol?.toUpperCase()}.png`

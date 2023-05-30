@@ -6,6 +6,7 @@ import LogoIcon from "components/LogoIcon";
 import { SkeletonComponent } from "components/SkeletonComponent";
 import { getNativeSybmol } from "lib/bridge/helpers";
 import StyledButton from "../StyledButton";
+import { BASE_URL } from "config";
 
 const CorePool = ({
   setSelectPoolDetail,
@@ -92,7 +93,7 @@ const CorePool = ({
 
         <div className="w-[50%] max-w-[200px] md:w-[340px] md:max-w-full">
           <a
-            href={`https://bridge.brewlabs.info/swap?outputCurrency=${data?.stakingToken.address}`}
+            href={`${BASE_URL}/swap?outputCurrency=${data?.stakingToken.address}`}
             target={"_blank"}
             rel="noreferrer"
           >

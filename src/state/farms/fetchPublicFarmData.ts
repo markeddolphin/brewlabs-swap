@@ -3,8 +3,9 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 
 import erc20 from "config/abi/erc20.json";
-import masterchefABI from "config/abi/staking/masterchef.json";
-import masterchefV2ABI from "config/abi/staking/masterchefV2.json";
+import masterchefABI from "config/abi/farm/masterchef.json";
+import masterchefV2ABI from "config/abi/farm/masterchefV2.json";
+import farmImplAbi from "config/abi/farm/farmImpl.json";
 
 import { API_URL, MULTICALL_FETCH_LIMIT } from "config/constants";
 import { SerializedFarmConfig, Version } from "config/constants/types";
@@ -161,21 +162,48 @@ export const fetchTotalStakesForFarms = async (chainId, farmsToFetch: Serialized
 
         const v3TotalStakes = await multicall(
           masterchefV2ABI,
-          compoundFarms.map((farm) => ({
-            address: farm.contractAddress,
-            name: "totalStaked",
-            params: [farm.poolId],
-          })),
+          compoundFarms
+            .filter((f) => !f.category)
+            .map((farm) => ({
+              address: farm.contractAddress,
+              name: "totalStaked",
+              params: farm.category ? [] : [farm.poolId],
+            })),
           chainId
         );
 
         if (v3TotalStakes) {
-          compoundFarms.forEach((farm, index) => {
-            data.push({
-              pid: farm.pid,
-              totalStaked: ethers.utils.formatUnits(v3TotalStakes[index][0], 18),
+          compoundFarms
+            .filter((f) => !f.category)
+            .forEach((farm, index) => {
+              data.push({
+                pid: farm.pid,
+                totalStaked: ethers.utils.formatUnits(v3TotalStakes[index][0], 18),
+              });
             });
-          });
+        }
+
+        const v3ImplTotalStakes = await multicall(
+          farmImplAbi,
+          compoundFarms
+            .filter((f) => f.category)
+            .map((farm) => ({
+              address: farm.contractAddress,
+              name: "totalStaked",
+              params: farm.category ? [] : [farm.poolId],
+            })),
+          chainId
+        );
+
+        if (v3ImplTotalStakes) {
+          compoundFarms
+            .filter((f) => f.category)
+            .forEach((farm, index) => {
+              data.push({
+                pid: farm.pid,
+                totalStaked: ethers.utils.formatUnits(v3ImplTotalStakes[index][0], 18),
+              });
+            });
         }
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -223,12 +251,12 @@ export const fetchFarmTotalRewards = async (farm) => {
 
     if (farm.reflectionToken?.isNative) {
       availableReflections = await simpleRpcProvider(farm.chainId).getBalance(farm.contractAddress);
-      availableReflections = new BigNumber(availableReflections._hex)
+      availableReflections = new BigNumber(availableReflections._hex);
     }
   }
 
   return {
-    availableRewards: getBalanceNumber( availableRewards, farm.earningToken.decimals),
+    availableRewards: getBalanceNumber(availableRewards, farm.earningToken.decimals),
     availableReflections: farm.reflectionToken
       ? getBalanceNumber(availableReflections, farm.reflectionToken.decimals)
       : 0,

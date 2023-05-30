@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@brewlabs/sdk'
+import { EXCHANGE_MAP, JSBI, Percent, ROUTER_ADDRESS_MAP, Router, SwapParameters, Trade, TradeType } from '@brewlabs/sdk'
 import { useMemo } from 'react'
 import { BIPS_BASE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -52,11 +52,12 @@ function useSwapCallArguments(
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const routerAddr = ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId];
 
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId) return []
 
-    const contract: Contract | null = getBrewlabsRouterContract(chainId, signer)
+    const contract: Contract | null = getBrewlabsRouterContract(chainId, routerAddr, signer)
     if (!contract) {
       return []
     }

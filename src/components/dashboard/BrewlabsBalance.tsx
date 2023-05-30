@@ -9,7 +9,7 @@ const BrewlabsBalance = () => {
   const { data, isError, isLoading } = useBalance({
     chainId: 56,
     watch: true,
-    addressOrName: address,
+    address,
     token: "0x6aac56305825f712fd44599e59f2ede51d42c3e7",
   });
 

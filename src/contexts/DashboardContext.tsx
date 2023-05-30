@@ -7,12 +7,15 @@ import { useAccount, useSigner } from "wagmi";
 import ERC20ABI from "config/abi/erc20.json";
 import claimableTokenAbi from "config/abi/claimableToken.json";
 import dividendTrackerAbi from "config/abi/dividendTracker.json";
+
 import prices from "config/constants/prices";
+import { customTokensForDeploy } from "config/constants/tokens";
 import { useActiveChainId } from "hooks/useActiveChainId";
 import { useDailyRefreshEffect, useSlowRefreshEffect } from "hooks/useRefreshEffect";
+import useWalletNFTs from "hooks/useWalletNFTs";
 import { getContract, getDividendTrackerContract, getMulticallContract } from "utils/contractHelpers";
 import multicall from "utils/multicall";
-import useWalletNFTs from "@hooks/useWalletNFTs";
+import { getNativeSybmol } from "lib/bridge/helpers";
 
 const DashboardContext: any = React.createContext({
   tokens: [],
@@ -27,11 +30,6 @@ const DashboardContext: any = React.createContext({
   setSelectedDeployer: () => {},
   setPending: () => {},
 });
-
-const CHAIN_NAME: any = {
-  1: "ETH",
-  56: "BNB",
-};
 
 const apiKeyList = [
   "82fc55c0-9833-4d12-82bb-48ae9748bead",
@@ -53,6 +51,10 @@ const WETH_ADDR = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
 let temp_addr: any, temp_id: any;
 const DashboardContextProvider = ({ children }: any) => {
+  const { address } = useAccount();
+  const { chainId } = useActiveChainId();
+  const { data: signer }: any = useSigner();
+
   const [tokens, setTokens] = useState([]);
   const [marketHistory, setMarketHistory] = useState([]);
   const [pending, setPending] = useState(false);
@@ -60,14 +62,11 @@ const DashboardContextProvider = ({ children }: any) => {
   const [priceHistory, setPriceHistory] = useState([]);
   const [selectedDeployer, setSelectedDeployer] = useState("");
   const [viewType, setViewType] = useState(0);
-  const { address } = useAccount();
 
   const nfts = useWalletNFTs(address);
 
   temp_addr = address;
-  const { chainId } = useActiveChainId();
   temp_id = chainId;
-  const { data: signer }: any = useSigner();
 
   const fetchTokenBaseInfo = async (address: any, type = "name symbol decimals", accountAddress: string = null) => {
     let calls: any = [];
@@ -170,8 +169,8 @@ const DashboardContextProvider = ({ children }: any) => {
         } catch (e) {
           rewardToken = {
             address: "0x0",
-            name: CHAIN_NAME[chainId],
-            symbol: CHAIN_NAME[chainId],
+            name: getNativeSybmol[chainId],
+            symbol: getNativeSybmol[chainId],
             decimals: 18,
           };
         }
@@ -290,7 +289,6 @@ const DashboardContextProvider = ({ children }: any) => {
           isReward: filter.length ? filter[0].isReward : false,
         });
       }
-      console.log(temp_addr, address, chainId, temp_id);
 
       if (!temp_addr || temp_addr !== address || temp_id !== chainId) return;
       setTokens(_tokens);
@@ -338,11 +336,11 @@ const DashboardContextProvider = ({ children }: any) => {
   async function fetchTokenList() {
     try {
       if (!tokenList_URI[chainId]) {
-        setTokenList([]);
+        setTokenList(customTokensForDeploy[chainId] ?? []);
         return;
       }
       const result = await axios.get(tokenList_URI[chainId]);
-      setTokenList(result.data.tokens);
+      setTokenList([...(customTokensForDeploy[chainId] ?? []), ...result.data.tokens]);
     } catch (error) {
       console.log(error);
     }

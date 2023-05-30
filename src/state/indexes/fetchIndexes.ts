@@ -108,7 +108,7 @@ export const fetchIndexPerformance = async (pool) => {
     for (let i = 0; i < pool.numTokens; i++) {
       const tokenYearUrl = `https://api.dex.guru/v1/tradingview/history?symbol=${pool.tokens[i].address}-${
         keys[pool.chainId]
-      }_USD&resolution=1440&from=${to - 3600 * 24 * 365}&to=${to}`;
+      }_USD&resolution=720&from=${to - 3600 * 24 * 365}&to=${to}`;
 
       let priceResult = await axios.get(tokenYearUrl);
       const yearlyPrice = priceResult.data;
@@ -123,7 +123,11 @@ export const fetchIndexPerformance = async (pool) => {
       tokenPrices.push(dailyPrice.c[dailyPrice.c.length - 1]);
     }
   } catch (e) {
-    return { priceChanges: new Array(4).fill({ percent: 0, value: 0 }), priceHistories: [] };
+    return {
+      priceChanges: new Array(4).fill({ percent: 0, value: 0 }),
+      priceHistories: [],
+      price3Histories: [[], [], []],
+    };
   }
 
   let priceChanges = [
@@ -141,7 +145,18 @@ export const fetchIndexPerformance = async (pool) => {
     ),
   ];
 
-  return { priceChanges, priceHistories: prices.map((p) => p[1].c), tokenPrices };
+  const timeBefore7d = Math.floor(new Date().setHours(new Date().getHours() - 24 * 7) / 1000);
+  const timeBefore30d = Math.floor(new Date().setHours(new Date().getHours() - 24 * 30) / 1000);
+  return {
+    priceChanges,
+    priceHistories: prices.map((p) => p[1].c),
+    price3Histories: [
+      prices.map((p) => p[1].c),
+      prices.map((p) => p[0].c.filter((c, i) => p[0].t[i] >= timeBefore7d)),
+      prices.map((p) => p[0].c.filter((c, i) => p[0].t[i] >= timeBefore30d)),
+    ],
+    tokenPrices,
+  };
 };
 
 export const fetchIndexFeeHistories = async (pool) => {
@@ -155,17 +170,37 @@ export const fetchIndexFeeHistories = async (pool) => {
   const { performanceFees, commissions } = res.data;
 
   let _performanceFees = [],
+    _performanceFeesfor7d = [],
+    _performanceFeesfor30d = [],
     _commissions = [];
   const timeBefore24Hrs = Math.floor(new Date().setHours(new Date().getHours() - 24) / 1000);
+  const timeBefore7d = Math.floor(new Date().setHours(new Date().getHours() - 24 * 7) / 1000);
+  const timeBefore30d = Math.floor(new Date().setHours(new Date().getHours() - 24 * 30) / 1000);
   const curTime = Math.floor(new Date().getTime() / 1000);
 
   for (let t = timeBefore24Hrs; t <= curTime; t += 3600) {
-    _performanceFees.push(sumOfArray(performanceFees.filter((v) => v.timestamp <= t).map((v) => +v.value)));
+    _performanceFees.push(
+      sumOfArray(performanceFees.filter((v) => v.timestamp <= t && v.timestamp >= timeBefore24Hrs).map((v) => +v.value))
+    );
+  }
+
+  for (let t = timeBefore7d; t <= curTime; t += 3600 * 4) {
+    _performanceFeesfor7d.push(
+      sumOfArray(performanceFees.filter((v) => v.timestamp <= t && v.timestamp >= timeBefore7d).map((v) => +v.value))
+    );
+  }
+
+  for (let t = timeBefore30d; t <= curTime; t += 3600 * 24) {
+    _performanceFeesfor30d.push(sumOfArray(performanceFees.filter((v) => v.timestamp <= t).map((v) => +v.value)));
   }
 
   for (let t = timeBefore24Hrs; t <= curTime; t += 3600) {
     _commissions.push(sumOfArray(commissions.filter((v) => v.timestamp <= t).map((v) => +v.value)));
   }
 
-  return { performanceFees: _performanceFees, commissions: _commissions };
+  return {
+    performanceFees: _performanceFees,
+    pFee3Histories: [_performanceFees, _performanceFeesfor7d, _performanceFeesfor30d],
+    commissions: _commissions,
+  };
 };

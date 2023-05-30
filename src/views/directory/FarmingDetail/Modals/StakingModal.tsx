@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { WNATIVE } from "@brewlabs/sdk";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ethers } from "ethers";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -22,7 +23,7 @@ import StyledButton from "../../StyledButton";
 import useApproveFarm from "../hooks/useApprove";
 import useFarm from "../hooks/useFarm";
 import { getBalanceAmount } from "utils/formatBalance";
-import Link from "next/link";
+import useFarmImpl from "../hooks/useFarmImpl";
 
 const StakingModal = ({
   open,
@@ -49,6 +50,14 @@ const StakingModal = ({
 
   const { onApprove } = useApproveFarm(data.lpAddress, data.pid, data.contractAddress);
   const { onStake, onUnstake } = useFarm(
+    data.poolId,
+    data.farmId,
+    data.chainId,
+    data.contractAddress,
+    data.version >= Version.V2 && data.performanceFee ? data.performanceFee : "0",
+    data.enableEmergencyWithdraw
+  );
+  const { onStake: onStakeImpl, onUnstake: onUnstakeImpl } = useFarmImpl(
     data.poolId,
     data.farmId,
     data.chainId,
@@ -85,11 +94,20 @@ const StakingModal = ({
   const handleConfirm = async () => {
     setPending(true);
     try {
-      if (type === "deposit") {
-        await onStake(amount);
+      if (data.category) {
+        if (type === "deposit") {
+          await onStakeImpl(amount);
+        } else {
+          await onUnstakeImpl(amount);
+        }
       } else {
-        await onUnstake(amount);
+        if (type === "deposit") {
+          await onStake(amount);
+        } else {
+          await onUnstake(amount);
+        }
       }
+
       dispatch(fetchFarmUserDataAsync({ account: address, chainId: data.chainId, pids: [data.pid] }));
     } catch (error) {
       console.log(error);
@@ -199,7 +217,8 @@ const StakingModal = ({
                   </StyledButton>
                 </div>
                 <div className="mt-3 h-12">
-                  {accountData.allowance ? (
+                  {+accountData.allowance.toString() >
+                  +ethers.utils.parseEther(amount && amount !== "" ? amount : "0") ? (
                     <StyledButton type="primary" disabled={!amount || insufficient || pending} onClick={handleConfirm}>
                       {insufficient ? "Insufficient" : type === "deposit" ? "Deposit" : "Withdraw"} {data.lpSymbol}
                     </StyledButton>
@@ -213,7 +232,7 @@ const StakingModal = ({
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="absolute -top-2 -right-2 rounded-full bg-white p-2 dark:bg-zinc-900 sm:dark:bg-zinc-800"
+                className="absolute -right-2 -top-2 rounded-full bg-white p-2 dark:bg-zinc-900 sm:dark:bg-zinc-800"
               >
                 <span className="sr-only">Close</span>
                 <XMarkIcon className="h-6 w-6 dark:text-slate-400" />

@@ -35,7 +35,8 @@ const useTokenMarketChart = (tokenAddresses: string[], chainId: ChainId): TokenM
         if (res.data) {
           setData(res.data);
         }
-      });
+      })
+      .catch((e) => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetPlatformId, JSON.stringify(tokenAddresses)]);
 

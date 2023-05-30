@@ -1,12 +1,11 @@
 import { useCallback, useContext, useMemo, useState } from "react";
-import { WNATIVE } from "@brewlabs/sdk";
+import { EXCHANGE_MAP, ROUTER_ADDRESS_MAP, WNATIVE } from "@brewlabs/sdk";
 import { TransactionResponse } from "alchemy-sdk";
 import { BigNumber, Contract, ethers } from "ethers";
 import { splitSignature } from "ethers/lib/utils";
 import { toast } from "react-toastify";
 import { useAccount, useSigner } from "wagmi";
 
-import { ROUTER_ADDRESS } from "config/constants";
 import { NETWORKS } from "config/constants/networks";
 import { DashboardContext } from "contexts/DashboardContext";
 import { useActiveChainId } from "hooks/useActiveChainId";
@@ -63,13 +62,15 @@ export default function RemoveLiquidityPanel({
   const { [Field.CURRENCY_A]: currencyAmountA, [Field.CURRENCY_B]: currencyAmountB } = parsedAmounts;
 
   const [allowedSlippage] = useUserSlippageTolerance();
+
+  const routerAddr = ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId]?.address;
   const lpManager = getLpManagerAddress(chainId);
   const deadline = useTransactionDeadline();
-  const [isGetWETH, setIsGetWETH] = useState(false);
 
+  const [isGetWETH, setIsGetWETH] = useState(false);
   const [approval, approveCallback] = useApproveCallback(
     parsedAmounts[Field.LIQUIDITY],
-    lpManager === "" ? ROUTER_ADDRESS[chainId] : lpManager
+    lpManager === "" ? routerAddr : lpManager
   );
 
   const { onUserInput: _onUserInput } = useBurnActionHandlers();
@@ -104,7 +105,7 @@ export default function RemoveLiquidityPanel({
       if (!currencyAmountA || !currencyAmountB) {
         throw new Error("missing currency amounts");
       }
-      const router = getBrewlabsRouterContract(chainId, signer);
+      const router = getBrewlabsRouterContract(chainId, routerAddr, signer);
       const gasPrice = await getNetworkGasPrice(library, chainId);
 
       const amountsMin = {
@@ -319,7 +320,7 @@ export default function RemoveLiquidityPanel({
       ];
       const message = {
         owner: account,
-        spender: lpManager === "" ? ROUTER_ADDRESS[chainId] : lpManager,
+        spender: lpManager === "" ? routerAddr : lpManager,
         value: liquidityAmount.raw.toString(),
         nonce: nonce.toHexString(),
         deadline: deadline.toNumber(),

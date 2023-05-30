@@ -6,6 +6,7 @@ import { Dialog } from "@headlessui/react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import { BASE_URL } from "config";
 import { PoolCategory } from "config/constants/types";
 import { chevronLeftSVG } from "components/dashboard/assets/svgs";
 import { DashboardContext } from "contexts/DashboardContext";
@@ -169,7 +170,7 @@ const StakingModal = ({
                 </div>
                 <a
                   className="flex-1"
-                  href={`https://bridge.brewlabs.info/swap?outputCurrency=${data.stakingToken.address}`}
+                  href={`${BASE_URL}/swap?outputCurrency=${data.stakingToken.address}`}
                   target={"_blank"}
                   rel="noreferrer"
                 >

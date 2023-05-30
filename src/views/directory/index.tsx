@@ -1,14 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useContext, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ChainId } from "@brewlabs/sdk";
+import BigNumber from "bignumber.js";
 import orderBy from "lodash/orderBy";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAccount } from "wagmi";
 
 import Container from "components/layout/Container";
 import PageWrapper from "components/layout/PageWrapper";
 import PageHeader from "components/layout/PageHeader";
 import WordHighlight from "components/text/WordHighlight";
 
-import { BLOCKS_PER_DAY } from "config/constants";
 import { AppId, Category } from "config/constants/types";
 import { TokenPriceContext } from "contexts/TokenPriceContext";
 import { useFarms } from "state/farms/hooks";
@@ -25,6 +27,8 @@ import {
 import { usePools } from "state/pools/hooks";
 import { useIndexes } from "state/indexes/hooks";
 import { useChainCurrentBlocks } from "state/block/hooks";
+import { filterPoolsByStatus } from "utils";
+import { getFarmApr } from "utils/apr";
 import getCurrencyId from "utils/getCurrencyId";
 
 import Banner from "./Banner";
@@ -36,11 +40,6 @@ import IndexDetail from "./IndexDetail";
 import FarmingDetail from "./FarmingDetail";
 import StakingDetail from "./StakingDetail";
 import ZapperDetail from "./ZapperDetail";
-import { useAccount } from "wagmi";
-import BigNumber from "bignumber.js";
-import { getFarmApr } from "utils/apr";
-import { ChainId } from "@brewlabs/sdk";
-import { latinise } from "utils/latinise";
 
 const Directory = ({ page }: { page: number }) => {
   const [curFilter, setCurFilter] = useState(page);
@@ -64,7 +63,6 @@ const Directory = ({ page }: { page: number }) => {
   const cakePrice = usePriceCakeBusd();
   const bananaPrice = useBananaPrice();
   const pancakeLpAprs = useFarmLpAprsFromAppId(AppId.PANCAKESWAP);
-  const [query, setQuery] = useState("");
 
   useSetFarms();
   usePollFarms();
@@ -91,37 +89,37 @@ const Directory = ({ page }: { page: number }) => {
         return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity };
       });
 
-      if (query) {
-        const lowercaseQuery = latinise(query.toLowerCase());
-        farmsToDisplayWithAPR = farmsToDisplayWithAPR.filter((farm) => {
-          return latinise(farm.lpSymbol.toLowerCase()).includes(lowercaseQuery);
-        });
-      }
       return farmsToDisplayWithAPR;
     },
-    [query, cakePrice, regularCakePerBlock, pancakeLpAprs]
+    [cakePrice, regularCakePerBlock, pancakeLpAprs]
   );
 
   const { tokenPrices, lpPrices } = useContext(TokenPriceContext);
   const currentBlocks = useChainCurrentBlocks();
   const allPools = [
-    ...pools.map((pool) => {
-      let price = tokenPrices[getCurrencyId(pool.chainId, pool.stakingToken.address)];
-      if (price > 500000) price = 0;
-      return { ...pool, tvl: pool.totalStaked && price ? +pool.totalStaked * price : 0 };
-    }),
-    ...farms.map((farm) => {
-      let price = lpPrices[getCurrencyId(farm.chainId, farm.lpAddress, true)];
-      return { ...farm, tvl: farm.totalStaked && price ? +farm.totalStaked * price : 0 };
-    }),
-    ...indexes.map((_index) => {
-      let tvl = 0;
-      for (let i = 0; i < _index.tokens.length; i++) {
-        let price = _index.tokenPrices?.[i] ?? tokenPrices[getCurrencyId(_index.chainId, _index.tokens[i].address)];
-        tvl += _index.totalStaked?.[i] && price ? +_index.totalStaked[i] * price : 0;
-      }
-      return { ..._index, tvl };
-    }),
+    ...pools
+      .filter((p) => p.visible)
+      .map((pool) => {
+        let price = tokenPrices[getCurrencyId(pool.chainId, pool.stakingToken.address)];
+        if (price > 500000) price = 0;
+        return { ...pool, tvl: pool.totalStaked && price ? +pool.totalStaked * price : 0 };
+      }),
+    ...farms
+      .filter((p) => p.visible)
+      .map((farm) => {
+        let price = lpPrices[getCurrencyId(farm.chainId, farm.lpAddress, true)];
+        return { ...farm, tvl: farm.totalStaked && price ? +farm.totalStaked * price : 0 };
+      }),
+    ...indexes
+      .filter((p) => p.visible)
+      .map((_index) => {
+        let tvl = 0;
+        for (let i = 0; i < _index.tokens.length; i++) {
+          let price = _index.tokenPrices?.[i] ?? tokenPrices[getCurrencyId(_index.chainId, _index.tokens[i].address)];
+          tvl += _index.totalStaked?.[i] && price ? +_index.totalStaked[i] * price : 0;
+        }
+        return { ..._index, tvl };
+      }),
     ...farmsList(zaps).map((zap) => {
       return {
         ...zap,
@@ -131,6 +129,7 @@ const Directory = ({ page }: { page: number }) => {
       };
     }),
   ];
+
   const sortPools = (poolsToSort) => {
     switch (sortOrder) {
       case "apr":
@@ -190,43 +189,13 @@ const Directory = ({ page }: { page: number }) => {
           curFilter === Category.ALL ||
           data.type === curFilter ||
           (curFilter === Category.MY_POSITION &&
-            (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance?.gt(0)))
+            (data.type === Category.INDEXES
+              ? +data.userData?.stakedUsdAmount > 0
+              : data.userData?.stakedBalance?.gt(0)))
       );
   }
+  chosenPools = sortPools(filterPoolsByStatus(chosenPools, currentBlocks, status));
 
-  switch (status) {
-    case "finished":
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          pool.isFinished ||
-          pool.multiplier === 0 ||
-          (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier === "0X")
-      );
-      break;
-    case "new":
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          !pool.isFinished &&
-          ((pool.type === Category.POOL &&
-            (+pool.startBlock === 0 ||
-              +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-            (pool.type === Category.FARM &&
-              (+pool.startBlock > currentBlocks[pool.chainId] ||
-                +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-            (pool.type === Category.INDEXES && new Date(pool.createdAt).getTime() + 86400 * 1000 >= Date.now()))
-      );
-      break;
-    default:
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          !pool.isFinished &&
-          ((pool.type === Category.POOL && +pool.startBlock > 0) ||
-            (pool.type === Category.FARM && pool.multiplier > 0 && +pool.startBlock < currentBlocks[pool.chainId]) ||
-            pool.type === Category.INDEXES ||
-            (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier !== "0X"))
-      );
-  }
-  chosenPools = sortPools(chosenPools);
   const renderDetailPage = () => {
     switch (curPool.type) {
       case Category.POOL:
@@ -312,16 +281,6 @@ const Directory = ({ page }: { page: number }) => {
                 }
               />
               <Container className="font-brand">
-                {/* <div className="mb-4 flex justify-end">
-                  <div className="h-[32px] w-[140px] font-roboto">
-                    <StyledButton onClick={() => setDeployerOpen(true)}>
-                      <div className="flex items-center">
-                        <div className="ml-1">Deploy Product</div>
-                        <div className="ml-1 -scale-100">{chevronLeftSVG}</div>
-                      </div>
-                    </StyledButton>
-                  </div>
-                </div> */}
                 <Banner setSelectPoolDetail={setSelectPoolDetail} setCurPool={setCurPool} allPools={allPools} />
 
                 <div className="mt-8">

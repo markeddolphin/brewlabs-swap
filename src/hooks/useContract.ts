@@ -26,6 +26,8 @@ import {
   getContract,
   getIndexContract,
   getBrewlabsFeeManagerContract,
+  getFarmFactoryContract,
+  getFarmImplContract,
 } from "utils/contractHelpers";
 import {
   getAddress,
@@ -62,6 +64,12 @@ export const useMasterchef = (address: string) => {
   return useMemo(() => getMasterchefContract(chainId, address, signer ?? undefined), [address, signer, chainId]);
 };
 
+export const useFarmContract = (address: string) => {
+  const { chainId } = useActiveChainId();
+  const { data: signer } = useSigner();
+  return useMemo(() => getFarmImplContract(chainId, address, signer ?? undefined), [address, signer, chainId]);
+};
+
 export const useSingleStaking = (chainId: ChainId, contractAddress: string) => {
   const { data: signer } = useSigner();
   return useMemo(
@@ -85,6 +93,10 @@ export const useIndexContract = (chainId: ChainId, contractAddress: string) => {
   );
 };
 
+export const useFarmFactoryContract = (chainId: ChainId) => {
+  const { data: signer } = useSigner();
+  return useMemo(() => getFarmFactoryContract(chainId, signer ?? undefined), [chainId, signer]);
+};
 // Code below migrated from Exchange useContract.ts
 
 // returns null on errors
@@ -154,10 +166,7 @@ export function useTokenTransferContract(withSignerIfPossible?: boolean): Contra
 
 export const useBrewlabsFeeManager = (chainId: ChainId) => {
   const { data: signer } = useSigner();
-  return useMemo(
-    () => getBrewlabsFeeManagerContract(chainId, signer ?? undefined),
-    [chainId, signer]
-  );
+  return useMemo(() => getBrewlabsFeeManagerContract(chainId, signer ?? undefined), [chainId, signer]);
 };
 export function useExternalMasterchef(withSignerIfPossible?: boolean, chef = Chef.MASTERCHEF): Contract | null {
   const [appId] = useAppId();

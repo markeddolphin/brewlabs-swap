@@ -21,7 +21,7 @@ export function useNativeBalances(uncheckedAddresses?: (string | undefined)[]): 
       uncheckedAddresses
         ? uncheckedAddresses
           .map(isAddress)
-          .filter((a): a is string => a !== false)
+          .filter((a): a is string => a !== "")
           .sort()
         : [],
     [uncheckedAddresses],
@@ -52,7 +52,7 @@ export function useTokenBalancesWithLoadingIndicator(
   tokens?: (Token | undefined)[],
 ): [{ [tokenAddress: string]: TokenAmount | undefined }, boolean] {
   const validatedTokens: Token[] = useMemo(
-    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
+    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== "") ?? [],
     [tokens],
   )
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -6,6 +7,7 @@ import Navigation from "./Navigation";
 
 const NavigationDesktop = () => {
   const [slimVersion, setSlimVersion] = useState(false);
+  const [short, setShort] = useState(false);
 
   const router = useRouter();
 
@@ -16,6 +18,7 @@ const NavigationDesktop = () => {
       setSlimVersion(false);
     }
   }, [router.pathname]);
+
   const spring = {
     type: "spring",
     stiffness: 700,

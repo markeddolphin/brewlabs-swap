@@ -19,9 +19,9 @@ const UserSidebar = () => {
 
   useEffect(() => {
     if (!window.ethereum) return;
-    if (!tempConnected) connect({ connector: connectors[1] });
+    if (!tempConnected) connect({ connector: connectors[0] });
     window.ethereum.on("chainChanged", async (chainId) => {
-      if (!tempConnected) connect({ connector: connectors[1] });
+      if (!tempConnected) connect({ connector: connectors[0] });
     });
   }, [window.ethereum]);
 

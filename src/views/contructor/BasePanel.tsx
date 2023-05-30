@@ -1,23 +1,21 @@
-import { Currency } from "@sushiswap-core/sdk";
-import Modal from "components/Modal";
-import { CircleRightSVG, InfoSVG, RightSVG, checkCircleSVG, chevronLeftSVG } from "components/dashboard/assets/svgs";
-import { CurrencyLogo } from "components/logo";
-import WalletSelector from "components/wallet/WalletSelector";
-import { DashboardContext } from "contexts/DashboardContext";
-import { useCurrency } from "hooks/Tokens";
-import { useLPTokens } from "hooks/constructor/useLPTokens";
-import { useActiveChainId } from "hooks/useActiveChainId";
-import { useFastRefreshEffect } from "hooks/useRefreshEffect";
-import { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
-import { isAddress } from "utils";
-import { getChainLogo, numberWithCommas, routers } from "utils/functions";
-import getTokenLogoURL from "utils/getTokenLogoURL";
-import StyledButton from "views/directory/StyledButton";
-import OutlinedButton from "views/swap/components/button/OutlinedButton";
-import { useAccount, useConnect } from "wagmi";
+
+import { EXCHANGE_MAP } from "@brewlabs/sdk";
+import { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import styled from "styled-components";
+import { useAccount, useConnect } from "wagmi";
+
 import "react-tooltip/dist/react-tooltip.css";
+import { useActiveChainId } from "hooks/useActiveChainId";
+import { isAddress } from "utils";
+import { getChainLogo, getDexLogo, numberWithCommas } from "utils/functions";
+import getTokenLogoURL from "utils/getTokenLogoURL";
+
+import StyledButton from "views/directory/StyledButton";
+
+import { CircleRightSVG, InfoSVG, RightSVG, checkCircleSVG } from "components/dashboard/assets/svgs";
+import WalletSelector from "components/wallet/WalletSelector";
+import Modal from "components/Modal";
 
 const LoadingText = () => {
   const [dotCount, setDotCount] = useState([]);
@@ -50,7 +48,7 @@ export function TokenItem({ data, i, setCurAction, setSelectedLP }) {
       <div className="flex items-center justify-between ">
         <div className="mx-auto flex items-center xmd:mx-0">
           <img src={getChainLogo(data.chainId)} alt={""} className="h-10 w-10 rounded-full border border-black" />
-          <img src={routers[data.chainId][0].image} alt={""} className="-ml-3 mr-3 h-10 w-10 rounded-full sm:mr-5" />
+          <img src={getDexLogo(EXCHANGE_MAP[data.chainId][0]?.id)} alt={""} className="-ml-3 mr-3 h-10 w-10 rounded-full sm:mr-5" />
 
           <div className="relative mr-3 hidden w-[34px] flex-col items-center text-[#EEBB19] xmd:flex sm:mr-5">
             {isNew ? (

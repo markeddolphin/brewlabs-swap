@@ -2,6 +2,7 @@ import { ChainId, WNATIVE } from "@brewlabs/sdk";
 import { ethers } from "ethers";
 import { EXPLORER_NAMES, EXPLORER_URLS } from "config/constants/networks";
 import { getNativeSybmol } from "lib/bridge/helpers";
+import { DEX_LOGOS } from "config/constants/swap";
 
 export function numberWithCommas(x: any) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -94,22 +95,8 @@ const EXPLORER_LOGO = {
 export const getExplorerLogo = (chainId) => {
   return EXPLORER_LOGO[chainId];
 };
-export const routers = {
-  1: [
-    {
-      name: "Uniswap",
-      address: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-      image: "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png",
-    },
-  ],
-  56: [
-    {
-      name: "Pancakeswap",
-      address: "0x10ed43c718714eb63d5aa57b78b54704e256024e",
-      image: "https://s2.coinmarketcap.com/static/img/coins/64x64/7186.png",
-    },
-  ],
-};
+
+export const getDexLogo = (exchange) => DEX_LOGOS[exchange];
 
 export const getIndexName = (tokens) => {
   // if (tokens.length === 2)

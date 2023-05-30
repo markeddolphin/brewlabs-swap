@@ -11,13 +11,13 @@ const IndexLogo = ({ tokens, appId = undefined, classNames = "mr-3" }) => {
         <div className={classNames}>
           <div className="flex">
             <img
-              src={getTokenLogoURL(tokens[0].address, tokens[0].chainId, appId)}
+              src={getTokenLogoURL(tokens[0].address, tokens[0].chainId, tokens[0].logo, appId)}
               onError={onError}
               alt={""}
               className="w-7 rounded-full"
             />
             <img
-              src={getTokenLogoURL(tokens[1].address, tokens[1].chainId, appId)}
+              src={getTokenLogoURL(tokens[1].address, tokens[1].chainId, tokens[0].logo, appId)}
               onError={onError}
               alt={""}
               className="-ml-3 w-7 rounded-full"

@@ -35,7 +35,7 @@ export const getNetworkLabel = (chainId: ChainId) => {
 };
 
 export const getNativeSybmol = (chainId: ChainId) => {
-  return SupportedChains.find((n) => n.id === chainId)?.nativeCurrency?.symbol ?? bsc.nativeCurrency?.symbol;
+  return SupportedChains.find((n) => n.id === chainId)?.nativeCurrency.symbol ?? bsc.nativeCurrency.symbol;
 };
 
 export const getExplorerLink = (chainId: ChainId, type: string, addressOrHash: string) => {

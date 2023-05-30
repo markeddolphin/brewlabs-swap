@@ -1,4 +1,6 @@
 // @ts-check
+import { BASE_URL } from "config";
+
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
   titleTemplate: "Brewlabs Earn - %s",
@@ -12,14 +14,14 @@ export default {
     cardType: "summary_large_image",
   },
   openGraph: {
-    url: "https://bridge.brewlabs.info",
+    url: BASE_URL,
     type: "website",
     title: "Brewlabs Earn",
     description:
       "Stake your tokens on the Brewlabs staking platform to earn passive income, compound or  harvest your rewards and reflections anytime!",
     images: [
       {
-        url: "https://bridge.brewlabs.info/images/brewlabs-earn-poster.jpg",
+        url: `${BASE_URL}/images/brewlabs-earn-poster.jpg`,
         width: 1200,
         height: 630,
         alt: "Brewlabs Earn",

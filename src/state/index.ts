@@ -11,6 +11,7 @@ import storage from "./storage";
 import farms from "./farms";
 import pools from "./pools";
 import indexes from "./indexes";
+import deploy from "./deploy";
 import user from "./user/reducer";
 import transactions from "./transactions/reducer";
 import burn from "./burn/reducer";
@@ -38,6 +39,7 @@ const persistedReducer = persistReducer(
     farms,
     pools,
     indexes,
+    deploy,
     zap,
     user,
     lists,

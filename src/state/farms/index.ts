@@ -120,44 +120,23 @@ export const fetchFarmUserDataAsync =
       });
       dispatch(setFarmUserData(data));
     });
-    fetchFarmUserStakedBalances(account, chainId, farmsToFetch).then((userStakedBalances) => {
-      const data = farmsToFetch.map((farm, index) => {
-        return {
-          pid: farm.pid,
-          farmId: farm.farmId,
-          poolId: farm.poolId,
-          chainId: farm.chainId,
-          stakedBalance: userStakedBalances[index],
-        };
-      });
+    fetchFarmUserStakedBalances(account, chainId, farmsToFetch).then((data) => {
       dispatch(setFarmUserData(data));
     });
     fetchFarmUserEarnings(
       account,
       chainId,
       farmsToFetch.filter((f) => ![15, 17].includes(f.farmId))
-    ).then((userFarmEarnings) => {
-      const data = farmsToFetch
-        .filter((f) => ![15, 17].includes(f.farmId))
-        .filter((f) => !f.enableEmergencyWithdraw)
-        .map((farm, index) => {
-          return {
-            pid: farm.pid,
-            farmId: farm.farmId,
-            poolId: farm.poolId,
-            chainId: farm.chainId,
-            earnings: userFarmEarnings[index] ?? "0",
-          };
-        });
+    ).then((data) => {
       dispatch(setFarmUserData(data));
     });
     await fetchFarmUserReflections(
       account,
       chainId,
-      farmsToFetch.filter((f) => ![15, 17].includes(f.farmId))
+      farmsToFetch.filter((f) => ![15, 16, 17].includes(f.farmId))
     ).then((userFarmReflections) => {
       const data = farmsToFetch
-        .filter((f) => ![15, 17].includes(f.farmId))
+        .filter((f) => ![15, 16, 17].includes(f.farmId))
         .filter((f) => !f.enableEmergencyWithdraw)
         .map((farm, index) => {
           return {

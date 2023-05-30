@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useContext } from "react";
-import { CurrencyAmount, Percent, FACTORY_ADDRESS_MAP, INIT_CODE_HASH_MAP } from "@brewlabs/sdk";
+import { CurrencyAmount, Percent, FACTORY_ADDRESS_MAP, INIT_CODE_HASH_MAP, Price, ChainId } from "@brewlabs/sdk";
 import { useSigner } from "wagmi";
 import { ApprovalState, useApproveCallbackFromTrade } from "hooks/useApproveCallback";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
@@ -40,6 +40,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   // swap state
   const { independentField, typedValue, recipient } = useSwapState();
   const { currencies, currencyBalances, parsedAmount, inputError, v2Trade: trade } = useDerivedSwapInfo();
+
   const { onUserInput, onSwitchTokens, onCurrencySelection } = useSwapActionHandlers();
 
   // txn values
@@ -47,8 +48,11 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const [userSlippageTolerance] = useUserSlippageTolerance();
 
   const noLiquidity = useMemo(() => {
-    return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
+    if (chainId === ChainId.BSC_TESTNET)
+      return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
+    return true; // use aggregator for non bsc testnet
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT], trade]);
+  // const noLiquidity = true;
 
   const [approval, approveCallback] = useApproveCallbackFromTrade(
     parsedAmount,
@@ -177,7 +181,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const parsedAmounts = {
     [Field.INPUT]: noLiquidity ? parsedAmount : independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
     [Field.OUTPUT]: noLiquidity
-      ? query?.amount
+      ? query?.outputAmount
       : independentField === Field.OUTPUT
       ? parsedAmount
       : trade?.outputAmount,
@@ -189,6 +193,24 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
     [independentField]: typedValue,
     [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? "",
   };
+
+  const price = useMemo(() => {
+    if (
+      !parsedAmounts ||
+      !parsedAmounts[Field.INPUT] ||
+      !parsedAmounts[Field.OUTPUT] ||
+      !currencies[Field.INPUT] ||
+      !currencies[Field.OUTPUT] ||
+      parsedAmounts[Field.INPUT].equalTo(0)
+    )
+      return undefined;
+    return new Price(
+      currencies[Field.INPUT],
+      currencies[Field.OUTPUT],
+      parsedAmounts[Field.INPUT].raw,
+      parsedAmounts[Field.OUTPUT].raw
+    );
+  }, [currencies[Field.INPUT], currencies[Field.OUTPUT]]);
 
   return (
     <>
@@ -226,13 +248,13 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
           onUserInput={handleTypeOutput}
           currency={currencies[Field.OUTPUT]}
           balance={currencyBalances[Field.OUTPUT]}
-          data={undefined}
+          data={query}
           slippage={autoMode ? slippage : userSlippageTolerance}
-          price={0} // hardcoded to 0
+          price={price}
           buyTax={buyTax}
           sellTax={sellTax}
           currencies={currencies}
-          disableInput={noLiquidity}
+          disable={noLiquidity}
         />
       </div>
       {account &&

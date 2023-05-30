@@ -27,7 +27,7 @@ export const BLOCKS = {
 }
 
 const fetcher = async (chainId = ChainId.ETHEREUM, query, variables = undefined) => {
-  return request(`${GRAPH_HOST[chainId]}/subgraphs/name/${BLOCKS[chainId]}`, query, variables)
+  return request(`${GRAPH_HOST[chainId]}/subgraphs/name/${BLOCKS[chainId]}`, query, variables) as any
 }
 
 export const MASTERCHEF_V2 = {
@@ -35,14 +35,14 @@ export const MASTERCHEF_V2 = {
 }
 
 export const masterChefV2 = async (query, chainId = ChainId.ETHEREUM, variables = undefined) =>
-  request(`${GRAPH_HOST[chainId]}/subgraphs/name/${MASTERCHEF_V2[chainId]}`, query, variables)
+  request(`${GRAPH_HOST[chainId]}/subgraphs/name/${MASTERCHEF_V2[chainId]}`, query, variables) as any
 
 export const MASTERCHEF_V1 = {
   [ChainId.ETHEREUM]: 'jiro-ono/masterchef-staging',
 }
 
 export const masterChefV1 = async (query, chainId = ChainId.ETHEREUM, variables = undefined) =>
-  request(`${GRAPH_HOST[chainId]}/subgraphs/name/${MASTERCHEF_V1[chainId]}`, query, variables)
+  request(`${GRAPH_HOST[chainId]}/subgraphs/name/${MASTERCHEF_V1[chainId]}`, query, variables) as any
 
 export const getMasterChefV1TotalAllocPoint = async () => {
   const {

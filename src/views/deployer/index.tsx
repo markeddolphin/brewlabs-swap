@@ -2,31 +2,29 @@
 import { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash/orderBy";
+import { useAccount } from "wagmi";
 
 import Container from "components/layout/Container";
 import PageWrapper from "components/layout/PageWrapper";
 import PageHeader from "components/layout/PageHeader";
 import WordHighlight from "components/text/WordHighlight";
 
-import { BLOCKS_PER_DAY } from "config/constants";
 import { Category } from "config/constants/types";
 import { TokenPriceContext } from "contexts/TokenPriceContext";
 import { useFarms } from "state/farms/hooks";
 import { usePools } from "state/pools/hooks";
 import { useIndexes } from "state/indexes/hooks";
 import { useChainCurrentBlocks } from "state/block/hooks";
+import { filterPoolsByStatus } from "utils";
 import getCurrencyId from "utils/getCurrencyId";
 
 import Banner from "views/directory/Banner";
-import PoolList from "./PoolList";
-import SelectionPanel from "./SelectionPanel";
-import DeployerModal from "views/directory/DeployerModal";
-
 import IndexDetail from "views/directory/IndexDetail";
 import FarmingDetail from "views/directory/FarmingDetail";
 import StakingDetail from "views/directory/StakingDetail";
-import ZapperDetail from "views/directory/ZapperDetail";
-import { useAccount } from "wagmi";
+
+import PoolList from "./PoolList";
+import SelectionPanel from "./SelectionPanel";
 
 const Deployer = ({ page }: { page: number }) => {
   const [curFilter, setCurFilter] = useState(page);
@@ -38,14 +36,12 @@ const Deployer = ({ page }: { page: number }) => {
     chainId: 0,
   });
   const [selectPoolDetail, setSelectPoolDetail] = useState(false);
-  const [status, setStatus] = useState("active");
-  const [deployerOpen, setDeployerOpen] = useState(false);
+  const [status, setStatus] = useState("new");
 
   const { pools, dataFetched } = usePools();
   const { data: farms } = useFarms();
   const { indexes } = useIndexes();
   const { address: account } = useAccount();
-  // const account = "0x6219b6b621e6e66a6c5a86136145e6e5bc6e4672";
 
   const { tokenPrices, lpPrices } = useContext(TokenPriceContext);
   const currentBlocks = useChainCurrentBlocks();
@@ -132,40 +128,8 @@ const Deployer = ({ page }: { page: number }) => {
             (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance.gt(0)))
       );
   }
+  chosenPools = sortPools(filterPoolsByStatus(chosenPools, currentBlocks, status));
 
-  switch (status) {
-    case "finished":
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          pool.isFinished ||
-          pool.multiplier === 0 ||
-          (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier === "0X")
-      );
-      break;
-    case "new":
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          !pool.isFinished &&
-          ((pool.type === Category.POOL &&
-            (+pool.startBlock === 0 ||
-              +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-            (pool.type === Category.FARM &&
-              (+pool.startBlock > currentBlocks[pool.chainId] ||
-                +pool.startBlock + BLOCKS_PER_DAY[pool.chainId] > currentBlocks[pool.chainId])) ||
-            (pool.type === Category.INDEXES && new Date(pool.createdAt).getTime() + 86400 * 1000 >= Date.now()))
-      );
-      break;
-    default:
-      chosenPools = chosenPools.filter(
-        (pool) =>
-          !pool.isFinished &&
-          ((pool.type === Category.POOL && +pool.startBlock > 0) ||
-            (pool.type === Category.FARM && pool.multiplier > 0 && +pool.startBlock < currentBlocks[pool.chainId]) ||
-            pool.type === Category.INDEXES ||
-            (pool.type === Category.ZAPPER && pool.pid !== 0 && pool.multiplier !== "0X"))
-      );
-  }
-  chosenPools = sortPools(chosenPools);
   const renderDetailPage = () => {
     switch (curPool.type) {
       case Category.POOL:
@@ -213,7 +177,6 @@ const Deployer = ({ page }: { page: number }) => {
 
   return (
     <PageWrapper>
-      <DeployerModal open={deployerOpen} setOpen={setDeployerOpen} />
       {renderDetailPage()}
 
       <AnimatePresence>

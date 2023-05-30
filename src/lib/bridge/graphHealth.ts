@@ -44,7 +44,7 @@ const failedStatus = {
 
 export const getHealthStatus = async (subgraph: any) => {
   try {
-    const data = await request(GRAPH_HEALTH_ENDPOINT, healthQuery, {
+    const data: any = await request(GRAPH_HEALTH_ENDPOINT, healthQuery, {
       subgraph,
     });
     return extractStatus(data.status);

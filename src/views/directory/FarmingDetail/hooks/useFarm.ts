@@ -1,14 +1,15 @@
 import { useCallback } from "react";
+import { ChainId } from "@brewlabs/sdk";
 
+import useActiveWeb3React from "hooks/useActiveWeb3React";
 import { useMasterchef } from "hooks/useContract";
 import { useAppDispatch } from "state";
 import { updateFarmsUserData } from "state/farms";
-import { ChainId } from "@brewlabs/sdk";
 import { BIG_ZERO } from "utils/bigNumber";
 import { getNetworkGasPrice } from "utils/getGasPrice";
-import useActiveWeb3React from "hooks/useActiveWeb3React";
-import { emergencyUnstakeFarm, harvestFarm, stakeFarm, unstakeFarm } from "./calls/farms";
 import { calculateGasMargin } from "utils";
+
+import { emergencyUnstakeFarm, harvestFarm, stakeFarm, unstakeFarm } from "./calls/farms";
 
 const harvestReward = async (masterChefContract, pid, performanceFee, gasPrice) => {
   let gasLimit = await masterChefContract.estimateGas.claimReward(pid, { value: performanceFee });

@@ -85,3 +85,8 @@ export const popularTokens = {
   [ChainId.ETHEREUM]: [ethTokens.brews, ethTokens.eth, ethTokens.usdc, ethTokens.usdt],
   [ChainId.BSC_MAINNET]: [bscTokens.brews, bscTokens.bnb, bscTokens.busd, bscTokens.usdt],
 };
+
+export const customTokensForDeploy = {
+  [ChainId.ETHEREUM]: [],
+  [ChainId.BSC_MAINNET]: []
+}

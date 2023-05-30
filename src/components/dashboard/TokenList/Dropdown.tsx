@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 const DropDown = ({
@@ -13,10 +13,19 @@ const DropDown = ({
   values: any;
   width?: string;
 }) => {
+  const dropdownRef: any = useRef();
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    document.addEventListener("mouseup", function (event) {
+      if (dropdownRef && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    });
+  }, []);
+
   return (
-    <div className={`dropdown ${width}`} onClick={() => setOpen(!open)}>
+    <div className={`dropdown ${width}`} onClick={() => setOpen(!open)} ref={dropdownRef}>
       <label
         tabIndex={0}
         className="btn-sm btn flex w-full justify-between bg-amber-400 active:bg-brand dark:text-zinc-800 dark:hover:bg-dark dark:hover:text-brand"

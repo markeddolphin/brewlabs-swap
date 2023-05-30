@@ -134,7 +134,7 @@ export const getExecutions = async (graphEndpoint: string, requests: any[]) => {
   while (true) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const data = await request(graphEndpoint, executionsQuery, {
+      const data: any = await request(graphEndpoint, executionsQuery, {
         first,
         skip: page * pageSize,
         messageIds,
@@ -162,7 +162,7 @@ const getRequestsWithQuery = async (graphEndpoint: string, query: any, user?: st
   while (true) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      const data = await request(graphEndpoint, query, {
+      const data: any = await request(graphEndpoint, query, {
         user,
         first,
         skip: page * pageSize,
