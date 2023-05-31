@@ -26,7 +26,7 @@ const SubNav = ({ openSettingModal }: Props) => {
             setSwapTab(1);
             setAddLiquidityStep(0);
           }}
-          disabled
+          // disabled
         >
           Add liquidity
         </button>

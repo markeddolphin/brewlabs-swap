@@ -22,6 +22,7 @@ import { wrappedCurrency } from "utils/wrappedCurrency";
 import { getBrewlabsRouterContract } from "utils/contractHelpers";
 import { ROUTER_ADDRESS, ZERO_ADDRESS } from "config/constants";
 import { useTransactionAdder } from "state/transactions/hooks";
+import { CurrencyLogo } from "@components/logo";
 
 export default function BasicLiquidity() {
   const { account, chainId, library } = useActiveWeb3React();
@@ -50,12 +51,13 @@ export default function BasicLiquidity() {
     poolTokenPercentage,
     error,
   } = useDerivedMintInfo(undefined, undefined);
+
   const { onFieldAInput, onFieldBInput, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
   const currencyA = currencies[Field.CURRENCY_A];
   const currencyB = currencies[Field.CURRENCY_B];
 
-  const routerAddr = ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId]?.address;
+  const routerAddr = ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId];
   const isValid = !error;
 
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
@@ -102,6 +104,7 @@ export default function BasicLiquidity() {
     const router = getBrewlabsRouterContract(chainId, routerAddr, signer);
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts;
+
     if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB) {
       return;
     }
@@ -266,29 +269,23 @@ export default function BasicLiquidity() {
               ></CurrencyInputPanel>
             </div>
 
-            <div className="mt-3 mb-6 rounded-3xl border border-gray-300 px-5 py-3 font-['Roboto'] text-xs font-bold text-gray-400 sm:px-8 sm:text-sm ">
+            <div className="mb-6 mt-3 rounded-3xl border border-gray-300 px-5 py-3 font-['Roboto'] text-xs font-bold text-gray-400 sm:px-8 sm:text-sm ">
               <div className="mb-3 flex justify-between">
                 <div className="text-base text-gray-300 sm:text-xl">New pool metrics</div>
                 <div className="flex min-w-[100px] items-center">
-                  <img
-                    src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png"
-                    className="h-8 w-8 rounded-full border border-black"
-                    alt=""
-                  ></img>
-                  <img
-                    src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c/logo.png"
-                    className=" -ml-3 h-8 w-8 rounded-full border border-black"
-                    alt=""
-                  ></img>
+                  {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
+                  {currencies[Field.CURRENCY_B] && (
+                    <div className="-ml-2">
+                      <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+                    </div>
+                  )}
                 </div>
               </div>
               {data.map((item) => (
                 <div key={item.key} className="mt-1 flex justify-between">
                   <div>{item.key}</div>
                   <div className="ml-2 flex min-w-[120px]">
-                    <div className="ml-[12px]">
-                      {item.value}
-                    </div>
+                    <div className="ml-[12px]">{item.value}</div>
                   </div>
                 </div>
               ))}
@@ -323,10 +320,15 @@ export default function BasicLiquidity() {
           ) : (
             <SolidButton
               onClick={onNext}
-              // disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
-              disabled={false}
+              disabled={!isValid || approvalA !== ApprovalState.APPROVED || approvalB !== ApprovalState.APPROVED}
             >
-              {addLiquidityStep === 2 ? "Create pool" : "Next: Select yield farm metrics"}
+              {error
+                ? error
+                : addLiquidityStep === 2
+                ? noLiquidity
+                  ? attemptingTxn ? "Creating..." : "Create pool"
+                  : attemptingTxn ? "Adding..." : "Add liquidity"
+                : "Next: Select yield farm metrics"}
             </SolidButton>
           )}
           <OutlinedButton className="mt-1 font-bold" small onClick={() => setAddLiquidityStep(1)}>
@@ -334,7 +336,12 @@ export default function BasicLiquidity() {
           </OutlinedButton>
         </>
       ) : (
-        <DeployYieldFarm onAddLiquidity={onAdd} attemptingTxn={attemptingTxn} hash={txHash}></DeployYieldFarm>
+        <DeployYieldFarm
+          onAddLiquidity={onAdd}
+          attemptingTxn={attemptingTxn}
+          hash={txHash}
+          currencies={currencies}
+        ></DeployYieldFarm>
       )}
     </>
   );

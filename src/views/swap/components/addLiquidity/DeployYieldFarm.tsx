@@ -4,6 +4,9 @@ import SolidButton from "../button/SolidButton";
 import OutlinedButton from "../button/OutlinedButton";
 import CheckIcon from "../CheckIcon";
 import { SwapContext } from "contexts/SwapContext";
+import { Field } from "state/mint/actions";
+import { Currency } from "@brewlabs/sdk";
+import { CurrencyLogo } from "@components/logo";
 
 export const CheckStatus = ({ status }: { status: number }) => {
   return status === 0 ? (
@@ -19,10 +22,12 @@ export default function DeployYieldFarm({
   onAddLiquidity,
   attemptingTxn,
   hash,
+  currencies,
 }: {
   onAddLiquidity: () => void;
   attemptingTxn: boolean;
   hash: string | undefined;
+  currencies: { [field in Field]?: Currency };
 }) {
   const { setAddLiquidityStep }: any = useContext(SwapContext);
 
@@ -101,16 +106,12 @@ export default function DeployYieldFarm({
         <img src="/images/networks/eth.svg" alt="" className="h-6 w-6 sm:h-8 sm:w-8"></img>
         <CheckIcon className="h-4 w-4 fill-[#eebb19]"></CheckIcon>
         <div className="flex min-w-[130px] items-center sm:min-w-[220px]">
-          <img
-            src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png"
-            className="h-6 w-6 rounded-full border border-black sm:h-8 sm:w-8"
-            alt=""
-          ></img>
-          <img
-            src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c/logo.png"
-            className=" -ml-3 h-6 w-6 rounded-full border border-black sm:h-8 sm:w-8"
-            alt=""
-          ></img>
+          {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
+          {currencies[Field.CURRENCY_B] && (
+            <div className="-ml-2">
+              <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+            </div>
+          )}
           <span className="ml-0 text-xs text-white sm:ml-2 sm:text-base">ETH-BREWLABS</span>
         </div>
         <button
@@ -123,20 +124,16 @@ export default function DeployYieldFarm({
       </div>
 
       <div className="mt-4 px-0 sm:px-4">
-        <div className="rounded-3xl border border-gray-600 px-5 pt-3 pb-8 font-['Roboto'] text-xs font-bold sm:text-sm">
+        <div className="rounded-3xl border border-gray-600 px-5 pb-8 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
           <div className="mb-3 flex justify-between">
             <div className="text-base text-gray-300 sm:text-xl">New yield farm metrics</div>
             <div className="flex min-w-[100px] items-center justify-center">
-              <img
-                src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7/logo.png"
-                className="h-8 w-8 rounded-full border border-black"
-                alt=""
-              ></img>
-              <img
-                src="https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c/logo.png"
-                className=" -ml-3 h-8 w-8 rounded-full border border-black"
-                alt=""
-              ></img>
+              {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
+              {currencies[Field.CURRENCY_B] && (
+                <div className="-ml-2">
+                  <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -176,7 +173,7 @@ export default function DeployYieldFarm({
             </div>
           </div>
         </div>
-        <div className="mt-2 mb-6 rounded-3xl border border-gray-600 px-5 pt-3 pb-4 font-['Roboto'] text-xs font-bold sm:text-sm">
+        <div className="mb-6 mt-2 rounded-3xl border border-gray-600 px-5 pb-4 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
           <div className="text-lg text-gray-300">Summary</div>
           {justEntered ? (
             <div>Available after deployment</div>
@@ -202,11 +199,7 @@ export default function DeployYieldFarm({
           Create pair & yield farm
         </SolidButton>
       )}
-      {attemptingTxn && (
-        <SolidButton disabled={false}>
-          Deploying...
-        </SolidButton>
-      )}
+      {attemptingTxn && <SolidButton disabled={false}>Deploying...</SolidButton>}
       {!attemptingTxn && (
         <OutlinedButton className="mt-1 font-bold" small onClick={onBack}>
           {justEntered ? "Back" : "Close window"}

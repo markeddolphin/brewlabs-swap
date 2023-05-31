@@ -39,7 +39,7 @@ export const useSwapAggregator = (
       ],
       value: currencies[Field.INPUT].isNative ? amountInWei : null,
     };
-  }, [amountIn, currencies]);
+  }, [amountIn?.toExact(), currencies[Field.INPUT]?.address, currencies[Field.OUTPUT]?.address]);
 
   const [query, setQuery] = useState<any>();
 

@@ -44,6 +44,7 @@ const tokenList_URI: any = {
   137: "https://tokens.coingecko.com/polygon-pos/all.json",
   250: "https://tokens.coingecko.com/fantom/all.json",
   43114: "https://tokens.coingecko.com/avalanche/all.json",
+  42161: "https://tokens.coingecko.com/arbitrum-one/all.json",
   25: "https://tokens.coingecko.com/cronos/all.json",
 };
 

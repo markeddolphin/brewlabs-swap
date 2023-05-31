@@ -28,7 +28,7 @@ export default function CreateLiquidityOption() {
         image="/images/swap/logout.svg"
         className="mt-2"
         onClick={() => {
-          setSwapTab(2);
+          // setSwapTab(2);
         }}
       >
         View and&nbsp;<span className="text-white">harvest</span>

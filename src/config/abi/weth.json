@@ -48,7 +48,7 @@
     "name": "withdraw",
     "outputs": [],
     "payable": false,
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

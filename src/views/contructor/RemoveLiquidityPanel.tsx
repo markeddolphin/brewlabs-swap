@@ -399,12 +399,10 @@ export default function RemoveLiquidityPanel({
             {lpPrice ? (
               <>
                 $
-                {
-                  +formatAmount(
-                    +ethers.utils.formatEther(parsedAmounts[Field.LIQUIDITY]?.raw.toString() ?? "0") * lpPrice,
-                    2
-                  )
-                }
+                {(
+                  +formatAmount(+ethers.utils.formatEther(parsedAmounts[Field.LIQUIDITY]?.raw.toString() ?? "0"), 10) *
+                  lpPrice
+                ).toFixed(2)}
                 &nbsp; USD
               </>
             ) : (

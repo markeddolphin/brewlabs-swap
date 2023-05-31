@@ -82,7 +82,6 @@ const SwapRewards = () => {
   const [lpBalances] = useTokenBalancesWithLoadingIndicator(account, lpTokens);
   const [tokenBalances] = useTokenBalancesWithLoadingIndicator(account, pairTokens);
   
-  console.log(lpBalances, tokenBalances);
   const filteredPairs = useMemo(() => {
     const quieriedPairs = pairs.filter(
       (pair) =>

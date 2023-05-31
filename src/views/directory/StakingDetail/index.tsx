@@ -306,7 +306,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                   </div>
                   <div className="flex flex-1 justify-end">
                     {data.isCustody && (
-                      <div className="hidden w-full max-w-[470px] lg:block ml-5">
+                      <div className="ml-5 hidden w-full max-w-[470px] lg:block">
                         <div className="mt-2 h-[32px] w-[140px] lg:mt-0">
                           <StyledButton>
                             <div className="absolute left-2 top-2.5">{lockSVG}</div>
@@ -317,7 +317,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                     )}
                     <div className="ml-3 flex w-full max-w-fit flex-col justify-end lg:ml-5 lg:max-w-[520px] lg:flex-row">
                       {data.enableEmergencyWithdraw && (
-                        <div className="h-[32px] w-[180px]">
+                        <div className="mr-0 h-[32px] w-[180px] lg:mr-5">
                           <StyledButton
                             type={"danger"}
                             onClick={() => setEmergencyOpen(true)}
@@ -328,7 +328,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                         </div>
                       )}
                       <StyledButton
-                        className="relative lg:mb-0 mb-2 h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)]  transition hover:border-white hover:text-white"
+                        className="relative mb-2 h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition  hover:border-white hover:text-white lg:mb-0"
                         type={"default"}
                         onClick={onSharePool}
                       >
@@ -401,25 +401,57 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                           <span className="text-primary">{earningToken.symbol}</span>
                         </div>
                         <div className="text-primary">
-                          {data.poolCategory === PoolCategory.CORE ? "Flexible" : `${data.duration} days lock`}
+                          {data.poolCategory === PoolCategory.CORE ? (
+                            "Flexible"
+                          ) : data.duration ? (
+                            `${data.duration} days lock`
+                          ) : (
+                            <div className="flex">
+                              <SkeletonComponent />
+                              <span className="ml-1">days lock</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="text-xs text-[#FFFFFF80]">
                         <div className="flex">
-                          Deposit Fee {(+data.depositFee).toFixed(2)}%
+                          Deposit Fee{" "}
+                          {data.depositFee !== undefined ? (
+                            (+data.depositFee).toFixed(2)
+                          ) : (
+                            <div className="ml-1">
+                              <SkeletonComponent />
+                            </div>
+                          )}
+                          %
                           <div className="tooltip" data-tip="Deposit fees are sent to token owner nominated address.">
                             <div className="ml-1 mt-[1.3px]">{warningFarmerSVG("11px")}</div>
                           </div>
                         </div>
                         <div className="flex">
-                          Withdraw Fee {(+data.withdrawFee).toFixed(2)}%
-                          {data.penaltyFee && <> (Early Withdraw Fee {data.penaltyFee.toFixed(2)} %)</>}
+                          Withdraw Fee{" "}
+                          {data.withdrawFee !== undefined ? (
+                            (+data.withdrawFee).toFixed(2)
+                          ) : (
+                            <div className="ml-1">
+                              <SkeletonComponent />
+                            </div>
+                          )}
+                          %{data.penaltyFee && <> (Early Withdraw Fee {data.penaltyFee.toFixed(2)} %)</>}
                           <div className="tooltip" data-tip="Withdraw fees are sent to token owner nominated address.">
                             <div className="ml-1 mt-[1.3px]">{warningFarmerSVG("11px")}</div>
                           </div>
                         </div>
                         <div className="flex">
-                          Peformance Fee {data.performanceFee / Math.pow(10, 18)} {getNativeSybmol(data.chainId)}&nbsp;
+                          Peformance Fee{" "}
+                          {data.performanceFee !== undefined ? (
+                            data.performanceFee / Math.pow(10, 18)
+                          ) : (
+                            <div className="ml-1">
+                              <SkeletonComponent />
+                            </div>
+                          )}{" "}
+                          {getNativeSybmol(data.chainId)}&nbsp;
                           <div
                             className="tooltip"
                             data-tip="Performance fee is charged per transaction to the Brewlabs Treasury (Brewlabs holders)."

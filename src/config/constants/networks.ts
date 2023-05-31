@@ -114,6 +114,7 @@ export const NetworkOptions = SUPPORTED_CHAIN_IDS.map((chainId: ChainId) => ({
 
 export const MORALIS_CHAIN_NAME = {
   [ChainId.ETHEREUM]: "mainnet",
+  [ChainId.ARBITRUM]: "arbitrum",
   [ChainId.BSC_MAINNET]: "bsc",
 };
 

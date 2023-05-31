@@ -474,6 +474,14 @@ const tokens = {
     'Dark Tavern Token',
     'https://darktavern.online/',
   ),
+  wpt: new Token(
+    BSC_MAINNET,
+    "0x8466BB37bde898E0820E0d9CFe2EB68fbB90cE9b",
+    18,
+    "WPT",
+    "WPT Investing Corp",
+    "https://www.warpigs.io/"
+  ),
   bvst: new Token(
     BSC_MAINNET,
     '0x592032513b329a0956b3f14d661119880F2361a6',

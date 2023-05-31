@@ -2267,6 +2267,14 @@
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x4aeB2D0B318e5e8ac62D5A39EB3495974951f477/logo.png"
     },
     {
+      "name": "WPT Investing Corp",
+      "symbol": "WPT",
+      "address": "0x8466BB37bde898E0820E0d9CFe2EB68fbB90cE9b",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/smartchain/assets/0x8466BB37bde898E0820E0d9CFe2EB68fbB90cE9b/logo.png"
+    },
+    {
       "name": "BlocVest Token",
       "symbol": "BVST",
       "address": "0x592032513b329a0956b3f14d661119880F2361a6",

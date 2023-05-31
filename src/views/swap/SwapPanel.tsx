@@ -23,6 +23,7 @@ import ConfirmationModal from "./components/modal/ConfirmationModal";
 import { SwapContext } from "contexts/SwapContext";
 import useSwapCallback from "@hooks/swap/useSwapCallback";
 import { useSwapAggregator } from "@hooks/swap/useSwapAggregator";
+import useWrapCallback, { WrapType } from "@hooks/swap/useWrapCallback";
 
 export default function SwapPanel({ type = "swap", disableChainSelect = false }) {
   const { account, chainId } = useActiveWeb3React();
@@ -39,7 +40,14 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const { autoMode, buyTax, sellTax, slippage }: any = useContext(SwapContext);
   // swap state
   const { independentField, typedValue, recipient } = useSwapState();
-  const { currencies, currencyBalances, parsedAmount, inputError, v2Trade: trade } = useDerivedSwapInfo();
+  const { currencies, currencyBalances, parsedAmount, inputError, v2Trade } = useDerivedSwapInfo();
+  const {
+    wrapType,
+    execute: onWrap,
+    inputError: wrapInputError,
+  } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue);
+  const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE;
+  const trade = showWrap ? undefined : v2Trade;
 
   const { onUserInput, onSwitchTokens, onCurrencySelection } = useSwapActionHandlers();
 
@@ -48,8 +56,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const [userSlippageTolerance] = useUserSlippageTolerance();
 
   const noLiquidity = useMemo(() => {
-    if (chainId === ChainId.BSC_TESTNET)
-      return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
+    if (chainId === ChainId.BSC_TESTNET) return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
     return true; // use aggregator for non bsc testnet
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT], trade]);
   // const noLiquidity = true;
@@ -134,6 +141,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const handleTypeInput = useCallback(
     (value: string) => {
       onUserInput(Field.INPUT, value);
+      if (value === "") onUserInput(Field.OUTPUT, "");
     },
     [onUserInput]
   );
@@ -178,20 +186,31 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
     }
   };
 
-  const parsedAmounts = {
-    [Field.INPUT]: noLiquidity ? parsedAmount : independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-    [Field.OUTPUT]: noLiquidity
-      ? query?.outputAmount
-      : independentField === Field.OUTPUT
-      ? parsedAmount
-      : trade?.outputAmount,
-  };
+  const parsedAmounts = showWrap
+    ? {
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
+    : {
+        [Field.INPUT]: noLiquidity
+          ? parsedAmount
+          : independentField === Field.INPUT
+          ? parsedAmount
+          : trade?.inputAmount,
+        [Field.OUTPUT]: noLiquidity
+          ? query?.outputAmount
+          : independentField === Field.OUTPUT
+          ? parsedAmount
+          : trade?.outputAmount,
+      };
 
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput));
 
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? "",
+    [dependentField]: showWrap
+      ? parsedAmounts[independentField]?.toExact() ?? ""
+      : parsedAmounts[dependentField]?.toSignificant(6) ?? "",
   };
 
   const price = useMemo(() => {
@@ -248,7 +267,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
           onUserInput={handleTypeOutput}
           currency={currencies[Field.OUTPUT]}
           balance={currencyBalances[Field.OUTPUT]}
-          data={query}
+          data={parsedAmounts[Field.INPUT] ? query : undefined}
           slippage={autoMode ? slippage : userSlippageTolerance}
           price={price}
           buyTax={buyTax}
@@ -268,6 +287,11 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
               <button className="btn-outline btn" disabled={true}>
                 {t("Loading")}
               </button>
+            ) : showWrap ? (
+              <PrimarySolidButton disabled={Boolean(wrapInputError)} onClick={onWrap}>
+                {wrapInputError ??
+                  (wrapType === WrapType.WRAP ? "Wrap" : wrapType === WrapType.UNWRAP ? "Unwrap" : null)}
+              </PrimarySolidButton>
             ) : approval <= ApprovalState.PENDING ? (
               <>
                 {/* <ApproveStatusBar step={apporveStep} url={currencies[Field.INPUT]} /> */}

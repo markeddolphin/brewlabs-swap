@@ -41,7 +41,7 @@ const SelectToken = ({ setStep, router, setRouter, lpAddress, setLpAddress, lpIn
       </div>
 
       <div className="mt-6">
-        <div className={`mb-1 ${lpInfo.pair ? "text-white" : ""}`}>3. Select token:</div>
+        <div className={`mb-1 ${lpInfo.pair ? "text-white" : ""}`}>3. Select LP token:</div>
         <input
           className="h-[55px] w-full rounded-lg bg-[#FFFFFF0D] p-[16px_14px] text-base text-white outline-none"
           placeholder={`Search by contract address...`}

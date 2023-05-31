@@ -67,7 +67,7 @@ const PoolCard = ({
           {data.type === Category.INDEXES ? (
             <IndexLogo tokens={data.tokens} />
           ) : data.type === Category.ZAPPER ? (
-            <IndexLogo tokens={[data.token, data.quoteToken]} appId={data.appId}/>
+            <IndexLogo tokens={[data.token, data.quoteToken]} appId={data.appId} />
           ) : (
             <div className="mr-3 h-7 w-7 rounded-full border border-white bg-white">
               <img
@@ -94,7 +94,7 @@ const PoolCard = ({
               {poolNames[data.type]} -{" "}
               {data.poolCategory === PoolCategory.CORE || data.type !== Category.POOL
                 ? "Flexible"
-                : `${data.duration} days lock`}
+                : `${data.duration ? data.duration : "__"} days lock`}
             </div>
             <div className="text-xs leading-none">
               {data.type === Category.INDEXES ? (
