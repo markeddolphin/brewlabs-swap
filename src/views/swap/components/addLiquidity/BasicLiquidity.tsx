@@ -20,7 +20,6 @@ import { calculateSlippageAmount, calculateGasMargin } from "utils";
 import { maxAmountSpend } from "utils/maxAmountSpend";
 import { wrappedCurrency } from "utils/wrappedCurrency";
 import { getBrewlabsRouterContract } from "utils/contractHelpers";
-import { ROUTER_ADDRESS, ZERO_ADDRESS } from "config/constants";
 import { useTransactionAdder } from "state/transactions/hooks";
 import { CurrencyLogo } from "@components/logo";
 
@@ -94,8 +93,8 @@ export default function BasicLiquidity() {
   );
 
   // check whether the user has approved the router on the tokens
-  const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], ROUTER_ADDRESS[chainId]);
-  const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], ROUTER_ADDRESS[chainId]);
+  const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], routerAddr);
+  const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], routerAddr);
 
   const addTransaction = useTransactionAdder();
 

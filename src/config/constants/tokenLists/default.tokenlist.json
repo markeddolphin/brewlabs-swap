@@ -2491,6 +2491,14 @@
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
     },
     {
+      "name": "TOKEND",
+      "symbol": "TOKEND",
+      "address": "0xF6709d6Df36bB00d21fB0EDbF07d06B6b77A3059",
+      "chainId": 97,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+    },
+    {
       "chainId": 42161,
       "symbol": "WETH",
       "name": "Wrapped ETH",
