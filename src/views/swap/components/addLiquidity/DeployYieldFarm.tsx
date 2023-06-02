@@ -1,12 +1,17 @@
-import CurrencyInputPanel from "components/currencyInputPanel";
 import React, { useContext, useMemo, useState } from "react";
-import SolidButton from "../button/SolidButton";
-import OutlinedButton from "../button/OutlinedButton";
-import CheckIcon from "../CheckIcon";
+import { Currency, Pair } from "@brewlabs/sdk";
+import useActiveWeb3React from "hooks/useActiveWeb3React";
 import { SwapContext } from "contexts/SwapContext";
 import { Field } from "state/mint/actions";
-import { Currency } from "@brewlabs/sdk";
+import addresses from "config/constants/contracts";
+import CurrencyInputPanel from "components/currencyInputPanel";
+import CheckIcon from "../CheckIcon";
 import { CurrencyLogo } from "@components/logo";
+import { CHAIN_ICONS } from "config/constants/networks";
+import SolidButton from "../button/SolidButton";
+import OutlinedButton from "../button/OutlinedButton";
+import { shortenAddress } from "utils";
+import { ZERO_ADDRESS } from "config/constants";
 
 export const CheckStatus = ({ status }: { status: number }) => {
   return status === 0 ? (
@@ -20,15 +25,18 @@ export const CheckStatus = ({ status }: { status: number }) => {
 
 export default function DeployYieldFarm({
   onAddLiquidity,
+  pair,
   attemptingTxn,
   hash,
   currencies,
 }: {
   onAddLiquidity: () => void;
+  pair: Pair;
   attemptingTxn: boolean;
   hash: string | undefined;
   currencies: { [field in Field]?: Currency };
 }) {
+  const { chainId } = useActiveWeb3React();
   const { setAddLiquidityStep }: any = useContext(SwapContext);
 
   const [initialReward, setInitialReward] = useState(0.1);
@@ -41,6 +49,10 @@ export default function DeployYieldFarm({
   const justEntered = useMemo(() => {
     return !attemptingTxn && !hash;
   }, [attemptingTxn, hash]);
+
+  const txConfirmed = useMemo(() => {
+    return !attemptingTxn && hash;
+  }, [attemptingTxn, hash])
 
   const onBack = (e) => {
     e.preventDefault();
@@ -84,17 +96,17 @@ export default function DeployYieldFarm({
   const summaryData = [
     {
       key: "Yield farm contract address",
-      value: "0x8793192319....",
-      image: "/images/networks/eth.svg",
+      value: shortenAddress(addresses.brewlabsFeeManager[chainId]),
+      image: CHAIN_ICONS[chainId],
     },
     {
       key: "Yield farm reward start",
-      value: "23:11:59",
+      value: new Date().toLocaleTimeString(),
     },
     {
       key: "Liquidity token address",
-      value: "0x8793192319....",
-      image: "/images/networks/eth.svg",
+      value: shortenAddress(pair?.liquidityToken.address || ZERO_ADDRESS),
+      image: CHAIN_ICONS[chainId],
     },
   ];
 
@@ -103,16 +115,16 @@ export default function DeployYieldFarm({
       <div className="font-['Roboto'] text-xl text-white">Step 2/2: Deploy yield farm</div>
 
       <div className="flex items-center justify-between rounded-3xl border border-primary p-4">
-        <img src="/images/networks/eth.svg" alt="" className="h-6 w-6 sm:h-8 sm:w-8"></img>
+        <img src={CHAIN_ICONS[chainId]} alt="" className="h-6 w-6 sm:h-8 sm:w-8"></img>
         <CheckIcon className="h-4 w-4 fill-[#eebb19]"></CheckIcon>
         <div className="flex min-w-[130px] items-center sm:min-w-[220px]">
           {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
           {currencies[Field.CURRENCY_B] && (
             <div className="-ml-2">
-              <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+              <CurrencyLogo currency={currencies[Field.CURRENCY_B]} size="30px" />
             </div>
           )}
-          <span className="ml-0 text-xs text-white sm:ml-2 sm:text-base">ETH-BREWLABS</span>
+          <span className="ml-0 text-xs text-white sm:ml-2 sm:text-base">{currencies[Field.CURRENCY_A].symbol}-{currencies[Field.CURRENCY_B].symbol}</span>
         </div>
         <button
           className="flex items-center rounded border border-gray-700 bg-gray-800 py-1 pl-[20px] pr-[7px]"
@@ -131,7 +143,7 @@ export default function DeployYieldFarm({
               {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
               {currencies[Field.CURRENCY_B] && (
                 <div className="-ml-2">
-                  <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+                  <CurrencyLogo currency={currencies[Field.CURRENCY_B]} size="30px" />
                 </div>
               )}
             </div>
@@ -175,7 +187,7 @@ export default function DeployYieldFarm({
         </div>
         <div className="mb-6 mt-2 rounded-3xl border border-gray-600 px-5 pb-4 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
           <div className="text-lg text-gray-300">Summary</div>
-          {justEntered ? (
+          {!txConfirmed ? (
             <div>Available after deployment</div>
           ) : (
             <>

@@ -76,5 +76,6 @@ export default {
   brewlabsFeeManager: {
     1: "",
     56: "",
+    97: "0x556330881a71598aD7b57805a48A8b77021A0fcf"
   },
 };

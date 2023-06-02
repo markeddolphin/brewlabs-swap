@@ -1,5 +1,5 @@
-import { Currency, TokenAmount, NATIVE_CURRENCIES, ROUTER_ADDRESS_MAP, EXCHANGE_MAP } from "@brewlabs/sdk";
-import { utils } from "ethers";
+import { useMemo } from "react";
+import { Currency, TokenAmount, NATIVE_CURRENCIES, ROUTER_ADDRESS_MAP, EXCHANGE_MAP, Token } from "@brewlabs/sdk";
 import { BigNumber } from "@ethersproject/bignumber";
 import { TransactionResponse } from "@ethersproject/providers";
 import DeployYieldFarm from "./DeployYieldFarm";
@@ -22,6 +22,10 @@ import { wrappedCurrency } from "utils/wrappedCurrency";
 import { getBrewlabsRouterContract } from "utils/contractHelpers";
 import { useTransactionAdder } from "state/transactions/hooks";
 import { CurrencyLogo } from "@components/logo";
+import useTokenMarketChart, {defaultMarketData} from "@hooks/useTokenMarketChart";
+import useTotalSupply from "@hooks/useTotalSupply";
+import { useTokenPrices } from "hooks/useTokenPrice";
+import getCurrencyId from "utils/getCurrencyId";
 
 export default function BasicLiquidity() {
   const { account, chainId, library } = useActiveWeb3React();
@@ -61,7 +65,7 @@ export default function BasicLiquidity() {
 
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>("");
-
+``
   const [allowedSlippage] = useUserSlippageTolerance();
   const deadline = 1000;
 
@@ -189,14 +193,42 @@ export default function BasicLiquidity() {
     }
   };
 
+  const [baseToken, quoteToken] =
+    currencies[Field.CURRENCY_B] === NATIVE_CURRENCIES[chainId]
+      ? [currencies[Field.CURRENCY_B], currencies[Field.CURRENCY_A]]
+      : [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]];
+
+  // const tokenMarketData = useTokenMarketChart([baseToken?.wrapped.address], chainId);
+  // const { usd } = tokenMarketData[baseToken?.wrapped.address];
+  const tokenPrices = useTokenPrices()
+  const quoteTotalSupply = useTotalSupply(quoteToken as Token);
+  const baseTokenPrice = tokenPrices[getCurrencyId(chainId, baseToken?.wrapped.address)]
+  const [marketcap, poolTokenPrice] = useMemo(() => {
+    if (
+      !baseTokenPrice ||
+      !quoteTotalSupply ||
+      !parsedAmounts ||
+      !parsedAmounts[Field.CURRENCY_A] ||
+      !parsedAmounts[Field.CURRENCY_B]
+    )
+      return [0, 0];
+    const [numerator, denominator] =
+      baseToken === currencies[Field.CURRENCY_A]
+        ? [Number(parsedAmounts[Field.CURRENCY_A].toExact()), Number(parsedAmounts[Field.CURRENCY_B].toExact())]
+        : [Number(parsedAmounts[Field.CURRENCY_B].toExact()), Number(parsedAmounts[Field.CURRENCY_A].toExact())];
+    const marketcap = baseTokenPrice * numerator * Number(quoteTotalSupply.toExact()) / denominator;
+    // const price = marketcap / Number(quoteTotalSupply.toExact());
+    return [marketcap, marketcap / Number(quoteTotalSupply.toExact())];
+  }, [baseTokenPrice, quoteTotalSupply, parsedAmounts]);
+
   const data = [
     {
       key: "Estimated token price",
-      value: "$0.42",
+      value: `$${poolTokenPrice.toFixed(2)}`,
     },
     {
       key: "Estimated pool starting marketcap",
-      value: "$204,000.00",
+      value: `$${marketcap.toFixed(2)}`,
     },
     {
       key: "Pool fee for token owner",
@@ -275,7 +307,7 @@ export default function BasicLiquidity() {
                   {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
                   {currencies[Field.CURRENCY_B] && (
                     <div className="-ml-2">
-                      <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />
+                      <CurrencyLogo currency={currencies[Field.CURRENCY_B]} size="30px" />
                     </div>
                   )}
                 </div>
@@ -325,8 +357,12 @@ export default function BasicLiquidity() {
                 ? error
                 : addLiquidityStep === 2
                 ? noLiquidity
-                  ? attemptingTxn ? "Creating..." : "Create pool"
-                  : attemptingTxn ? "Adding..." : "Add liquidity"
+                  ? attemptingTxn
+                    ? "Creating..."
+                    : "Create pool"
+                  : attemptingTxn
+                  ? "Adding..."
+                  : "Add liquidity"
                 : "Next: Select yield farm metrics"}
             </SolidButton>
           )}
@@ -337,6 +373,7 @@ export default function BasicLiquidity() {
       ) : (
         <DeployYieldFarm
           onAddLiquidity={onAdd}
+          pair={pair}
           attemptingTxn={attemptingTxn}
           hash={txHash}
           currencies={currencies}
