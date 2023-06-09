@@ -41,7 +41,7 @@ export const useSwapAggregator = (
     };
   }, [amountIn?.toExact(), currencies[Field.INPUT]?.address, currencies[Field.OUTPUT]?.address]);
 
-  const [query, setQuery] = useState<any>();
+  const [query, setQuery] = useState<any>(null);
 
   useEffect(() => {
     if (!contract || !callParams) return;
@@ -49,16 +49,16 @@ export const useSwapAggregator = (
     contract[methodName](...callParams.args)
       .then((response: any) => {
         const outputValue = response.amounts[response.amounts.length - 1];
-        const outputAmount =
-          currencies[Field.OUTPUT] instanceof Token
-            ? new TokenAmount(currencies[Field.OUTPUT], outputValue)
-            : new CurrencyAmount(currencies[Field.OUTPUT], outputValue);
-        const inputValue = response.amounts[0];
-        const inputAmount =
-          currencies[Field.INPUT] instanceof Token
-            ? new TokenAmount(currencies[Field.INPUT], inputValue)
-            : new CurrencyAmount(currencies[Field.INPUT], inputValue);
-        if (outputAmount)
+        if (outputValue) {
+          const outputAmount =
+            currencies[Field.OUTPUT] instanceof Token
+              ? new TokenAmount(currencies[Field.OUTPUT], outputValue)
+              : new CurrencyAmount(currencies[Field.OUTPUT], outputValue);
+          const inputValue = response.amounts[0];
+          const inputAmount =
+            currencies[Field.INPUT] instanceof Token
+              ? new TokenAmount(currencies[Field.INPUT], inputValue)
+              : new CurrencyAmount(currencies[Field.INPUT], inputValue);
           setQuery({
             inputAmount,
             outputAmount,
@@ -66,6 +66,9 @@ export const useSwapAggregator = (
             path: response.path,
             adapters: response.adapters,
           });
+        } else {
+          setQuery(null);
+        }
       })
       .catch((error: any) => {
         console.error(error);
@@ -75,8 +78,12 @@ export const useSwapAggregator = (
   const addTransaction = useTransactionAdder();
   return useMemo(() => {
     if (!chainId || !library || !account || !signer || !contract || !callParams) {
-      return { callback: null, query: query, error: "Missing dependencies" };
+      return { callback: null, error: "Missing dependencies", query };
     }
+    if (!query || !query.outputAmount) {
+      return { callback: null, error: "No liquidity found", query };
+    }
+    
     return {
       callback: async function onSwap() {
         const args = [

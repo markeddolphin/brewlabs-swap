@@ -38,32 +38,26 @@ const SelectionPanel = ({
   ).length;
 
   const filters = [
-    <>
-      My Deploys <span className="text-[11px]">({counts[1] + counts[2] + counts[3] + counts[4]})</span>
-    </>,
-    <>
-      Staking Pools <span className="text-[11px]">({counts[1]})</span>
-    </>,
+    // <>
+    //   My Deploys <span className="text-[11px]">({counts[1] + counts[2] + counts[3] + counts[4]})</span>
+    // </>,
+    // <>
+    //   Staking Pools <span className="text-[11px]">({counts[1]})</span>
+    // </>,
     <>
       Yield Farms <span className="text-[11px]">({counts[2]})</span>
     </>,
-    <>
-      Indexes <span className="text-[11px]">({counts[3]})</span>
-    </>,
+    // <>
+    //   Indexes <span className="text-[11px]">({counts[3]})</span>
+    // </>,
   ];
 
-  let filteredPools = pools.filter(
-    (data) =>
-      curFilter === Category.ALL ||
-      data.type === curFilter ||
-      (curFilter === Category.MY_POSITION &&
-        (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance.gt(0)))
-  );
+  let filteredPools = pools.filter((data) => data.type === 2);
 
   let activityCnts = {
     active: filterPoolsByStatus(filteredPools, currentBlocks, "active").length,
     finished: filterPoolsByStatus(filteredPools, currentBlocks, "finished").length,
-    new: filterPoolsByStatus(filteredPools, currentBlocks, "new").length
+    new: filterPoolsByStatus(filteredPools, currentBlocks, "new").length,
   };
 
   return (

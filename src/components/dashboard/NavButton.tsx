@@ -38,7 +38,7 @@ const NavButton = ({ setValue, value }: { setValue?: any; value: number }) => {
         {NavSVG}
       </div>
       <div
-        className={`absolute -right-[7px] top-[57px]  overflow-hidden rounded-lg  bg-brand transition-all ${
+        className={`absolute -right-[7px] top-[57px]  overflow-hidden rounded-[8px_8px_8px_0px] rounded-bl-0  bg-brand transition-all nav-shadow ${
           open ? "h-20 w-[208px]" : "h-0 w-0"
         }`}
       >

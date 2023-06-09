@@ -52,7 +52,7 @@ const IndexPerformance = () => {
         </div>
         <ReactTooltip anchorId={"Top9"} place="right" content="Top 9 Brewlabs Indexes based on performance." />
       </div>
-      <div className="w-full mx-auto max-w-[620px]">
+      <div className="w-full mx-auto sm:max-w-[676px] max-w-[652px]">
         <Carousel
           arrows={false}
           responsive={responsive}
@@ -75,7 +75,7 @@ const IndexPerformance = () => {
                   return (
                     <div
                       key={i}
-                      className="flex cursor-pointer items-center justify-between rounded py-3 transition hover:bg-[rgba(50,50,50,0.4)] "
+                      className="flex cursor-pointer items-center justify-between rounded sm:p-[12px_12px_12px_24px] p-[12px_4px_12px_8px] transition hover:bg-[rgba(50,50,50,0.4)] "
                       onClick={() => {
                         router.push(`/indexes/${data.pid}`);
                         setIsOpen(0);

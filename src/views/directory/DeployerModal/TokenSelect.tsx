@@ -42,11 +42,11 @@ const TokenSelect = ({ selectedCurrency, setSelectedCurrency }) => {
   function onCurrencySelect(input, currency) {
     setSelectedCurrency(currency);
   }
- 
+
   return (
     <div className="relative z-20" ref={dropdownRef}>
       <div
-        className={`flex h-[36px] cursor-pointer items-center justify-between overflow-hidden rounded-md bg-[#B9B8B81A] pl-3.5`}
+        className={`flex h-[36px] cursor-pointer items-center justify-between overflow-hidden primary-shadow rounded-md bg-[#B9B8B81A] pl-3.5`}
         onClick={() => {
           setIsOpen(isOpen === 1 ? 1 : 2);
           setSidebarContent(

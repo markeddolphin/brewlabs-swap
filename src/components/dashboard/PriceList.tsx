@@ -133,7 +133,7 @@ const PriceList = () => {
 
   const CustomRightArrow = ({ onClick }) => {
     return (
-      <div onClick={() => onClick()} className="absolute -right-5 -scale-100 cursor-pointer text-[#7a7a7c]">
+      <div onClick={() => onClick()} className="absolute -right-5 -scale-100 cursor-pointer text-primary">
         {chevronLeftSVG}
       </div>
     );
@@ -141,14 +141,14 @@ const PriceList = () => {
 
   const CustomLeftArrow = ({ onClick }) => {
     return (
-      <div onClick={() => onClick()} className="absolute -left-5 cursor-pointer text-[#7a7a7c]">
+      <div onClick={() => onClick()} className="absolute -left-5 cursor-pointer text-primary">
         {chevronLeftSVG}
       </div>
     );
   };
   return (
     <StyledContainer>
-      <div className = 'font-semibold text-yellow mb-1 -ml-2'>Featured</div>
+      <div className="-ml-2 mb-1 font-semibold text-yellow">Featured</div>
       <Carousel
         responsive={responsive}
         infinite={true}
@@ -167,7 +167,7 @@ const PriceList = () => {
             percent = ((price - data.history[0]) / data.history[0]) * 100;
           }
           return (
-            <div className="relative w-[210px] rounded-[20px] border-[2px] border-[#FFFFFF80] px-[18px] py-3" key={i}>
+            <div className="feature-shadow relative w-[210px] rounded-[20px] px-[18px] py-3" key={i}>
               <div className="flex items-center">
                 <img src={getTokenLogoURL(data.address, data.chainId)} alt={""} className="mr-3 w-7 rounded-full" />
                 <div className="font-semibold">
@@ -207,6 +207,7 @@ const StyledContainer = styled.div`
   margin: 0 auto;
   .react-multi-carousel-list {
     position: unset !important;
+    padding: 4px 0 !important;
   }
   position: relative;
   .react-multi-carousel-item {

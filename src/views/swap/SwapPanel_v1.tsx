@@ -426,11 +426,11 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
 
   const handleInputCurrencySelect = (currency: Currency) => {
     onCurrencySelection(Field.INPUT, currency);
-  }
+  };
 
   const handleOutputCurrencySelect = (currency: Currency) => {
     onCurrencySelection(Field.OUTPUT, currency);
-  }
+  };
 
   return (
     <>

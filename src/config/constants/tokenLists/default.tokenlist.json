@@ -1707,6 +1707,30 @@
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0x916c5DE09cF63f6602d1e1793FB41F6437814A62/logo.png"
     },
     {
+      "name": "Baby Pepe",
+      "symbol": "BBPP",
+      "address": "0x5dD0F5dA07E9C63F2d216179311EF8cB68ABb629",
+      "chainId": 1,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0x5dD0F5dA07E9C63F2d216179311EF8cB68ABb629/logo.png"
+    },
+    {
+      "name": "xBBPP",
+      "symbol": "xBBPP",
+      "address": "0xe9fdB522F1b6623BB29cf1d70C4728A7e55c5634",
+      "chainId": 1,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0xe9fdB522F1b6623BB29cf1d70C4728A7e55c5634/logo.png"
+    },
+    {
+      "name": "Pepe",
+      "symbol": "PEPE",
+      "address": "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
+      "chainId": 1,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/ethereum/assets/0x6982508145454Ce325dDbE47a25d4ec3d2311933/logo.png"
+    },
+    {
       "name": "Pomeranian",
       "symbol": "POM",
       "address": "0x24ffe459F51ea20C5d8ad49843529fc33654e7E4",
@@ -2471,32 +2495,28 @@
       "symbol": "TOKENA",
       "address": "0xC15BA1a077F6B2ecF51b8AAfbC31E04dC9CbC578",
       "chainId": 97,
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+      "decimals": 18
     },
     {
       "name": "TOKENB",
       "symbol": "TOKENB",
       "address": "0x9C7C28A281B7F30796dC4d1831AF5FCB422a554A",
       "chainId": 97,
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+      "decimals": 18
     },
     {
       "name": "TOKENC",
       "symbol": "TOKENC",
       "address": "0xB8Dc3ef9eB65A2d66ee4a133C836929c952c9D37",
       "chainId": 97,
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+      "decimals": 18
     },
     {
       "name": "TOKEND",
       "symbol": "TOKEND",
       "address": "0xF6709d6Df36bB00d21fB0EDbF07d06B6b77A3059",
       "chainId": 97,
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
+      "decimals": 18
     },
     {
       "chainId": 42161,

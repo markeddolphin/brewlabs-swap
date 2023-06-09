@@ -22,7 +22,7 @@ import { wrappedCurrency } from "utils/wrappedCurrency";
 import { getBrewlabsRouterContract } from "utils/contractHelpers";
 import { useTransactionAdder } from "state/transactions/hooks";
 import { CurrencyLogo } from "@components/logo";
-import useTokenMarketChart, {defaultMarketData} from "@hooks/useTokenMarketChart";
+import useTokenMarketChart, { defaultMarketData } from "@hooks/useTokenMarketChart";
 import useTotalSupply from "@hooks/useTotalSupply";
 import { useTokenPrices } from "hooks/useTokenPrice";
 import getCurrencyId from "utils/getCurrencyId";
@@ -37,7 +37,6 @@ export default function BasicLiquidity() {
   const referralFee = 0.0;
   const brewlabsFee = 0.05;
   const tokenOwnerFee = 0.0;
-  const FEE_PRECISION = 100;
 
   // mint state
   const { independentField, typedValue, otherTypedValue } = useMintState();
@@ -65,7 +64,7 @@ export default function BasicLiquidity() {
 
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>("");
-``
+  ``;
   const [allowedSlippage] = useUserSlippageTolerance();
   const deadline = 1000;
 
@@ -198,11 +197,9 @@ export default function BasicLiquidity() {
       ? [currencies[Field.CURRENCY_B], currencies[Field.CURRENCY_A]]
       : [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]];
 
-  // const tokenMarketData = useTokenMarketChart([baseToken?.wrapped.address], chainId);
-  // const { usd } = tokenMarketData[baseToken?.wrapped.address];
-  const tokenPrices = useTokenPrices()
+  const tokenMarketData = useTokenMarketChart(chainId);
+  const { usd: baseTokenPrice } = tokenMarketData[baseToken?.wrapped.address.toLowerCase()] || defaultMarketData;
   const quoteTotalSupply = useTotalSupply(quoteToken as Token);
-  const baseTokenPrice = tokenPrices[getCurrencyId(chainId, baseToken?.wrapped.address)]
   const [marketcap, poolTokenPrice] = useMemo(() => {
     if (
       !baseTokenPrice ||
@@ -216,7 +213,7 @@ export default function BasicLiquidity() {
       baseToken === currencies[Field.CURRENCY_A]
         ? [Number(parsedAmounts[Field.CURRENCY_A].toExact()), Number(parsedAmounts[Field.CURRENCY_B].toExact())]
         : [Number(parsedAmounts[Field.CURRENCY_B].toExact()), Number(parsedAmounts[Field.CURRENCY_A].toExact())];
-    const marketcap = baseTokenPrice * numerator * Number(quoteTotalSupply.toExact()) / denominator;
+    const marketcap = (baseTokenPrice * numerator * Number(quoteTotalSupply.toExact())) / denominator;
     // const price = marketcap / Number(quoteTotalSupply.toExact());
     return [marketcap, marketcap / Number(quoteTotalSupply.toExact())];
   }, [baseTokenPrice, quoteTotalSupply, parsedAmounts]);
@@ -238,10 +235,6 @@ export default function BasicLiquidity() {
       key: "Pool fee for liquidity providers",
       value: liquidityProviderFee.toFixed(2) + "%",
     },
-    // {
-    //   key: "Pool fee for token holders",
-    //   value: tokenHoldersFee.toFixed(2) + "%",
-    // },
     {
       key: "Pool fee for Brewlabs protocol",
       value: "0.05%",

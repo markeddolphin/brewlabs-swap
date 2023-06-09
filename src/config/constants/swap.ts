@@ -4,7 +4,8 @@ export const SUBGRAPH_NAMES = {
   [ChainId.ETHEREUM]: "brewlabs-aggregator-mainnet",
   [ChainId.BSC_MAINNET]: "brewlabs-aggregator-bsc",
   [ChainId.ARBITRUM]: "brewlabs-aggregator-arbitrum",
-  [ChainId.POLYGON]: "brewlabs-aggregator-polygon"
+  [ChainId.POLYGON]: "brewlabs-aggregator-polygon",
+  [ChainId.FANTOM]: "brewlabs-aggregator-fantom",
 };
 
 export const SUPPORTED_DEXES = {

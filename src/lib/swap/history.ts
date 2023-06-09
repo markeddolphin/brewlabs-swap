@@ -46,5 +46,5 @@ export const getSwapLogs = async (graphEndpoint: string, caller: string, chainId
     const receipt = await waitForTransaction({chainId, hash: transactionHash})
     return receipt.from;
   }))
-  return logs.filter((log, index) => senders[index] === caller).slice(0, 10);
+  return logs.filter((log, index) => senders[index].toLowerCase() === caller.toLowerCase()).slice(0, 10);
 };

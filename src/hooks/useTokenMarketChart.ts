@@ -1,9 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-
-import { CG_API, CG_PRO_API } from "config/constants/endpoints";
-import CG_ASSET_PLATFORMS from "config/constants/tokens/CGAssetPlatforms.json";
 import { ChainId } from "@brewlabs/sdk";
+import { API_URL } from "config/constants";
 
 export interface TokenMarketData {
   [address: string]: {
@@ -17,28 +15,23 @@ export const defaultMarketData = {
   usd_24h_change: null,
 };
 
-const useTokenMarketChart = (tokenAddresses: string[], chainId: ChainId): TokenMarketData => {
-  const assetPlatformId = CG_ASSET_PLATFORMS.find((platform) => platform.chain_identifier === chainId)?.id;
-  const [data, setData] = useState(
-    Object.assign({}, ...tokenAddresses.map((address) => ({ [address]: defaultMarketData })))
-  );
+const useTokenMarketChart = (chainId: ChainId): TokenMarketData => {
 
+  const [data, setData] = useState({});
   useEffect(() => {
-    if (!assetPlatformId || tokenAddresses.length === 0) return;
     axios
       .get(
-        `${CG_API}/simple/token_price/${assetPlatformId}?contract_addresses=${tokenAddresses.join(
-          ","
-        )}&vs_currencies=usd&include_24hr_change=true`
+        `${API_URL}/cg/prices?chainId=${chainId}`
       )
       .then((res) => {
         if (res.data) {
-          setData(res.data);
+          const {prices} = res.data;
+          setData(prices);
         }
       })
       .catch((e) => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetPlatformId, JSON.stringify(tokenAddresses)]);
+  }, [chainId]);
 
   return data;
 };

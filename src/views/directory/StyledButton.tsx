@@ -20,7 +20,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="portfolio-shadow relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF80] bg-[#B9B8B81A] text-sm font-medium transition hover:border-transparent hover:bg-dark hover:text-brand disabled:cursor-[not-allowed] disabled:bg-transparent disabled:text-white"
+      className="portfolio-shadow relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF80] bg-[#B9B8B81A] text-sm font-medium transition  hover:opacity-70 disabled:cursor-[not-allowed] disabled:bg-transparent disabled:text-white"
     >
       {children}
     </button>
@@ -103,7 +103,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="portfolio-shadow  relative flex h-full w-full items-center justify-center rounded bg-primary text-sm font-semibold text-black transition enabled:hover:bg-dark enabled:hover:text-brand disabled:cursor-[not-allowed] disabled:opacity-70"
+      className="portfolio-shadow  relative flex h-full w-full items-center justify-center rounded bg-primary text-sm font-semibold text-black transition enabled:hover:opacity-70 disabled:cursor-[not-allowed] disabled:opacity-70"
     >
       {children}
     </button>

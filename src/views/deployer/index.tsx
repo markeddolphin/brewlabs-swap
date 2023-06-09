@@ -120,13 +120,7 @@ const Deployer = ({ page }: { page: number }) => {
             (t) => t.name.toLowerCase().includes(lowercaseQuery) || t.symbol.toLowerCase().includes(lowercaseQuery)
           ).length
       )
-      .filter(
-        (data: any) =>
-          curFilter === Category.ALL ||
-          data.type === curFilter ||
-          (curFilter === Category.MY_POSITION &&
-            (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance.gt(0)))
-      );
+      .filter((data: any) => data.type === 2);
   }
   chosenPools = sortPools(filterPoolsByStatus(chosenPools, currentBlocks, status));
 

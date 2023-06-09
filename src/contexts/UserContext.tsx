@@ -1,13 +1,10 @@
-import { CurrencyAmount, Price } from "@brewlabs/sdk";
-import { useSlowRefreshEffect } from "@hooks/useRefreshEffect";
 import axios from "axios";
-import { slippageDefault } from "config/constants";
-import { BigNumber } from "ethers";
 import React, { useState } from "react";
-import { useDefaultsFromURLSearch } from "state/swap/hooks";
 import { useAccount } from "wagmi";
+import { API_URL } from "config/constants";
+import { useSlowRefreshEffect } from "@hooks/useRefreshEffect";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const UserContext: any = React.createContext({ userData: {}, fetchUserData: () => {}, changeAvatar: () => {} });
 const instance = axios.create({ baseURL: API_URL });
 

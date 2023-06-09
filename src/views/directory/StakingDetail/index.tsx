@@ -556,7 +556,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                     rewards={{
                       deposit:
                         data.depositBalance -
-                        (data.earningToken.address.toLowerCase() === data.stakingToken.address.toLowerCase()
+                        (data.earningToken.address?.toLowerCase() === data.stakingToken.address.toLowerCase()
                           ? data.totalStaked
                           : 0),
                       available: data.availableRewards,

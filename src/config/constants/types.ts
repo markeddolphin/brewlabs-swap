@@ -170,8 +170,7 @@ export interface BrewlabsPair {
   id: ETHAddress;
   token0: BrewlabsToken;
   token1: BrewlabsToken;
-  token0Owner?: ETHAddress;
-  token1Owner?: ETHAddress;
+  tokenOwner?: ETHAddress;
   referrer?: ETHAddress;
   volumeToken0: BigNumber;
   volumeToken1: BigNumber;

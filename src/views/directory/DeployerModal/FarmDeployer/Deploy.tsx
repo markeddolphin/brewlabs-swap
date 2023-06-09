@@ -190,7 +190,7 @@ const Deploy = ({ setOpen, step, setStep, router, lpInfo }) => {
 
   return (
     <div className="font-roboto text-white">
-      <div className="mt-4 flex items-center justify-between rounded-[30px] border border-primary px-4 py-3">
+      <div className="mt-4 flex items-center justify-between rounded-[30px] px-4 py-5 bg-[#1A1E28] primary-shadow">
         <div className="mx-auto flex items-center justify-between sm:mx-0">
           <img
             src={getDexLogo(router?.id)}

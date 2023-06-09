@@ -22,8 +22,8 @@ export const Adapters = {
       address: "0x9c9bEaD2170C3ea31d40081b99C9e086F99F5e41",
       name: "Dodo",
       logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.dodoex.io.png",
-      meta: "v1"
-    }
+      meta: "v1",
+    },
   ],
   56: [
     {
@@ -61,7 +61,7 @@ export const Adapters = {
   ],
   137: [
     {
-      address: '0x8bd826b08ed6D95bB53F1C980a38559C003489CF',
+      address: "0x8bd826b08ed6D95bB53F1C980a38559C003489CF",
       name: "Uniswap",
       logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.uniswap.org.png",
       meta: "v3",
@@ -88,7 +88,50 @@ export const Adapters = {
       address: "0xdd98619165ce0947E43DACE1baD5D391fD693C76",
       name: "Sushiswap",
       logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/app.sushi.com.png",
-    }
+    },
+  ],
+  250: [
+    {
+      address: "0x8bd826b08ed6D95bB53F1C980a38559C003489CF",
+      name: "Spookyswap",
+      logo: "https://dexscreener.com/img/dexes/spookyswap.png",
+    },
+    {
+      address: "0xc18F7338Baeea1C539E97CE0B35aa2611B1cE784",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "2pool",
+    },
+    {
+      address: "0x58Ae3C69B846abed8bd4344192d3B39416f60e3f",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "3poolv2",
+    },
+    {
+      address: "0x8433f9865c197a9E4954Ebd5c0C69a24cE50c6dC",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "lambda2pool",
+    },
+    {
+      address: "0x1418174f8b158AcBA1a1ac1a9Ac7E9C509CD7418",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "mai3pool",
+    },
+    {
+      address: "0xAcC4fC9A4ebA3675B2A0cF1638f62314F8347850",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "qeist",
+    },
+    {
+      address: "0xA5bdA4c3ba1a922fD1DA68b487Adc5264Cf53dc7",
+      name: "Curve",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
+      meta: "tricrypto",
+    },
   ],
   42161: [
     {
@@ -120,7 +163,14 @@ export const Adapters = {
       name: "Curve",
       logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
       meta: "tricrypto",
-    }
+    },
   ],
-  97: [],
+  97: [
+    {
+      address: "0xc42213ea7D836285e35413CCe8607f9416Ddb0a6",
+      name: "Pancakeswap",
+      logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/exchange.pancakeswap.finance.png",
+      meta: "v2",
+    },
+  ],
 };

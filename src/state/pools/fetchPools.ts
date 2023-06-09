@@ -369,7 +369,7 @@ export const fetchPoolDepositBalance = async (pool) => {
 
   let depositBalance = 0;
 
-  if (sHistoryResult && sHistoryResult !== "Max rate limit reached") {
+  if (sHistoryResult && sHistoryResult !== "Max rate limit reached"  && sHistoryResult !== "Error! Invalid contract address format") {
     sHistoryResult.map((history: any) => {
       if (history.to.toLowerCase() === pool.contractAddress.toLowerCase()) {
         depositBalance += history.value / Math.pow(10, pool.earningToken.decimals);

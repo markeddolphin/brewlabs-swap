@@ -74,7 +74,7 @@ const HeroSection = ({
             return (
               <DeployItem
                 key={i}
-                className="flex h-[140px] w-[140px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#FFFFFFBF] transition-all hover:border-solid hover:border-primary"
+                className="primary-shadow flex h-[140px] w-[140px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#FFFFFFBF] transition-all hover:border-solid hover:border-primary"
                 onClick={() => setDeployType("Yield Farm")}
                 active={deployType === data}
               >
@@ -171,7 +171,7 @@ const DeployerModal = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
 };
 
 const DeployItem = styled.div<{ active: boolean }>`
-  border: 1px ${({ active }) => (active ? "solid #ffde00" : "dashed #FFFFFFBF")};
+  border: 1px ${({ active }) => (active ? "solid #ffde00" : "dashed #ffffff50")};
   > div > svg {
     color: ${({ active }) => (active ? "#ffde00" : "white")};
   }
@@ -183,6 +183,7 @@ const CarouselPanel = styled.div`
   margin: 0 auto;
   .react-multi-carousel-list {
     position: unset !important;
+    padding : 8px 0;
   }
   position: relative;
   .react-multi-carousel-item {
