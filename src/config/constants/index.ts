@@ -175,7 +175,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     tokens[ChainId.BSC_MAINNET].eth,
     tokens[ChainId.BSC_MAINNET].usdc,
   ],
-  [ChainId.BSC_TESTNET]: [tokens[ChainId.BSC_TESTNET].wbnb, tokens[ChainId.BSC_TESTNET].busd],
+  [ChainId.BSC_TESTNET]: [tokens[ChainId.BSC_TESTNET].wbnb, tokens[ChainId.BSC_TESTNET].busd, tokens[ChainId.BSC_TESTNET].tokenA],
   [ChainId.POLYGON]: [tokens[ChainId.POLYGON].wmatic, tokens[ChainId.POLYGON].usdc],
   [ChainId.FANTOM]: [tokens[ChainId.FANTOM].wftm, tokens[ChainId.FANTOM].eth, tokens[ChainId.FANTOM].usdc],
   [ChainId.AVALANCHE]: [tokens[ChainId.AVALANCHE].wavax, tokens[ChainId.AVALANCHE].usdc],

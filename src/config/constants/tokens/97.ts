@@ -28,14 +28,14 @@ const tokens = {
   ),
   tokenB: new Token(
     BSC_TESTNET,
-    "0xC15BA1a077F6B2ecF51b8AAfbC31E04dC9CbC578",
+    "0x9C7C28A281B7F30796dC4d1831AF5FCB422a554A",
     18,
     "TOKENB",
     "TOKENB"
   ),
   tokenC: new Token(
     BSC_TESTNET,
-    "0xC15BA1a077F6B2ecF51b8AAfbC31E04dC9CbC578",
+    "0xB8Dc3ef9eB65A2d66ee4a133C836929c952c9D37",
     18,
     "TOKENC",
     "TOKENC"
