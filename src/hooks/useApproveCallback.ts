@@ -1,6 +1,6 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
-import { Trade, CurrencyAmount } from "@brewlabs/sdk";
+import { Trade, CurrencyAmount, ROUTER_ADDRESS_MAP, EXCHANGE_MAP } from "@brewlabs/sdk";
 import { useCallback, useMemo } from "react";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
 import { getNetworkGasPrice } from "utils/getGasPrice";
@@ -122,6 +122,6 @@ export function useApproveCallbackFromTrade(
 
   return useApproveCallback(
     noLiquidity ? amountIn : amountToApprove,
-    noLiquidity ? getAggregatorAddress(chainId) : ROUTER_ADDRESS[chainId]
+    noLiquidity ? getAggregatorAddress(chainId) : ROUTER_ADDRESS_MAP[EXCHANGE_MAP[chainId][0]?.key][chainId]
   );
 }
