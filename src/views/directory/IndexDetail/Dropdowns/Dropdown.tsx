@@ -17,19 +17,19 @@ const DropDown = ({ value, setValue, data }: { setValue?: any; value: number; da
 
   return (
     <StyledDropDown
-      className="relative z-10 flex h-[24px] w-full cursor-pointer items-center justify-between text-xs text-black"
+      className="primary-shadow relative z-10 flex h-[20px] w-full cursor-pointer items-center justify-between text-xs text-black"
       ref={dropRef}
       onClick={() => setOpen(!open)}
       open={open}
     >
       <div>{data[value]}</div>
       <div>{!open ? <ChevronDownIcon className={"h-3"} /> : <ChevronUpIcon className={"h-3 "} />}</div>
-      <DropDownBody className={"absolute transition-all"} open={open}>
+      <DropDownBody className={"primary-shadow absolute"} open={open}>
         {data.map((data, i) => {
           return (
             <div
               key={i}
-              className="flex h-[24px] cursor-pointer items-center justify-center transition-all hover:bg-[#424444bf]"
+              className="flex h-[20px] cursor-pointer items-center justify-center transition-all hover:bg-[#424444bf]"
               onClick={() => setValue(i)}
             >
               {data}
@@ -48,20 +48,17 @@ const StyledDropDown = styled.div<{ open: boolean }>`
   background: rgb(46, 52, 62);
   border-bottom-left-radius: ${({ open }) => (open ? 0 : "12px")};
   border-bottom-right-radius: ${({ open }) => (open ? 0 : "12px")};
-  border: 0.5px solid rgba(255, 255, 255, 0.5);
   color: #ffffffbf;
   padding: 0 8px;
 `;
 
 const DropDownBody = styled.div<{ open: boolean }>`
-  height: ${({ open }) => (open ? "73px" : 0)};
+  height: ${({ open }) => (open ? "60px" : 0)};
   overflow: hidden;
   background: rgb(46, 52, 62);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  border: ${({ open }) => (open ? "0.5px solid rgba(255, 255, 255, 0.5)" : "none")};
-  border-top: none;
-  width: calc(100% + 2px);
-  left: -1px;
-  top: 23px;
+  width: 100%;
+  left: 0px;
+  top: 20px;
 `;

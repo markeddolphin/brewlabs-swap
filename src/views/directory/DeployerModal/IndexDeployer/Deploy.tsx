@@ -89,7 +89,7 @@ const Deploy = ({ step, setStep, setOpen }) => {
                   visibleType === "public"
                     ? "border-primary text-primary shadow-[0px_4px_4px_#00000040]"
                     : "border-[#FFFFFF40] text-[#FFFFFF80]"
-                } relative flex h-9 w-36 items-center justify-center rounded-md border  bg-[#B9B8B81A] font-brand text-base font-normal`}
+                } !h-9 !w-36 border bg-[#B9B8B81A] font-brand !text-base font-normal`}
                 onClick={() => setVisibleType("public")}
               >
                 Public
@@ -102,7 +102,7 @@ const Deploy = ({ step, setStep, setOpen }) => {
                   visibleType === "private"
                     ? "border-primary text-primary shadow-[0px_4px_4px_#00000040]"
                     : "border-[#FFFFFF40] text-[#FFFFFF80]"
-                } relative flex h-9 w-36 items-center justify-center rounded-md border  bg-[#B9B8B81A] font-brand text-base font-normal`}
+                } !h-9 !w-36 border bg-[#B9B8B81A] font-brand !text-base font-normal`}
                 onClick={() => setVisibleType("private")}
               >
                 Private

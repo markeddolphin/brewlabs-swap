@@ -44,6 +44,7 @@ import { useFetchPoolsWithUserData, useFetchPublicPoolsData, usePollPoolsPublicD
 import { useFetchIndexesWithUserData, useFetchPublicIndexesData, usePollIndexesFromApi } from "state/indexes/hooks";
 import { UserContextProvider } from "contexts/UserContext";
 import { usePollFarmFactoryData } from "state/deploy/hooks";
+import LoadingPage from "@components/LoadingPage";
 
 const Bubbles = lazy(() => import("components/animations/Bubbles"));
 
@@ -75,6 +76,7 @@ function MyApp(props: AppProps<{ initialReduxState: any }>) {
   const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -92,6 +94,17 @@ function MyApp(props: AppProps<{ initialReduxState: any }>) {
     return () => {
       router.events.off("routeChangeComplete", handler);
       router.events.off("hashChangeComplete", handler);
+    };
+  }, [router.events]);
+
+  useEffect(() => {
+    router.events.on("routeChangeStart", () => setLoading(true));
+    router.events.on("routeChangeComplete", () => setLoading(false));
+    router.events.on("routeChangeError", () => setLoading(false));
+    return () => {
+      router.events.off("routeChangeStart", () => setLoading(true));
+      router.events.off("routeChangeComplete", () => setLoading(false));
+      router.events.off("routeChangeError", () => setLoading(false));
     };
   }, [router.events]);
 
@@ -136,14 +149,14 @@ function MyApp(props: AppProps<{ initialReduxState: any }>) {
                                 <NavigationMobile />
                                 <UserSidebar />
 
-                                <div className="flex flex-1 flex-col">
+                                <div className="flex flex-1 flex-col relative">
                                   <HeaderMobile />
-
                                   <LazyMotion features={domAnimation}>
                                     <AnimatePresence exitBeforeEnter>
                                       <App {...props} />
                                     </AnimatePresence>
                                   </LazyMotion>
+                                  {/* {loading ? <LoadingPage /> : ""} */}
                                 </div>
                               </div>
                               <ToastContainer />

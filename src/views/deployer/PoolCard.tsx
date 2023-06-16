@@ -45,10 +45,12 @@ const PoolCard = ({
         setSelectPoolDetail(true);
         switch (data.type) {
           case Category.POOL:
-            setCurPool({ type: Category.POOL, pid: data.sousId, chainId: data.chainId });
+            // setCurPool({ type: Category.POOL, pid: data.sousId, chainId: data.chainId });
+            router.push(`/staking/${data.chainId}/${data.contractAddress}`);
             break;
           case Category.FARM:
-            setCurPool({ type: Category.FARM, pid: data.farmId, chainId: data.chainId });
+            // setCurPool({ type: Category.FARM, pid: data.farmId, chainId: data.chainId });
+            router.push(`/farms/${data.chainId}/${data.contractAddress}`);
             break;
           case Category.INDEXES:
             // setCurPool({ type: Category.INDEXES, pid: data.pid });

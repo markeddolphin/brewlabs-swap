@@ -102,15 +102,13 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   };
 
   const handleApproveUsingRouter = async () => {
-    setAttemptingTxn(true);
     try {
       const response = await approveCallback();
       await response.wait();
     } catch (e) {}
-    setAttemptingTxn(false);
   };
 
-  const handleSwapUsingRouter = async () => {
+  const handleSwapUsingRouter = useCallback(() => {
     if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
       return;
     }
@@ -118,27 +116,16 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
       return;
     }
     setAttemptingTxn(true);
-    setTxConfirmInfo({
-      type: "confirming",
-      tx: undefined,
-    });
-    try {
-      const response = await swapCallbackUsingRouter();
-      setTxConfirmInfo({
-        type: "confirming",
-        tx: response.hash,
+    swapCallbackUsingRouter()
+      .then((hash) => {
+        setAttemptingTxn(false);
+        onUserInput(Field.INPUT, "");
+      })
+      .catch((error) => {
+        setAttemptingTxn(false);
+        onUserInput(Field.INPUT, "");
       });
-      // await response.wait();
-    } catch (err) {
-      setTxConfirmInfo({
-        type: "failed",
-        tx: undefined,
-      });
-    } finally {
-      setAttemptingTxn(false);
-      onUserInput(Field.INPUT, "");
-    }
-  };
+  }, [priceImpactWithoutFee, swapCallbackUsingRouter]);
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
@@ -177,25 +164,16 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
       return;
     }
     setAttemptingTxn(true);
-    setTxConfirmInfo({
-      type: "confirming",
-      tx: undefined,
-    });
-    try {
-      const txHash = await swapCallbackUsingAggregator();
-      setTxConfirmInfo({
-        type: "confirming",
-        tx: txHash,
+
+    swapCallbackUsingAggregator()
+      .then((hash) => {
+        setAttemptingTxn(false);
+        onUserInput(Field.INPUT, "");
+      })
+      .catch((error) => {
+        setAttemptingTxn(false);
+        onUserInput(Field.INPUT, "");
       });
-    } catch (err) {
-      setTxConfirmInfo({
-        type: "failed",
-        tx: undefined,
-      });
-    } finally {
-      setAttemptingTxn(false);
-      onUserInput(Field.INPUT, "");
-    }
   };
 
   const parsedAmounts = showWrap
@@ -319,11 +297,11 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
                   onClick={() => {
                     handleApproveUsingRouter();
                   }}
-                  pending={attemptingTxn}
-                  disabled={attemptingTxn}
+                  pending={approval === ApprovalState.PENDING}
+                  disabled={approval === ApprovalState.PENDING}
                 >
                   {approval === ApprovalState.PENDING ? (
-                    <span>{t("Approve %asset%", { asset: currencies[Field.INPUT]?.symbol })}</span>
+                    <span>{t("Approving %asset%", { asset: currencies[Field.INPUT]?.symbol })}</span>
                   ) : approval === ApprovalState.UNKNOWN ? (
                     <span>{t("Loading", { asset: currencies[Field.INPUT]?.symbol })}</span>
                   ) : (
@@ -344,21 +322,17 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
                   (noLiquidity && !!aggregationCallbackError)
                 }
               >
-                {attemptingTxn ? (
-                  "Swapping..."
-                ) : !noLiquidity ? (
-                  !!swapCallbackError ? (
-                    swapCallbackError
-                  ) : priceImpactSeverity > 3 ? (
-                    "Price Impact Too High"
-                  ) : (
-                    "Swap"
-                  )
-                ) : !!aggregationCallbackError ? (
-                  aggregationCallbackError
-                ) : (
-                  "Swap"
-                )}
+                {attemptingTxn
+                  ? "Swapping..."
+                  : !noLiquidity
+                  ? !!swapCallbackError
+                    ? swapCallbackError
+                    : priceImpactSeverity > 3
+                    ? "Price Impact Too High"
+                    : "Swap"
+                  : !!aggregationCallbackError
+                  ? aggregationCallbackError
+                  : "Swap"}
               </PrimarySolidButton>
             )}
           </>

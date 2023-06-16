@@ -62,7 +62,7 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
  * @param tx to check for recency
  */
 export function isTransactionRecent(tx: TransactionDetails): boolean {
-  return new Date().getTime() - tx.addedTime < 1000 //86_400_000
+  return new Date().getTime() - tx.addedTime < 2000 //86_400_000
 }
 
 // returns whether a token has a pending approval transaction

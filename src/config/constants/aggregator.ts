@@ -132,6 +132,11 @@ export const Adapters = {
       logo: "https://raw.githubusercontent.com/trustwallet/assets/master/dapps/curve.fi.png",
       meta: "tricrypto",
     },
+    {
+      address: "0x34Fb087D17D269F67852834Cdf63868554b6dc07",
+      name: "Equalizer",
+      logo: "https://dexscreener.com/img/dexes/equalizer.png",
+    }
   ],
   42161: [
     {

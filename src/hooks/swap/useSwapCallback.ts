@@ -195,7 +195,7 @@ export function useSwapCallback(
           gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
-          .then((response: any) => {
+          .then(async (response: any) => {
             const inputSymbol = trade.inputAmount.currency.symbol;
             const outputSymbol = trade.outputAmount.currency.symbol;
             const inputAmount = trade.inputAmount.toSignificant(3);
@@ -214,7 +214,7 @@ export function useSwapCallback(
             addTransaction(response, {
               summary: withRecipient,
             });
-
+            await response.wait();
             return response;
           })
           .catch((error: any) => {

@@ -50,6 +50,9 @@ import EnterExitModal from "./Modals/EnterExitModal";
 import IndexLogo from "./IndexLogo";
 import StakingHistory from "./StakingHistory";
 import TotalStakedChart from "./TotalStakedChart";
+import UpdateFeeModal from "./Modals/UpdateFeeModal";
+import MintIndexOwnershipNFT from "./Modals/MintIndexOwnershipNFT";
+import StakeIndexOwnershipNFT from "./Modals/StakeIndexOwnershipNFT";
 
 const aprTexts = ["24hrs", "7D", "30D"];
 
@@ -60,6 +63,10 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
 
   const [stakingModalOpen, setStakingModalOpen] = useState(false);
   const [addNFTModalOpen, setAddNFTModalOpen] = useState(false);
+  const [updateFeeOpen, setUpdateFeeOpen] = useState(false);
+  const [mintIndexNFTOpen, setMintIndexNFTOpen] = useState(false);
+  const [stakeIndexNFTOpen, setStakeIndexNFTOpen] = useState(false);
+
   const [curType, setCurType] = useState("enter");
   const [curGraph, setCurGraph] = useState(2);
   const [curAPR, setCurAPR] = useState(0);
@@ -200,6 +207,34 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
     }, 1000);
     navigator.clipboard.writeText(`${BASE_URL}${location.pathname}`);
   };
+
+  const indexOptions =
+    data?.deployer === address.toLowerCase()
+      ? ["Mint Index NFT", "Add Index NFT", "Update Fee Address", "Mint Ownership NFT", "Stake Ownership NFT"]
+      : ["Mint Index NFT", "Add Index NFT"];
+
+  function onIndexOption(i) {
+    switch (i) {
+      case 0:
+        handleMintNft();
+        break;
+      case 1:
+        setAddNFTModalOpen(true);
+        break;
+      case 2:
+        setUpdateFeeOpen(true);
+        break;
+      case 3:
+        setMintIndexNFTOpen(true);
+        break;
+      case 4:
+        setStakeIndexNFTOpen(true);
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       <AnimatePresence exitBeforeEnter>
@@ -215,6 +250,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
               <EnterExitModal open={stakingModalOpen} setOpen={setStakingModalOpen} type={curType} data={data} />
             )}
             <AddNFTModal open={addNFTModalOpen} setOpen={setAddNFTModalOpen} data={data} />
+            <UpdateFeeModal open={updateFeeOpen} setOpen={setUpdateFeeOpen} name={getIndexName(tokens)} />
+            <MintIndexOwnershipNFT open={mintIndexNFTOpen} setOpen={setMintIndexNFTOpen} />
+            <StakeIndexOwnershipNFT open={stakeIndexNFTOpen} setOpen={setStakeIndexNFTOpen} />
             <PageHeader
               title={
                 <div className="text-[40px]">
@@ -252,19 +290,16 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       <div className="block xl:hidden">
                         <div className="mt-2" />
                         <StyledButton
-                          className="relative h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)]  transition hover:border-white hover:text-white"
+                          className="!h-8 !w-[140px] bg-[#B9B8B81A] font-roboto font-bold text-primary hover:border-white hover:text-white"
                           type={"default"}
                           onClick={onShareIndex}
                         >
                           <div className="flex items-center">
                             <div className="mr-1.5">{isCopied ? "Copied" : "Share Index"}</div> {LinkSVG}
                           </div>
-                          {/* <div className="absolute -right-3 -top-2 z-10 flex h-4 w-10 items-center justify-center rounded-[30px] bg-primary font-roboto text-xs font-bold text-black">
-                            Soon
-                          </div> */}
                         </StyledButton>
                         <div className="mt-2" />
-                        <OptionDropdown handleMintNft={handleMintNft} setAddNFTModalOpen={setAddNFTModalOpen} />
+                        <OptionDropdown data={indexOptions} setValue={onIndexOption} />
                       </div>
                     </div>
                   </div>
@@ -272,7 +307,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                     <div className="hidden w-full max-w-[480px] items-center sm:flex">
                       <img src={"/images/non-logo.png"} alt={""} className="mr-2 hidden h-10 w-10 rounded-full" />
                       <StyledButton
-                        className="h-8 w-[140px] flex-1 cursor-pointer items-center justify-center rounded border border-primary bg-[#B9B8B81A] px-2 font-roboto text-sm font-semibold text-primary shadow-[0px_4px_4px_#00000040] transition hover:border-white hover:text-white xl:flex"
+                        className="!h-8 !w-[140px] flex-1 bg-[#B9B8B81A] px-2 font-roboto font-semibold text-primary hover:text-white xl:flex"
                         type={"default"}
                         onClick={() => router.push(`/indexes/profile/${data.deployer}`)}
                       >
@@ -290,7 +325,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           className="mr-2 hidden h-10 w-10 rounded-full xs:block"
                         />
                         <StyledButton
-                          className="h-8 w-[140px] flex-1 cursor-pointer items-center justify-center rounded border border-primary bg-[#B9B8B81A] px-2 font-roboto text-sm font-semibold text-primary shadow-[0px_4px_4px_#00000040] transition hover:border-white hover:text-white xl:flex"
+                          className="!h-8 !w-[140px] flex-1 bg-[#B9B8B81A] px-2 font-roboto font-semibold text-primary hover:border-white hover:text-white xl:flex"
                           type={"default"}
                           onClick={() => router.push(`/indexes/profile/${data.deployer}`)}
                         >
@@ -301,7 +336,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         </StyledButton>
                       </div>
                       <StyledButton
-                        className="relative hidden h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition hover:border-white hover:text-white xl:flex"
+                        className="hidden !h-8 !w-[140px] bg-[#B9B8B81A] font-roboto font-bold text-primary hover:border-white hover:text-white xl:flex"
                         type={"default"}
                         onClick={() => onShareIndex()}
                       >
@@ -314,7 +349,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       </StyledButton>
                       <div className="mr-4 mt-2 hidden xl:mt-0 xl:block" />
                       <div className="hidden xl:block">
-                        <OptionDropdown handleMintNft={handleMintNft} setAddNFTModalOpen={setAddNFTModalOpen} />
+                        <OptionDropdown data={indexOptions} setValue={onIndexOption} />
                       </div>
                       <a
                         className=" ml-0 h-[32px] w-[140px] xl:ml-4 "
@@ -334,7 +369,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                 <div className="mt-2 flex flex-col items-center justify-between md:flex-row">
                   <IndexLogo tokens={tokens} />
                   <div className="flex max-w-full flex-1 flex-wrap justify-end xl:flex-nowrap">
-                    <InfoPanel padding={"14px 25px 8px 25px"} className="relative mt-4 max-w-full md:max-w-[500px]">
+                    <div className="primary-shadow relative mt-4 w-full max-w-full rounded bg-[#B9B8B80D] p-[14px_25px_8px_25px] md:max-w-[500px]">
                       <div className="flex flex-wrap justify-between text-xl">
                         <div className="mr-4 whitespace-nowrap">
                           <span className="mr-1 hidden sm:inline-block">Index: </span>
@@ -349,7 +384,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           ) : (
                             <SkeletonComponent />
                           )}
-                          <div className="ml-1 w-[60px]">
+                          <div className="ml-2 w-[60px]">
                             <DropDown value={curAPR} setValue={setCurAPR} data={aprTexts} />
                           </div>
                         </div>
@@ -402,12 +437,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           </div>
                         </div>
                       </div>
-                    </InfoPanel>
+                    </div>
 
-                    <InfoPanel
-                      padding={"6px 25px 14px 25px"}
-                      className="ml-0 mt-4 flex max-w-full flex-wrap justify-between md:ml-[30px] md:max-w-[500px]"
-                    >
+                    <div className="primary-shadow ml-0 mt-4 flex w-full max-w-full flex-wrap justify-between rounded bg-[#B9B8B80D] p-[6px_25px_14px_25px] md:ml-[30px] md:max-w-[500px]">
                       <div className="mt-2">
                         <div className="text-xl">My Position</div>
                         <div className="mt-1 leading-none text-primary">
@@ -449,7 +481,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         <div className="text-xl">Profit</div>
                         <div className="mt-1 flex leading-none text-[#FFFFFF80]">{renderProfit(true)}</div>
                       </div>
-                    </InfoPanel>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-10 flex w-full flex-col justify-between md:flex-row">
@@ -464,10 +496,12 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       }
                       curGraph={curGraph}
                     />
-                    <InfoPanel
-                      className="mt-24 flex cursor-pointer items-center justify-between"
-                      type={"secondary"}
-                      boxShadow={curGraph === 2 ? "primary" : null}
+                    <div
+                      className={`primary-shadow mt-24 flex cursor-pointer items-center justify-between rounded border p-[12px_15px] transition ${
+                        curGraph === 2
+                          ? "border-[#FFFFFFB2] bg-[#b9b8b829]"
+                          : "border-transparent bg-[#B9B8B81A] hover:bg-[#b9b8b829]"
+                      }`}
                       onClick={() => setCurGraph(2)}
                     >
                       <div className="flex flex-wrap">
@@ -492,11 +526,13 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           )}
                         </div>
                       </div>
-                    </InfoPanel>
-                    <InfoPanel
-                      className="mt-2.5 flex cursor-pointer justify-between"
-                      type={"secondary"}
-                      boxShadow={curGraph === 0 ? "primary" : null}
+                    </div>
+                    <div
+                      className={`primary-shadow mt-2.5 flex cursor-pointer items-center justify-between rounded border p-[12px_15px] transition ${
+                        curGraph === 0
+                          ? "border-[#FFFFFFB2] bg-[#b9b8b829]"
+                          : "border-transparent bg-[#B9B8B81A] hover:bg-[#b9b8b829]"
+                      }`}
                       onClick={() => setCurGraph(0)}
                     >
                       <div>Total Index Value</div>
@@ -506,11 +542,13 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           {tokens.length === 2 ? tokens.map((t) => t.symbol).join(" / ") : `Multiple`}
                         </span>
                       </div>
-                    </InfoPanel>
-                    <InfoPanel
-                      className="mt-2.5 flex cursor-pointer justify-between"
-                      type={"secondary"}
-                      boxShadow={curGraph === 1 ? "primary" : null}
+                    </div>
+                    <div
+                      className={`primary-shadow mt-2.5 flex cursor-pointer items-center justify-between rounded border p-[12px_15px] transition ${
+                        curGraph === 1
+                          ? "border-[#FFFFFFB2] bg-[#b9b8b829]"
+                          : "border-transparent bg-[#B9B8B81A] hover:bg-[#b9b8b829]"
+                      }`}
                       onClick={() => setCurGraph(1)}
                     >
                       <div>
@@ -528,12 +566,14 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         )}
                         <span className="ml-1 text-[#FFFFFF80]">{getNativeSybmol(data.chainId)}</span>
                       </div>
-                    </InfoPanel>
+                    </div>
 
-                    <InfoPanel
-                      className="mt-2.5 flex cursor-pointer justify-between"
-                      type={"secondary"}
-                      boxShadow={curGraph === 3 ? "primary" : null}
+                    <div
+                      className={`primary-shadow mt-2.5 flex cursor-pointer items-center justify-between rounded border p-[12px_15px] transition ${
+                        curGraph === 3
+                          ? "border-[#FFFFFFB2] bg-[#b9b8b829]"
+                          : "border-transparent bg-[#B9B8B81A] hover:bg-[#b9b8b829]"
+                      }`}
                       onClick={() => setCurGraph(3)}
                     >
                       <div>
@@ -545,7 +585,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           ? formatAmount(+data.commissions[data.commissions.length - 1] * nativeTokenPrice)
                           : "0.00"}
                       </div>
-                    </InfoPanel>
+                    </div>
                   </div>
                   <div className="relative mt-10 w-full md:mt-0 md:w-[57%]">
                     <div className="mt-7">
@@ -612,30 +652,3 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
 };
 
 export default IndexDetail;
-
-const InfoPanel = styled.div<{ padding?: string; type?: string; boxShadow?: string }>`
-  background: ${({ type }) => (type === "secondary" ? "rgba(185, 184, 184, 0.1)" : "rgba(185, 184, 184, 0.05)")};
-  border: 0.5px solid rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-  padding: ${({ padding, type }) => (type === "secondary" ? "12px 15px" : padding)};
-  width: 100%;
-  color: #ffffffbf;
-  box-shadow: ${({ boxShadow }) =>
-    boxShadow === "primary"
-      ? "0px 2px 1px rgba(255, 255, 255, 0.75)"
-      : boxShadow === "secondary"
-      ? "0px 1px 1px rgba(255, 255, 255, 0.75)"
-      : ""};
-  :hover {
-    border-color: ${({ type, boxShadow }) =>
-      type === "secondary" && !boxShadow ? "rgba(255, 255, 255, 0.75)" : "rgba(255, 255, 255, 0.5)"};
-  }
-  .react-tooltip {
-    z-index: 100;
-    font-size: 13px;
-    line-height: 125%;
-    opacity: 1;
-    max-width: 300px;
-    text-align: center;
-  }
-`;

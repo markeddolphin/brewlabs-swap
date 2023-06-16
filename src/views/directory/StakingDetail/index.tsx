@@ -47,9 +47,10 @@ import StakingModal from "./Modals/StakingModal";
 import useLockupPool from "./hooks/useLockupPool";
 import useUnlockupPool from "./hooks/useUnlockupPool";
 import EmergencyModal from "./Modals/EmergencyModal";
+import { useRouter } from "next/router";
 
 const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
-  const { open, setOpen, data } = detailDatas;
+  const { data } = detailDatas;
   const dispatch = useAppDispatch();
 
   const { userData: accountData, earningToken, stakingToken, reflectionTokens } = data;
@@ -60,6 +61,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
   const [curGraph, setCurGraph] = useState(1);
   const [isCopied, setIsCopied] = useState(false);
 
+  const router = useRouter();
   const { address } = useAccount();
   const { chainId } = useActiveChainId();
   const { canSwitch, switchNetwork } = useSwitchNetwork();
@@ -240,7 +242,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
 
   return (
     <AnimatePresence exitBeforeEnter>
-      {open && (
+      {
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -277,7 +279,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                 <div className="flex items-center justify-between font-roboto">
                   <div className="flex w-[160px] flex-col sm:flex-row">
                     <div className="h-[32px] w-[140px] ">
-                      <StyledButton onClick={() => setOpen(false)}>
+                      <StyledButton onClick={() => router.push("/staking")}>
                         <div className="absolute left-2 top-[7px]">{chevronLeftSVG}</div>
                         <div className="ml-2">Back to pool list</div>
                       </StyledButton>
@@ -290,7 +292,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                 <div className="flex items-center justify-between font-roboto">
                   <div className="flex w-[160px] flex-col">
                     <div className="h-[32px] w-[140px] ">
-                      <StyledButton onClick={() => setOpen(false)}>
+                      <StyledButton onClick={() => router.push("/staking")}>
                         <div className="absolute left-2 top-[7px]">{chevronLeftSVG}</div>
                         <div className="ml-2">Back to pool list</div>
                       </StyledButton>
@@ -328,7 +330,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
                         </div>
                       )}
                       <StyledButton
-                        className="relative mb-2 h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition  hover:border-white hover:text-white lg:mb-0"
+                        className="mb-2 !h-8 !w-[140px] border border-primary bg-[#B9B8B81A] font-roboto font-bold text-primary hover:border-white hover:text-white lg:mb-0"
                         type={"default"}
                         onClick={onSharePool}
                       >
@@ -868,7 +870,7 @@ const StakingDetail = ({ detailDatas }: { detailDatas: any }) => {
             )}
           </div>
         </motion.div>
-      )}
+      }
     </AnimatePresence>
   );
 };

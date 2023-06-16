@@ -14,24 +14,24 @@ const WarningModal = ({ open, setOpen, type, onClick }) => {
     case "notverified":
       warningText = (
         <div>
-          This token may be malicious, it has unverified code. <br />
-          Do you wish to continue?
+          <div>This token may be malicious, it has unverified code.</div>
+          <div className="my-2">Do you wish to continue?</div>
         </div>
       );
       break;
     case "notlisted":
       warningText = (
         <div>
-          This token may be malicious, it is not listed by other routers or third parties yet. <br />
-          Do you wish to continue?
+          <div>This token may be malicious, it is not listed by other routers or third parties yet.</div>
+          <div className="my-2">Do you wish to continue?</div>
         </div>
       );
       break;
     case "highpriceimpact":
       warningText = (
         <div>
-          This swap has a price impact of 5.00% or higher. <br />
-          Do you wish to continue?
+          <div>This swap has a price impact of 5.00% or higher.</div>
+          <div className="my-2">Do you wish to continue?</div>
         </div>
       );
       break;

@@ -42,10 +42,12 @@ const PoolCard = ({
         setSelectPoolDetail(true);
         switch (data.type) {
           case Category.POOL:
-            setCurPool({ type: Category.POOL, pid: data.sousId, chainId: data.chainId });
+            // setCurPool({ type: Category.POOL, pid: data.sousId, chainId: data.chainId });
+            router.push(`/staking/${data.chainId}/${data.sousId}`);
             break;
           case Category.FARM:
-            setCurPool({ type: Category.FARM, pid: data.farmId, chainId: data.chainId });
+            // setCurPool({ type: Category.FARM, pid: data.farmId, chainId: data.chainId });
+            router.push(`/farms/${data.chainId}/${data.contractAddress}`);
             break;
           case Category.INDEXES:
             // setCurPool({ type: Category.INDEXES, pid: data.pid });
@@ -60,10 +62,10 @@ const PoolCard = ({
       }}
     >
       <div className="flex items-center justify-between">
-        <div className="min-w-[80px] pl-4">
+        <div className="w-[80px] pl-4">
           <img src={CHAIN_ICONS[data.chainId]} alt={""} className="w-9" />
         </div>
-        <div className="flex min-w-[210px] items-center">
+        <div className="flex w-[210px] items-center">
           {data.type === Category.INDEXES ? (
             <IndexLogo tokens={data.tokens} />
           ) : data.type === Category.ZAPPER ? (
@@ -77,29 +79,33 @@ const PoolCard = ({
               />
             </div>
           )}
-          <div>
+          <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
             {data.type === Category.INDEXES ? (
-              <div className="text-sm leading-none">{getIndexName(data.tokens)}</div>
+              <div className="overflow-hidden text-ellipsis text-sm leading-none">{getIndexName(data.tokens)}</div>
             ) : data.type === Category.ZAPPER ? (
-              <div className="text-sm leading-none">
+              <div className="text-sm leading-none ">
                 <div>{getIndexName([data.token, data.quoteToken])}</div>
                 <div>Earning : {data.earningToken.symbol}</div>
               </div>
             ) : (
-              <div className="leading-none">
+              <div className="overflow-hidden text-ellipsis leading-none">
                 <span className="text-primary">Earn</span> {data.earningToken.symbol}
               </div>
             )}
-            <div className="text-xs">
+            <div className="overflow-hidden text-ellipsis text-xs">
               {poolNames[data.type]} -{" "}
               {data.poolCategory === PoolCategory.CORE || data.type !== Category.POOL
                 ? "Flexible"
                 : `${data.duration ? data.duration : "__"} days lock`}
             </div>
-            <div className="text-xs leading-none">
+            <div className="text-xs leading-none ">
               {data.type === Category.INDEXES ? (
                 data.priceChanges ? (
-                  <div className={data.priceChanges[0].percent >= 0 ? "text-success" : "text-danger"}>
+                  <div
+                    className={`${
+                      data.priceChanges[0].percent >= 0 ? "text-success" : "text-danger"
+                    } overflow-hidden text-ellipsis`}
+                  >
                     Performance - {Math.abs(data.priceChanges[0].percent).toFixed(2)}% 24hrs
                   </div>
                 ) : (

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
-    "@brewlabs/sdk": "^1.2.9",
+    "@brewlabs/sdk": "^1.2.11",
     "@headlessui/react": "^1.6.0",
     "@heroicons/react": "^2.0.12",
     "@reduxjs/toolkit": "^1.9.0",

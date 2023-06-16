@@ -14,13 +14,16 @@ const StyledButton = ({
   type?: string;
   boxShadow?: boolean;
   className?: string;
-}): ReactElement =>
-  type === "secondary" ? (
+}): ReactElement => {
+  const base =
+    "flex items-center justify-center disabled:cursor-[not-allowed] rounded relative primary-shadow text-sm transition w-full h-full";
+
+  return type === "secondary" ? (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="portfolio-shadow relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF80] bg-[#B9B8B81A] text-sm font-medium transition  hover:opacity-70 disabled:cursor-[not-allowed] disabled:bg-transparent disabled:text-white"
+      className={`border border-[#FFFFFF80] bg-[#B9B8B81A] font-medium  enabled:hover:opacity-70 disabled:bg-transparent disabled:text-white ${base}`}
     >
       {children}
     </button>
@@ -29,7 +32,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF80] bg-[#B9B8B81A] text-sm font-medium transition enabled:hover:border-green enabled:hover:shadow-[0_1px_4px_rgba(47,211,93,0.75)] disabled:cursor-[not-allowed] disabled:opacity-70"
+      className={`border border-[#FFFFFF80] bg-[#B9B8B81A] font-medium enabled:hover:border-green enabled:hover:shadow-[0_1px_4px_rgba(47,211,93,0.75)] disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -40,7 +43,7 @@ const StyledButton = ({
       disabled={disabled}
       className={`${
         boxShadow ? "staking-button-shadow border-[#EEBB19]" : "border-transparent"
-      } relative flex h-full w-full items-center justify-center rounded border bg-[#B9B8B81A] font-medium text-[#FFFFFFBF] transition enabled:hover:border-transparent enabled:hover:bg-dark enabled:hover:text-brand disabled:cursor-[not-allowed] disabled:opacity-70`}
+      } border bg-[#B9B8B81A] font-medium text-[#FFFFFFBF]  enabled:hover:border-transparent enabled:hover:bg-dark enabled:hover:text-brand  disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -49,7 +52,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF80] bg-[#B9B8B81A] text-sm font-medium transition hover:border-[#FFFFFFBF] hover:shadow-[0_1px_4px_rgba(255,255,255,0.75)] disabled:cursor-[not-allowed] disabled:opacity-70`}
+      className={`border border-[#FFFFFF80] bg-[#B9B8B81A] font-medium  hover:border-[#FFFFFFBF] hover:shadow-[0_1px_4px_rgba(255,255,255,0.75)]  disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -58,7 +61,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`relative flex h-full w-full items-center justify-center rounded border border-primary bg-transparent text-sm font-medium text-[#FFFFFFBF] transition hover:shadow-[0_1px_4px_#EEBB19] disabled:cursor-[not-allowed] disabled:opacity-70`}
+      className={`border border-primary bg-transparent font-medium text-[#FFFFFFBF]  hover:shadow-[0_1px_4px_#EEBB19]  disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -67,7 +70,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`relative flex h-full w-full items-center justify-center rounded bg-[#1B212D] text-sm font-medium text-[#FFFFFFBF] transition hover:text-brand disabled:cursor-[not-allowed] disabled:opacity-70`}
+      className={`bg-[#1B212D] font-medium text-[#FFFFFFBF]  hover:text-brand  disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -76,7 +79,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`relative flex h-full w-full items-center justify-center rounded bg-danger text-sm font-semibold text-black transition hover:text-white disabled:cursor-[not-allowed] disabled:opacity-70`}
+      className={`bg-danger font-semibold text-black  hover:text-white  disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
@@ -85,17 +88,12 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="relative flex h-full w-full items-center justify-center rounded border border-[#FFFFFF40] bg-transparent text-sm text-[#FFFFFFBF] transition disabled:cursor-[not-allowed] disabled:opacity-70"
+      className={`border border-[#FFFFFF40] bg-transparent text-[#FFFFFFBF]   disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
   ) : type === "default" ? (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`${className} flex justify-center items-center disabled:cursor-[not-allowed] disabled:opacity-70`}
-    >
+    <button type="button" onClick={onClick} disabled={disabled} className={`${className} ${base}`}>
       {children}
     </button>
   ) : (
@@ -103,10 +101,11 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="portfolio-shadow  relative flex h-full w-full items-center justify-center rounded bg-primary text-sm font-semibold text-black transition enabled:hover:opacity-70 disabled:cursor-[not-allowed] disabled:opacity-70"
+      className={`bg-primary font-semibold text-black enabled:hover:opacity-70 disabled:opacity-70 ${base}`}
     >
       {children}
     </button>
   );
+};
 
 export default StyledButton;

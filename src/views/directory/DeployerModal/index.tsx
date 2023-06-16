@@ -70,7 +70,7 @@ const HeroSection = ({
           customRightArrow={<CustomRightArrow onClick={undefined} />}
           customLeftArrow={<CustomLeftArrow onClick={undefined} />}
         >
-          {["Staking Pool", "Yield Farm", "Index", "Token"].map((data, i) => {
+          {[ "Yield Farm"].map((data, i) => {
             return (
               <DeployItem
                 key={i}

@@ -243,7 +243,6 @@ const TokenList = ({
                 : logoFilter.length
                 ? logoFilter[0].logoURI
                 : emptyLogos[chainId];
-            const link = `${getBlockExplorerLink(data.address, "token", chainId)}?a=${address}`;
             return (
               <StyledLink
                 key={i}
@@ -319,15 +318,27 @@ const TokenList = ({
                   isHover={isHover[i] && isHover[i].toString()}
                   onMouseEnter={() => onHover(i, true)}
                   onMouseLeave={() => onHover(i, false)}
+                  onClick={(e: any) => {
+                    const trashIcon = document.getElementById("trash" + i);
+                    const claimButton = document.getElementById("claim" + i);
+                    if ((trashIcon && trashIcon.contains(e.target)) || (claimButton && claimButton.contains(e.target)))
+                      return;
+                    let t: any;
+                    if (data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") t = NATIVE_CURRENCIES[chainId];
+                    else t = new Token(chainId, data.address, data.decimals);
+                    onCurrencySelection(Field.OUTPUT, t);
+                    setViewType(1);
+                  }}
                 >
                   <div className={`${fullOpen ? "min-w-[14px]" : "min-w-[70px]"} text-center`}>
                     {fullOpen ? (
-                      <div className="h-3.5 w-3.5">
+                      <div className={`h-3.5 w-3.5 ${fullOpen ? "block" : "hidden"}`}>
                         <TrashIcon
                           className={`h-full w-full cursor-pointer text-danger ${
                             !data.name.includes("_Tracker") ? "" : "hidden"
                           }`}
                           onClick={() => onArchive(data.address)}
+                          id={"trash" + i}
                         />
                       </div>
                     ) : (
@@ -373,6 +384,7 @@ const TokenList = ({
                         <div
                           onClick={() => onClaim(data.address)}
                           className="cursor-pointer transition hover:opacity-80"
+                          id={"claim" + i}
                         >
                           {claimSVG}
                         </div>

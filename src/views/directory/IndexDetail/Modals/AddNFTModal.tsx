@@ -121,9 +121,9 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
                 </div>
               </div>
               <div>
-                <div className="mt-6 mb-2 text-xl text-[#FFFFFFBF]">Index NFT&apos;s Available</div>
+                <div className="mb-2 mt-6 text-xl text-[#FFFFFFBF]">Index NFT&apos;s Available</div>
                 <div className="flex flex-col justify-between xmd:flex-row">
-                  <div className="mr-0 mb-5 min-h-[240px] flex-1 rounded border border-primary bg-[#B9B8B81A] px-3.5 py-3 xmd:mb-0 sm:mr-6">
+                  <div className="mb-5 mr-0 min-h-[240px] flex-1 rounded border border-primary bg-[#B9B8B81A] px-3.5 py-3 xmd:mb-0 sm:mr-6">
                     {userData.nftItems &&
                       userData.nftItems.map((nft) => (
                         <div
@@ -194,7 +194,7 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="absolute -top-2 -right-2 rounded-full bg-white p-2 dark:bg-zinc-900 sm:dark:bg-zinc-800"
+                className="absolute -right-2 -top-2 rounded-full bg-white p-2 dark:bg-zinc-900 sm:dark:bg-zinc-800"
               >
                 <span className="sr-only">Close</span>
                 <XMarkIcon className="h-6 w-6 dark:text-slate-400" />
@@ -221,15 +221,5 @@ const StyledPanel = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const StyledInput = styled.input`
-  width: 100%;
-  height: 55px;
-  padding: 16px 14px;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-radius: 6px;
-  color: white;
-  outline: none;
-`;
+
 export default AddNFTModal;

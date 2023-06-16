@@ -32,7 +32,7 @@ const ActivityDropdown = ({ value, setValue, counts }: { setValue?: any; value: 
 
   return (
     <StyledDropDown
-      className="portfolio-shadow relative z-10 flex h-[30px] w-full cursor-pointer items-center justify-center bg-[#D9D9D91A] text-sm text-[#FFFFFF80]"
+      className="primary-shadow relative z-10 flex h-[30px] w-full cursor-pointer items-center justify-center bg-[#D9D9D91A] text-sm text-[#FFFFFF80]"
       ref={dropRef}
       onClick={() => setOpen(!open)}
       open={open}

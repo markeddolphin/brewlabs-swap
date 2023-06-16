@@ -207,11 +207,11 @@ const Profile = ({ deployer }: { deployer: string }) => {
                 <div className="flex flex-1 justify-end">
                   <div className="ml-3 flex w-full max-w-fit flex-col items-end justify-end sm:ml-[30px] xl:max-w-[520px] xl:flex-row xl:items-center">
                     <StyledButton
-                      className="relative h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition hover:border-white hover:text-white xs:w-[200px] xl:flex"
+                      className="!h-8 !w-[140px] bg-[#B9B8B81A] font-roboto font-bold text-primary transition hover:border-white hover:text-white xs:!w-[200px] xl:flex"
                       type={"default"}
                     >
-                      <div className="flex items-center">
-                        <div className="mr-1.5 w-[150px] overflow-hidden text-ellipsis whitespace-nowrap xl:w-[170px]">
+                      <div className="flex items-center w-full px-2">
+                        <div className="mr-1.5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap ">
                           Follow & get notifications
                         </div>
                         <div className="scale-[125%]">{UserAddSVG}</div>
@@ -222,7 +222,7 @@ const Profile = ({ deployer }: { deployer: string }) => {
                     </StyledButton>
                     <div className="mr-4 mt-2 xl:mt-0" />
                     <StyledButton
-                      className="relative h-8 w-[140px] rounded-md border border-primary bg-[#B9B8B81A] font-roboto text-sm font-bold text-primary shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition hover:border-white hover:text-white xl:flex"
+                      className="!h-8 !w-[140px] bg-[#B9B8B81A] font-roboto font-bold text-primary hover:border-white hover:text-white xl:flex"
                       type={"default"}
                       onClick={onSharePortfolio}
                     >

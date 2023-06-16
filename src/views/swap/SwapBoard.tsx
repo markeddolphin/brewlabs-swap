@@ -48,7 +48,7 @@ export default function SwapBoard({ type = "swap", disableChainSelect = false })
     >
       <div
         className="tooltip absolute right-14 top-6 scale-75 cursor-pointer text-[rgb(75,85,99)]"
-        data-tip="Withdraw fees are sent to deployer address."
+        data-tip="No Brewlabs NFT found."
       >
         {NFTSVG}
       </div>

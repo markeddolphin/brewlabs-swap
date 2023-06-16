@@ -17,7 +17,7 @@ const DropDown = ({ value, setValue, data }: { setValue?: any; value: number; da
 
   return (
     <StyledDropDown
-      className="portfolio-shadow relative z-10 flex h-7 w-full cursor-pointer items-center bg-[#2a303b] pl-4 text-sm text-[#FFFFFFBF]"
+      className="primary-shadow relative z-10 flex h-7 w-full cursor-pointer items-center bg-[#2a303b] pl-4 text-sm text-[#FFFFFFBF]"
       ref={dropRef}
       onClick={() => setOpen(!open)}
       open={open}
