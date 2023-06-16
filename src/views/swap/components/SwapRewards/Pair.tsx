@@ -24,7 +24,9 @@ const Pair = ({ pair }) => {
       <img className="h-10 w-10 rounded-full" src={network.image} alt={network.name} />
       <div className="mx-2 flex items-center">
         <CurrencyLogo currency={currency0} size="39px" />
-        <CurrencyLogo currency={currency1} size="39px" style={{ marginLeft: "-15px" }} />
+        <div className="-ml-2">
+          <CurrencyLogo currency={currency1} size="39px" />
+        </div>
         <div className="ml-2">
           <div className="text-white">
             {currency0.symbol}-{currency1.symbol}

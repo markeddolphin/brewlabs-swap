@@ -29,7 +29,7 @@ export const useLiquidityPools = () => {
   useEffect(() => {
     (async () => {
       const value = await contract.pairsLength();
-      setPairsLength(value);
+      setPairsLength(value.toNumber());
     })();
   }, [contract]);
 
