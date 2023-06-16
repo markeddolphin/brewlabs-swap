@@ -7,11 +7,14 @@ import Pair from "./Pair";
 import StyledButton from "views/directory/StyledButton";
 import OutlinedButton from "../button/OutlinedButton";
 import { useClaim } from "hooks/swap/useClaim";
-import { JSBI, Token } from "@brewlabs/sdk";
+import { CurrencyAmount, JSBI, Token, TokenAmount } from "@brewlabs/sdk";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
 import { filterTokens } from "components/searchModal/filtering";
 import { useTokenBalancesWithLoadingIndicator } from "state/wallet/hooks";
 import { useLiquidityPools } from "@hooks/swap/useLiquidityPools";
+import useTokenMarketChart, { defaultMarketData } from "@hooks/useTokenMarketChart";
+import { usePendingLPRewards } from "@hooks/swap/usePendingLPRewards";
+import { useTokens } from "@hooks/Tokens";
 
 const SwapRewards = () => {
   const { chainId, account } = useActiveWeb3React();
@@ -25,10 +28,10 @@ const SwapRewards = () => {
    * pairs are initialized with hardcoded infos
    * they should be fetched from subgraph
    */
-
+  const tokenMarketData = useTokenMarketChart(chainId);
   const pairs = useLiquidityPools();
-
   const lpTokens = useMemo(() => pairs.map((pair) => new Token(chainId, pair.id, 18)), [chainId, pairs]);
+
   const [lpBalances] = useTokenBalancesWithLoadingIndicator(account, lpTokens);
 
   const inputFilter = useCallback(
@@ -37,15 +40,34 @@ const SwapRewards = () => {
     [criteria]
   );
 
-  const eligiblePairs = useMemo(() => {
+  const ownedPairs = useMemo(() => {
     if (!account || !pairs || !pairs.length) return [];
-    return pairs
-      .filter(
-        (pair) =>
-          pair.referrer === account || pair.tokenOwner === account || lpBalances[pair.id]?.greaterThan(JSBI.BigInt(0))
-      )
-      .filter(inputFilter);
+    return pairs.filter(
+      (pair) =>
+        pair.referrer === account || pair.tokenOwner === account || lpBalances[pair.id]?.greaterThan(JSBI.BigInt(0))
+    );
   }, [account, pairs]);
+
+  const pairTokenAddresses = useMemo(
+    () => [...new Set([].concat.apply([], ownedPairs.map((pair) => [pair.token0, pair.token1]) as ConcatArray<any>[]))],
+    [ownedPairs]
+  );
+  const pairTokens = useTokens(pairTokenAddresses);
+  const rewards = usePendingLPRewards(ownedPairs);
+  const lpRewardInUSD = useMemo(() => {
+    if (Object.keys(pairTokens ?? {}).length === 0) return 0;
+    return ownedPairs.reduce((sum, pair, index) => {
+      const { token0, token1 } = pair;
+      const { usd: token0Price } = tokenMarketData[token0?.toLowerCase()] || defaultMarketData;
+      const { usd: token1Price } = tokenMarketData[token1?.toLowerCase()] || defaultMarketData;
+      sum +=
+        Number(token0Price) * Number(new TokenAmount(pairTokens[token0], rewards[index]?.amount0 ?? 0).toExact()) +
+        Number(token1Price) * Number(new TokenAmount(pairTokens[token1], rewards[index]?.amount1 ?? 0).toExact());
+      return sum;
+    }, 0);
+  }, [ownedPairs, rewards, tokenMarketData, pairTokens]);
+
+  const eligiblePairs = useMemo(() => ownedPairs.filter(inputFilter), [ownedPairs]);
 
   const pairsOfReferrer = eligiblePairs.filter((pair) => pair.referrer === account);
   const pairsOfTokenOwner = eligiblePairs.filter((pair) => pair.tokenOwner === account);
@@ -99,7 +121,7 @@ const SwapRewards = () => {
             <div className="mr-2 scale-125 text-white">
               <InfoSVG />
             </div>
-            <div className="text-xs text-[#FFFFFF80]">$4.42 USD</div>
+            <div className="text-xs text-[#FFFFFF80]">${lpRewardInUSD.toFixed(2)} USD</div>
           </div>
         </div>
       </div>
@@ -116,7 +138,7 @@ const SwapRewards = () => {
         <SearchInput placeholder="Search token..." value={criteria} onChange={(e) => setCriteria(e.target.value)} />
       </div>
       {filteredPairs.map((pair, index) => (
-        <Pair pair={pair} key={index} />
+        <Pair pair={pair} key={index} marketData={tokenMarketData} />
       ))}
       <div className="mt-8">
         <OutlinedButton href="https://brewlabs.info/" className="mt-2" small>

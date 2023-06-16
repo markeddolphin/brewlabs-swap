@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { parseBytes32String } from "@ethersproject/strings";
-import { Currency, Token, currencyEquals, NATIVE_CURRENCIES } from "@brewlabs/sdk";
-import { useMemo } from "react";
+import { Currency, Token, currencyEquals, NATIVE_CURRENCIES, WNATIVE } from "@brewlabs/sdk";
+import { useEffect, useMemo, useState } from "react";
 import { arrayify } from "ethers/lib/utils";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
 import {
@@ -18,6 +18,7 @@ import { isAddress } from "utils";
 
 import { useBytes32TokenContract, useTokenContract } from "./useContract";
 import { filterTokens } from "components/searchModal/filtering";
+import { getBep20Contract } from "utils/contractHelpers";
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -205,4 +206,25 @@ export function useCurrency(currencyId: string | undefined): Currency | null | u
 
   const token = useToken(isBNB ? undefined : currencyId);
   return isBNB ? NATIVE_CURRENCIES[chainId] : token;
+}
+
+export function useTokens(tokenAddresses?: string[]): { [address: string]: Token } {
+  const { chainId } = useActiveWeb3React();
+  const [tokensInfo, setTokensInfo] = useState<{ [address: string]: Token }>();
+  useEffect(() => {
+    (async () => {
+      const tokenEntries = await Promise.all(
+        tokenAddresses.map(async (address) => {
+          const tokenContract = getBep20Contract(chainId, address);
+          const name = await tokenContract.name();
+          const symbol = await tokenContract.symbol();
+          const decimals = await tokenContract.decimals();
+          return [address, new Token(chainId, address, decimals, symbol, name)];
+        })
+      );
+      setTokensInfo(Object.fromEntries(tokenEntries));
+    })();
+  }, [JSON.stringify(tokenAddresses), chainId]);
+
+  return tokensInfo;
 }

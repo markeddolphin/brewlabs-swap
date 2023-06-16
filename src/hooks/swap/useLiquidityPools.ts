@@ -27,10 +27,12 @@ export const useLiquidityPools = () => {
   const [pairsLength, setPairsLength] = useState<number>(0);
 
   useEffect(() => {
-    (async () => {
-      const value = await contract.pairsLength();
-      setPairsLength(value.toNumber());
-    })();
+    if (contract) {
+      (async () => {
+        const value = await contract.pairsLength();
+        setPairsLength(value.toNumber());
+      })();
+    }
   }, [contract]);
 
   const outputOfPairs = useSingleContractMultipleData(

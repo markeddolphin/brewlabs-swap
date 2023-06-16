@@ -9,13 +9,22 @@ import { BrewlabsPair } from "config/constants/types";
 import { useClaim } from "hooks/swap/useClaim";
 import { useCurrency } from "hooks/Tokens";
 import { CurrencyLogo } from "components/logo";
+import { usePair } from "data/Reserves";
+import { defaultMarketData } from "@hooks/useTokenMarketChart";
 
-const Pair = ({ pair }) => {
-  const { token0, token1, volumeUSD } = pair;
+const Pair = ({ pair, marketData }) => {
+  const { token0, token1 } = pair;
   const currency0 = useCurrency(token0);
   const currency1 = useCurrency(token1);
-  const { claim } = useClaim();
+  const [pairState, pairContext] = usePair(currency0, currency1);
+  const { usd: token0Price } = marketData[token0?.toLowerCase()] || defaultMarketData;
+  const { usd: token1Price } = marketData[token1?.toLowerCase()] || defaultMarketData;
 
+  const volumeUSD =
+    Number(token0Price) * Number(pairContext?.reserve0.toExact() ?? "0") +
+    Number(token1Price) * Number(pairContext?.reserve1.toExact() ?? "0");
+  
+  const { claim } = useClaim();
   const { chainId } = useActiveWeb3React();
   const network = useMemo(() => NetworkOptions.filter((network) => network.id == chainId)[0], [chainId]);
 
@@ -31,7 +40,7 @@ const Pair = ({ pair }) => {
           <div className="text-white">
             {currency0.symbol}-{currency1.symbol}
           </div>
-          <div className="text-xs text-[#FFFFFF80]">Vol. ${volumeUSD?.toString() ?? 0} </div>
+          <div className="text-xs text-[#FFFFFF80]">Vol. ${volumeUSD?.toFixed(2) ?? 0} </div>
         </div>
       </div>
       <div className="relative mt-5 h-[36px] w-full xsm:mt-0 xsm:w-[110px]">
