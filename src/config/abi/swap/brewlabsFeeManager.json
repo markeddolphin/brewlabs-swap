@@ -2,8 +2,18 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "OwnershipTransferred",
     "type": "event"
@@ -11,8 +21,18 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "address", "name": "pair", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "referrer", "type": "address" }
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "referrer",
+        "type": "address"
+      }
     ],
     "name": "ReferrerUpdated",
     "type": "event"
@@ -20,10 +40,30 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "pair", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "token0Amount", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "token1Amount", "type": "uint256" }
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token0Amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "token1Amount",
+        "type": "uint256"
+      }
     ],
     "name": "RewardClaimed",
     "type": "event"
@@ -31,9 +71,24 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "address", "name": "pair", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "RewardDeposited",
     "type": "event"
@@ -41,21 +96,43 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "address", "name": "pair", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "tokenOwner", "type": "address" }
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "tokenOwner",
+        "type": "address"
+      }
     ],
     "name": "TokenOwnerUpdated",
     "type": "event"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "pair", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
     "name": "claim",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address[]", "name": "brewlabs_pairs", "type": "address[]" }],
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "brewlabs_pairs",
+        "type": "address[]"
+      }
+    ],
     "name": "claimAll",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -63,8 +140,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "token0", "type": "address" },
-      { "internalType": "address", "name": "token1", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "token0",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1",
+        "type": "address"
+      }
     ],
     "name": "createPool",
     "outputs": [],
@@ -72,42 +157,118 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "pair", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
     "name": "getFeeDistribution",
     "outputs": [
-      { "internalType": "uint256", "name": "totalFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "lpFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "brewlabsFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "tokenOwnerFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "stakingFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "referralFee", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "totalFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lpFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "brewlabsFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenOwnerFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "stakingFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "referralFee",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "pair", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
     "name": "getPoolFeInfo",
     "outputs": [
       {
         "components": [
-          { "internalType": "address", "name": "token0", "type": "address" },
-          { "internalType": "address", "name": "token1", "type": "address" },
-          { "internalType": "address", "name": "tokenOwner", "type": "address" },
-          { "internalType": "address", "name": "referrer", "type": "address" },
+          {
+            "internalType": "address",
+            "name": "token0",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "token1",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenOwner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "referrer",
+            "type": "address"
+          },
           {
             "components": [
-              { "internalType": "uint256", "name": "lpFee", "type": "uint256" },
-              { "internalType": "uint256", "name": "brewlabsFee", "type": "uint256" },
-              { "internalType": "uint256", "name": "tokenOwnerFee", "type": "uint256" },
-              { "internalType": "uint256", "name": "stakingFee", "type": "uint256" },
-              { "internalType": "uint256", "name": "referralFee", "type": "uint256" }
+              {
+                "internalType": "uint256",
+                "name": "lpFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "brewlabsFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "tokenOwnerFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "stakingFee",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "referralFee",
+                "type": "uint256"
+              }
             ],
             "internalType": "struct BrewlabsSwapFeeManager.FeeDistribution",
             "name": "feeDistribution",
             "type": "tuple"
           },
-          { "internalType": "uint256", "name": "timeToOpen", "type": "uint256" }
+          {
+            "internalType": "uint256",
+            "name": "timeToOpen",
+            "type": "uint256"
+          }
         ],
         "internalType": "struct BrewlabsSwapFeeManager.PoolFeInfo",
         "name": "",
@@ -118,21 +279,51 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "pair", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
     "name": "getReferrer",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "pair", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
     "name": "getTokenOwner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "_factory", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
+      }
+    ],
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -140,10 +331,26 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "from", "type": "address" },
-      { "internalType": "address", "name": "token0", "type": "address" },
-      { "internalType": "address", "name": "token1", "type": "address" },
-      { "internalType": "address", "name": "pair", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token0",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
     ],
     "name": "lpBurned",
     "outputs": [],
@@ -152,10 +359,26 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "to", "type": "address" },
-      { "internalType": "address", "name": "token0", "type": "address" },
-      { "internalType": "address", "name": "token1", "type": "address" },
-      { "internalType": "address", "name": "pair", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token0",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
     ],
     "name": "lpMinted",
     "outputs": [],
@@ -164,11 +387,31 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "from", "type": "address" },
-      { "internalType": "address", "name": "to", "type": "address" },
-      { "internalType": "address", "name": "token0", "type": "address" },
-      { "internalType": "address", "name": "token1", "type": "address" },
-      { "internalType": "address", "name": "pair", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token0",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token1",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
     ],
     "name": "lpTransferred",
     "outputs": [],
@@ -177,9 +420,21 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "address", "name": "token", "type": "address" },
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "notifyRewardAmount",
     "outputs": [],
@@ -189,42 +444,137 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "pairs",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "pairsLength",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "address", "name": "staker", "type": "address" }
-    ],
-    "name": "pendingLPRewards",
     "outputs": [
-      { "internalType": "uint256", "name": "amount0", "type": "uint256" },
-      { "internalType": "uint256", "name": "amount1", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
-  { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
     "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "bytes", "name": "feeDistribution", "type": "bytes" }
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "claimer",
+        "type": "address"
+      }
+    ],
+    "name": "pendingRewards",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount0",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount1",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct BrewlabsSwapFeeManager.RewardAmount",
+        "name": "lpRewards",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount0",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount1",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct BrewlabsSwapFeeManager.RewardAmount",
+        "name": "ownerRewards",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount0",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount1",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct BrewlabsSwapFeeManager.RewardAmount",
+        "name": "referralRewards",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "feeDistribution",
+        "type": "bytes"
+      }
     ],
     "name": "setFeeDistribution",
     "outputs": [],
@@ -233,8 +583,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "address", "name": "referrer", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "referrer",
+        "type": "address"
+      }
     ],
     "name": "setReferrer",
     "outputs": [],
@@ -243,8 +601,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "uint256", "name": "time", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "time",
+        "type": "uint256"
+      }
     ],
     "name": "setTime2OpenPool",
     "outputs": [],
@@ -253,8 +619,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "pair", "type": "address" },
-      { "internalType": "address", "name": "tokenOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenOwner",
+        "type": "address"
+      }
     ],
     "name": "setTokenOwner",
     "outputs": [],
@@ -262,7 +636,13 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",

@@ -1,10 +1,10 @@
+import { useCallback } from "react";
 import useActiveWeb3React from "@hooks/useActiveWeb3React";
 import { useFarmFactoryContract } from "@hooks/useContract";
-import { useCallback } from "react";
 import { calculateGasMargin } from "utils";
 import { getNetworkGasPrice } from "utils/getGasPrice";
 
-export const useFarmFactory = (chainId, performanceFee) => {
+export const useFactory = (chainId, performanceFee) => {
   const { library } = useActiveWeb3React();
   const factoryContract = useFarmFactoryContract(chainId);
 

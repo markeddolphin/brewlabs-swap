@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext } from "react";
 
+import contracts from "config/constants/contracts";
 import { DashboardContext } from "contexts/DashboardContext";
 import { useActiveChainId } from "@hooks/useActiveChainId";
 import { isAddress } from "utils";
@@ -15,12 +16,13 @@ const SelectToken = ({ setStep, router, setRouter, lpAddress, setLpAddress, lpIn
   const { chainId } = useActiveChainId();
   const { tokenList: supportedTokens }: any = useContext(DashboardContext);
 
+  const isSupportedChain = Object.keys(contracts.farmFactory).includes(chainId.toString());
   const token0Address = isAddress(lpInfo?.pair?.token0.address);
   const token1Address = isAddress(lpInfo?.pair?.token1.address);
   const notSupported =
     router?.factory?.toLowerCase() !== lpInfo?.pair?.factory?.toLowerCase() ||
     supportedTokens
-      .filter((t) => t.chainId === chainId)
+      .filter((t) => t.chainId === chainId && t.address)
       .filter(
         (t) =>
           t.address.toLowerCase() === token0Address?.toLowerCase() ||
@@ -110,9 +112,9 @@ const SelectToken = ({ setStep, router, setRouter, lpAddress, setLpAddress, lpIn
           onClick={() => {
             setStep(2);
           }}
-          disabled={!lpInfo?.pair || notSupported}
+          disabled={!lpInfo?.pair || notSupported || !isSupportedChain}
         >
-          Next
+          {isSupportedChain ? "Next" : "Not support current chain"}
         </StyledButton>
       </div>
     </div>

@@ -1,23 +1,63 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
+import { ethers } from "ethers";
 import { AnimatePresence, motion } from "framer-motion";
+import { useContext, useState } from "react";
+import { Oval } from "react-loader-spinner";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { chevronLeftSVG, warningCircleSVG } from "components/dashboard/assets/svgs";
 import LogoIcon from "components/LogoIcon";
+import { DashboardContext } from "contexts/DashboardContext";
+import { getNativeSybmol, handleWalletError } from "lib/bridge/helpers";
+import { useAppDispatch } from "state";
+import { setIndexesPublicData } from "state/indexes";
+import { DeserializedIndex } from "state/indexes/types";
+import { getIndexName } from "utils/functions";
 
 import StyledButton from "../../StyledButton";
-import { useState } from "react";
+import useIndexImpl from "../hooks/useIndexImpl";
 
-const UpdateFeeModal = ({ open, setOpen, name }: { open: boolean; setOpen: any; name: string }) => {
-  const [address, setAddress] = useState("");
+const UpdateFeeModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; data: DeserializedIndex }) => {
+  const dispatch = useAppDispatch();
+
+  const { pending, setPending }: any = useContext(DashboardContext);
+  const { onUpdateFeeAddress } = useIndexImpl(data.pid, data.address, data.performanceFee);
+
+  const [feeAddress, setFeeAddress] = useState("");
+
+  const showError = (errorMsg: string) => {
+    if (errorMsg) toast.error(errorMsg);
+  };
+
+  const handleUpdateFeeAddress = async () => {
+    if (pending) return;
+    if (!ethers.utils.isAddress(feeAddress) || feeAddress === ethers.constants.AddressZero) {
+      toast.error("Invalid fee address");
+    }
+
+    setPending(true);
+    try {
+      const tx = await onUpdateFeeAddress(feeAddress);
+
+      dispatch(setIndexesPublicData([{ pid: data.pid, feeWallet: feeAddress }]));
+      toast.success("Fee wallet was updated");
+
+      setOpen(false);
+    } catch (e) {
+      console.log(e);
+      handleWalletError(e, showError, getNativeSybmol(data.chainId));
+    }
+    setPending(false);
+  };
   return (
     <AnimatePresence exitBeforeEnter>
       <Dialog
         open={open}
         className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
-        onClose={() => setOpen(false)}
+        onClose={() => {}}
       >
         <div className="flex min-h-full items-center justify-center p-4 ">
           <motion.div
@@ -61,33 +101,55 @@ const UpdateFeeModal = ({ open, setOpen, name }: { open: boolean; setOpen: any; 
               <div className="mx-auto w-full max-w-[480px]">
                 <div className="mt-3 flex items-center justify-between">
                   <div className="text-lg text-[#FFFFFFBF]">Current fee address</div>
-                  <div className="text-sm text-[#FFFFFF80]">{name}</div>
+                  <div className="text-sm text-[#FFFFFF80]">
+                    {data.name !== "" ? data.name : getIndexName(data.tokens)}
+                  </div>
                 </div>
-                <div className="mt-2 text-sm">0x...</div>
+                <div className="mt-2 text-sm">{data.feeWallet}</div>
                 <div className="mt-3 text-lg text-[#FFFFFFBF]">New fee address</div>
-                <StyledInput value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x..." />
+                <StyledInput value={feeAddress} onChange={(e) => setFeeAddress(e.target.value)} placeholder="0x..." />
                 <div className="mx-auto mt-2.5 flex w-full max-w-[360px] items-center justify-between text-sm text-[#FFFFFF80]">
                   <div className="flex items-center">
                     <div
                       className="tooltip"
                       data-tip="Fee percentage charged to users on deposit sent to your nominated address."
                     >
-                      <div className="mr-2 scale-125 cursor-pointer text-[#3F3F46]">{warningCircleSVG}</div>
+                      <div className="mr-2 scale-125 cursor-pointer text-tailwind">{warningCircleSVG}</div>
                     </div>
-                    <div>Deposit Fee 0.25%</div>
+                    <div>Deposit Fee {data.depositFee ?? 0.25}%</div>
                   </div>
                   <div className="flex items-center">
                     <div
                       className="tooltip"
                       data-tip="Fee percentage charged to users on withdrawal in profit sent to your nominated address."
                     >
-                      <div className="mr-2 scale-125 cursor-pointer text-[#3F3F46]">{warningCircleSVG}</div>
+                      <div className="mr-2 scale-125 cursor-pointer text-tailwind">{warningCircleSVG}</div>
                     </div>
-                    <div>Commission Fee 1.00%</div>
+                    <div>Commission Fee {data.commissionFee ?? 1}%</div>
                   </div>
                 </div>
                 <div className="mt-3.5 h-12">
-                  <StyledButton type="quaternary">Update fee address</StyledButton>
+                  <StyledButton
+                    type="quaternary"
+                    onClick={handleUpdateFeeAddress}
+                    disabled={
+                      pending || !ethers.utils.isAddress(feeAddress) || feeAddress === ethers.constants.AddressZero
+                    }
+                  >
+                    Update fee address
+                    {pending && (
+                      <div className="absolute right-2 top-0 flex h-full items-center">
+                        <Oval
+                          width={21}
+                          height={21}
+                          color={"white"}
+                          secondaryColor="black"
+                          strokeWidth={3}
+                          strokeWidthSecondary={3}
+                        />
+                      </div>
+                    )}
+                  </StyledButton>
                 </div>
               </div>
               <button

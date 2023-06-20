@@ -67,6 +67,13 @@ export const navigationData = [
     icon: "ArrowDownOnSquareIcon",
     svg: DeployerSVG,
   },
+  {
+    name: "NFT",
+    href: "/nft",
+    external: false,
+    // coming: true,
+    icon: "ShoppingBagIcon",
+  },
 ] as NavigationItem[];
 
 export const navigationExtraData = [

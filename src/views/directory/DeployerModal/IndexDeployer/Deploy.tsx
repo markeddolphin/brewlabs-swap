@@ -1,35 +1,117 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useState } from "react";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 import styled from "styled-components";
-import StyledButton from "../../StyledButton";
-import ChainSelect from "views/swap/components/ChainSelect";
-import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+
 import { checkCircleSVG, InfoSVG, MinusSVG, PlusSVG, UploadSVG } from "components/dashboard/assets/svgs";
+import IndexLogo from "@components/logo/IndexLogo";
+import LoadingText from "@components/LoadingText";
 
-const Deploy = ({ step, setStep, setOpen }) => {
-  const [contractAddress, setContractAddress] = useState("");
-  const [tokenAddress, setTokenAddress] = useState(null);
-  const [visibleType, setVisibleType] = useState("public");
+import IndexFactoryAbi from "config/abi/indexes/factory.json";
+import { DashboardContext } from "contexts/DashboardContext";
+import { useActiveChainId } from "@hooks/useActiveChainId";
+import { useTokenApprove } from "@hooks/useApprove";
+import { getExplorerLink, getNativeSybmol, handleWalletError } from "lib/bridge/helpers";
+import { useIndexFactory } from "state/deploy/hooks";
+import { getBep20Contract } from "utils/contractHelpers";
+import { getChainLogo, getExplorerLogo, getIndexName } from "utils/functions";
+
+import StyledButton from "../../StyledButton";
+
+import { useFactory } from "./hooks";
+import StyledInput from "@components/StyledInput";
+
+const Deploy = ({ step, setStep, setOpen, tokens }) => {
+  const { chainId } = useActiveChainId();
+  const { address: account } = useAccount();
+  const { pending, setPending }: any = useContext(DashboardContext);
+
+  const factory = useIndexFactory(chainId);
+  const { onCreate } = useFactory(chainId, factory.payingToken.isNative ? factory.serviceFee : "0");
+  const { onApprove } = useTokenApprove();
+
   const [name, setName] = useState("");
-  const [commissionWallet, setCommissionWallet] = useState("");
+  const [indexAddr, setIndexAddr] = useState("");
+  const [depositFee, setDepositFee] = useState(0);
+  const [commissionFee, setCommissionFee] = useState(0);
+  const [commissionWallet, setCommissionWallet] = useState<string | undefined>();
+  const [visibleType, setVisibleType] = useState(true);
 
-  useEffect(() => {
-    if (contractAddress.length) setTokenAddress("0x330518cc95c92881bCaC1526185a514283A5584D");
-    else setTokenAddress(null);
-  }, [contractAddress]);
+  const showError = (errorMsg: string) => {
+    if (errorMsg) toast.error(errorMsg);
+  };
 
-  useEffect(() => {
-    if (step === 3) {
-      setTimeout(() => {
-        setStep(4);
-      }, 5000);
+  const handleDeploy = async () => {
+    if (!factory) {
+      toast.error("Not supported current chain");
+      return;
     }
-  }, [step]);
+
+    if (!ethers.utils.isAddress(commissionWallet) && commissionWallet) {
+      toast.error("Invalid commission wallet");
+      return;
+    }
+
+    if (name.length > 25) {
+      toast.error("Index name cannot exceed 25 characters");
+      return;
+    }
+
+    setStep(3);
+    setPending(true);
+
+    try {
+      if (factory.payingToken.isToken && +factory.serviceFee > 0) {
+        const payingToken = getBep20Contract(chainId, factory.payingToken.address);
+        const allowance = await payingToken.allowance(account, factory.address);
+
+        // approve paying token for deployment
+        if (
+          factory.payingToken.isToken &&
+          +factory.serviceFee > 0 &&
+          allowance.lt(ethers.BigNumber.from(factory.serviceFee))
+        ) {
+          await onApprove(factory.payingToken.address, factory.address);
+        }
+      }
+
+      // deploy farm contract
+      const tx = await onCreate(
+        name,
+        tokens.map((t) => t.address),
+        [depositFee, commissionFee],
+        commissionWallet ?? account,
+        !visibleType
+      );
+
+      const iface = new ethers.utils.Interface(IndexFactoryAbi);
+      for (let i = 0; i < tx.logs.length; i++) {
+        try {
+          const log = iface.parseLog(tx.logs[i]);
+          if (log.name === "IndexCreated") {
+            setIndexAddr(log.args.index);
+            break;
+          }
+        } catch (e) {}
+      }
+
+      setStep(4);
+    } catch (e) {
+      console.log(e);
+      handleWalletError(e, showError, getNativeSybmol(chainId));
+      setStep(2);
+    }
+
+    setPending(false);
+  };
 
   const makePendingText = () => {
     return (
       <div className="flex w-28 items-center justify-between rounded-lg border border-[#FFFFFF80] bg-[#B9B8B81A] px-2 py-1 text-sm">
-        <div className="text-[#FFFFFFBF]">{step === 2 ? "Pending" : step === 5 ? "Deployed" : "Deploying"}</div>
-        {step === 5 ? (
+        <div className="text-[#FFFFFFBF]">{step === 2 ? "Pending" : step === 4 ? "Deployed" : "Deploying"}</div>
+        {step === 4 ? (
           <div className="ml-3 scale-50 text-primary">{checkCircleSVG}</div>
         ) : (
           <div className="text-primary">{UploadSVG}</div>
@@ -37,123 +119,201 @@ const Deploy = ({ step, setStep, setOpen }) => {
       </div>
     );
   };
+
   return (
     <div className="font-roboto text-white">
       <div className="mt-4 flex items-center justify-between rounded-[30px] border border-primary px-4 py-3">
-        <div className="mx-auto flex w-full max-w-[280px] items-center justify-between sm:mx-0">
-          <CircleImage className="h-8 w-8" />
+        <div className="mx-auto flex w-fit items-center justify-start overflow-hidden text-ellipsis whitespace-nowrap sm:mx-0">
+          <img src={getChainLogo(chainId)} alt={""} className="h-7 w-7" />
           <div className="scale-50 text-primary">{checkCircleSVG}</div>
-          <div className="flex items-center">
-            <CircleImage className="h-8 w-8" />
-            <div className="-ml-2 mr-2">
-              <CircleImage className="h-8 w-8" />
-            </div>
-            <div>WOM-CAKE Index</div>
+          <div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
+            <IndexLogo type="line" tokens={tokens} classNames="mx-3" />
+            <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{getIndexName(tokens)}</div>
           </div>
         </div>
         <div className="hidden sm:block">{makePendingText()}</div>
       </div>
       <div className=" mb-5 mt-3 flex w-full justify-end sm:hidden">{makePendingText()}</div>
 
-      {step === 3 ? (
+      {step === 2 && (
         <div className="mt-4  text-sm font-semibold text-[#FFFFFF80]">
           <div className="ml-4 ">
             <div className="mb-1">Set index name</div>
-            <StyledInput value={name} onChange={(e) => setName(e.target.value)} />
+            <StyledInput value={name} setValue={setName} placeholder={getIndexName(tokens)} className="w-full" />
           </div>
 
-          <div className="ml-4 mt-3.5">
-            <div className="flex w-full items-center justify-between">
-              <div className="mb-1">Set commission wallet</div>
+          <div className="mt-3.5">
+            <div className="mb-1 flex w-full items-end justify-between">
               <div className="flex items-center">
-                <div>Set commission fee</div>
-                <div className="mx-2 scale-150 cursor-pointer text-[#3F3F46]">{PlusSVG}</div>
-                <div>1.00%</div>
-                <div className="ml-2 scale-150 cursor-pointer text-[#3F3F46]">{MinusSVG}</div>
+                <div className="tooltip" data-tip="This wallet can be changed at a later date.">
+                  <div className="-mt-0.5 mr-1.5 scale-125 text-white">
+                    <InfoSVG />
+                  </div>
+                </div>
+                <div>Set deposit and commission fee wallet</div>
               </div>
             </div>
-            <StyledInput value={commissionWallet} onChange={(e) => setCommissionWallet(e.target.value)} />
+            <StyledInput
+              value={commissionWallet}
+              setValue={setCommissionWallet}
+              placeholder="Default is your connected wallet"
+              className="ml-4 w-[calc(100%-16px)]"
+            />
+          </div>
+          <div className="mt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div
+                  className="tooltip"
+                  data-tip="This fee is charged when a user enters your index. This fee is sent to your nominated address. Your deposit fee is combined with Brewlabs fixed fee's of 0.25% on every index"
+                >
+                  <div className="-mt-0.5 mr-1.5 scale-125 text-white">
+                    <InfoSVG />
+                  </div>
+                </div>
+                <div>Set deposit fee</div>
+              </div>
+              <div className="flex items-center">
+                <div
+                  className="mx-2 scale-150 cursor-pointer text-tailwind hover:text-[#87878a]"
+                  onClick={() => setDepositFee(Math.min(factory ? factory.depositFeeLimit : 0.25, depositFee + 0.01))}
+                >
+                  {PlusSVG}
+                </div>
+                <div>{depositFee.toFixed(2)}%</div>
+                <div
+                  className="ml-2 scale-150 cursor-pointer text-tailwind hover:text-[#87878a]"
+                  onClick={() => setDepositFee(Math.max(0, depositFee - 0.01))}
+                >
+                  {MinusSVG}
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center">
+                <div
+                  className="tooltip"
+                  data-tip="This fee is charged when a user exits your index in a profitable position."
+                >
+                  <div className="-mt-0.5 mr-1.5 scale-125 text-white">
+                    <InfoSVG />
+                  </div>
+                </div>
+                <div>Set commission fee</div>
+              </div>
+              <div className="flex items-center">
+                <div
+                  className="mx-2 scale-150 cursor-pointer text-tailwind hover:text-[#87878a]"
+                  onClick={() =>
+                    setCommissionFee(Math.min(factory ? factory.commissionFeeLimit : 1, commissionFee + 0.01))
+                  }
+                >
+                  {PlusSVG}
+                </div>
+                <div>{commissionFee.toFixed(2)}%</div>
+                <div
+                  className="ml-2 scale-150 cursor-pointer text-tailwind hover:text-[#87878a]"
+                  onClick={() => setCommissionFee(Math.max(0, commissionFee - 0.01))}
+                >
+                  {MinusSVG}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="mt-3">
             <div className="flex items-center">
-              <div className="-mt-0.5 mr-1.5 scale-125 text-white">
-                <InfoSVG />
+              <div className="tooltip" data-tip="Display your index to other users.">
+                <div className="-mt-0.5 mr-1.5 scale-125 text-white">
+                  <InfoSVG />
+                </div>
               </div>
               <div>Make my index visible to others?</div>
             </div>
-            <div className="ml-4 mt-2 flex">
+            <div className="ml-4 mt-4 flex">
               <StyledButton
                 type={"default"}
                 className={`${
-                  visibleType === "public"
-                    ? "border-primary text-primary shadow-[0px_4px_4px_#00000040]"
-                    : "border-[#FFFFFF40] text-[#FFFFFF80]"
-                } !h-9 !w-36 border bg-[#B9B8B81A] font-brand !text-base font-normal`}
-                onClick={() => setVisibleType("public")}
+                  visibleType ? "text-primary" : "text-[#FFFFFF80]"
+                } !h-9 !w-36 bg-[#B9B8B81A] font-brand !text-base font-normal`}
+                onClick={() => setVisibleType(true)}
               >
                 Public
-                {visibleType === "public" ? <div className="absolute left-3 scale-[40%]">{checkCircleSVG}</div> : ""}
+                {visibleType && <div className="absolute left-3 scale-[40%]">{checkCircleSVG}</div>}
               </StyledButton>
               <div className="mr-2" />
               <StyledButton
                 type={"default"}
                 className={`${
-                  visibleType === "private"
-                    ? "border-primary text-primary shadow-[0px_4px_4px_#00000040]"
-                    : "border-[#FFFFFF40] text-[#FFFFFF80]"
-                } !h-9 !w-36 border bg-[#B9B8B81A] font-brand !text-base font-normal`}
-                onClick={() => setVisibleType("private")}
+                  !visibleType ? "text-primary" : "text-[#FFFFFF80]"
+                } !h-9 !w-36 bg-[#B9B8B81A] font-brand !text-base font-normal`}
+                onClick={() => setVisibleType(false)}
               >
                 Private
-                {visibleType === "private" ? <div className="absolute left-3 scale-[40%]">{checkCircleSVG}</div> : ""}
+                {!visibleType && <div className="absolute left-3 scale-[40%]">{checkCircleSVG}</div>}
               </StyledButton>
             </div>
           </div>
         </div>
-      ) : (
-        ""
       )}
 
-      {step === 4 ? (
+      {step === 4 && (
         <div className="my-5 rounded-[30px] border border-[#FFFFFF80] px-8 py-4 font-roboto text-sm font-semibold text-[#FFFFFF80]">
           <div className="text-[#FFFFFFBF]">Summary</div>
           <div className="mt-4 flex flex-col items-center justify-between xsm:mt-2 xsm:flex-row ">
             <div>Index contract address</div>
             <div className="flex w-full max-w-[140px] items-center">
-              <CircleImage className="mr-2 h-5 w-5" />
-              <div>0x8793192319....</div>
+              <img src={getExplorerLogo(chainId)} className="mr-1 h-4 w-4" alt="explorer" />
+              <a
+                href={getExplorerLink(chainId, "address", indexAddr)}
+                target="_blank"
+                rel="noreferrer"
+                className="overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                {indexAddr}
+              </a>
             </div>
           </div>
           <div className="mt-4 flex flex-col items-center justify-between xsm:mt-1 xsm:flex-row xsm:items-start">
             <div>Index name</div>
-            <div className=" w-full max-w-[140px] pl-7">{name}</div>
+            <div className=" w-full max-w-[140px] overflow-hidden text-ellipsis whitespace-nowrap pl-7">
+              {name === "" ? getIndexName(tokens) : name}
+            </div>
           </div>
           <div className="mt-4 flex flex-col items-center justify-between xsm:mt-2 xsm:flex-row ">
             <div>Commission wallet</div>
             <div className="flex w-full max-w-[140px] items-center">
-              <CircleImage className="mr-2 h-5 w-5" />
-              <div>{commissionWallet}</div>
+              <img src={getExplorerLogo(chainId)} className="mr-1 h-4 w-4" alt="explorer" />
+              <a
+                href={getExplorerLink(chainId, "address", commissionWallet ?? account)}
+                target="_blank"
+                rel="noreferrer"
+                className="overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                {commissionWallet ?? account}
+              </a>
             </div>
           </div>
           <div className="mt-4 flex flex-col items-center justify-between xsm:mt-1 xsm:flex-row xsm:items-start">
             <div>Commission fee</div>
-            <div className=" w-full max-w-[140px] pl-7">0.05%</div>
+            <div className=" w-full max-w-[140px] pl-7">{commissionFee.toFixed(2)}%</div>
           </div>
           <div className="mt-4 flex flex-col items-center justify-between xsm:mt-1 xsm:flex-row xsm:items-start">
             <div>Visibility</div>
-            <div className=" w-full max-w-[140px] pl-7">Public</div>
+            <div className=" w-full max-w-[140px] pl-7">{visibleType ? "Public" : "Priveate"}</div>
           </div>
         </div>
-      ) : (
-        ""
       )}
 
       <div className="mb-5 mt-4 flex items-center justify-between text-[#FFFFFF80]">
         {step === 2 ? (
-          <div className="text-sm font-semibold text-[#FFFFFF40]">Waiting for deploy...</div>
+          <div className="text-sm font-semibold text-[#FFFFFF40]">
+            <LoadingText text={"Waiting for deploy"} />
+          </div>
         ) : step === 3 ? (
-          <div className="text-sm font-semibold text-[#2FD35DBF]">Deploying smart contract...</div>
+          <div className="text-sm font-semibold text-[#2FD35DBF]">
+            <LoadingText text={"Deploying smart contract"} />
+          </div>
         ) : step === 4 ? (
           <div className="text-sm font-semibold text-[#2FD35DBF]">Complete</div>
         ) : (
@@ -166,10 +326,10 @@ const Deploy = ({ step, setStep, setOpen }) => {
         </div>
       </div>
 
-      {step !== 5 ? <div className="mb-5 h-[1px] w-full bg-[#FFFFFF80]" /> : ""}
+      <div className="mb-5 h-[1px] w-full bg-[#FFFFFF80]" />
       <div className="mx-auto h-12 max-w-[500px]">
         {step === 2 ? (
-          <StyledButton type="primary" onClick={() => setStep(3)}>
+          <StyledButton type="primary" onClick={handleDeploy} disabled={pending || !factory}>
             Deploy
           </StyledButton>
         ) : step === 4 ? (
@@ -183,24 +343,5 @@ const Deploy = ({ step, setStep, setOpen }) => {
     </div>
   );
 };
-
-const CircleImage = styled.div`
-  background: #d9d9d9;
-  border: 1px solid #000000;
-  border-radius: 50%;
-`;
-
-const StyledInput = styled.input`
-  height: 40px;
-  font-size: 14px;
-  width: 100%;
-  flex: 1;
-  color: white;
-  outline: none;
-  background: rgba(185, 184, 184, 0.1);
-  border: 0.5px solid rgba(255, 255, 255, 0.25);
-  padding: 16px 14px;
-  border-radius: 6px;
-`;
 
 export default Deploy;

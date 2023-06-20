@@ -1,10 +1,10 @@
 import { ReactElement, useState } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
 import styled from "styled-components";
 import { useActiveChainId } from "hooks/useActiveChainId";
 import { TransactionFailedSVG } from "components/dashboard/assets/svgs";
+import { getExplorerLink } from "lib/bridge/helpers";
 
 type ModalProps = {
   open: boolean;
@@ -13,10 +13,6 @@ type ModalProps = {
   tx: string;
 };
 
-const SCAN_URL = {
-  1: "https://etherscan.io",
-  56: "https://bscscan.com",
-};
 const ConfirmationModal = ({ open, setOpen, type, tx }: ModalProps): ReactElement | null => {
   const { chainId } = useActiveChainId();
   return (
@@ -24,7 +20,7 @@ const ConfirmationModal = ({ open, setOpen, type, tx }: ModalProps): ReactElemen
       {open && (
         <Dialog
           open={open}
-          onClose={() => setOpen(false)}
+          onClose={() => {}}
           className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
         >
           <div className="flex min-h-full items-start justify-end p-4 text-center">
@@ -55,7 +51,7 @@ const ConfirmationModal = ({ open, setOpen, type, tx }: ModalProps): ReactElemen
                 <div
                   className={`flex w-full items-center justify-between overflow-hidden rounded-t-lg ${
                     type === "failed" ? "bg-danger" : "bg-brand"
-                  } py-1.5 px-4`}
+                  } px-4 py-1.5`}
                 >
                   {type === "confirming" ? (
                     <img src={"/images/brewlabs-bubbling-seemless.gif"} alt={""} className="w-[70px]" />
@@ -72,11 +68,11 @@ const ConfirmationModal = ({ open, setOpen, type, tx }: ModalProps): ReactElemen
                       : "Transaction Confirmed"}
                   </div>
                 </div>
-                <div className="border-t-0 flex overflow-hidden rounded-b-lg border border-[#FFFFFF80] bg-[rgb(38,44,55)] font-roboto font-semibold">
+                <div className="flex overflow-hidden rounded-b-lg border border-t-0 border-[#FFFFFF80] bg-[rgb(38,44,55)] font-roboto font-semibold">
                   <a
                     className="flex w-[50%] cursor-pointer items-center justify-center border-r  border-[FFFFFF80] py-2 text-white transition hover:bg-[rgb(61,66,76)]"
                     target={"_blank"}
-                    href={`${SCAN_URL[chainId]}/tx/${tx}`}
+                    href={getExplorerLink(chainId, "transaction", tx)}
                     rel="noreferrer"
                   >
                     <img src={"/images/explorer/etherscan.png"} alt={""} className="mr-2 w-4" />

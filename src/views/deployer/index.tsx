@@ -36,7 +36,7 @@ const Deployer = ({ page }: { page: number }) => {
     chainId: 0,
   });
   const [selectPoolDetail, setSelectPoolDetail] = useState(false);
-  const [status, setStatus] = useState("new");
+  const [status, setStatus] = useState("active");
 
   const { pools, dataFetched } = usePools();
   const { data: farms } = useFarms();
@@ -120,7 +120,7 @@ const Deployer = ({ page }: { page: number }) => {
             (t) => t.name.toLowerCase().includes(lowercaseQuery) || t.symbol.toLowerCase().includes(lowercaseQuery)
           ).length
       )
-      .filter((data: any) => data.type === 2);
+      .filter((data: any) => data.type === curFilter);
   }
   chosenPools = sortPools(filterPoolsByStatus(chosenPools, currentBlocks, status));
 

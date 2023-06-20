@@ -5,6 +5,11 @@ const useWalletTokens = (walletAddress: string, chain: string) => {
   const [tokens, setTokens] = useState([]);
 
   const fetchTokens = useCallback(async () => {
+    if (!chain) {
+      setTokens([]);
+      return;
+    }
+
     const res = await axios.get(`https://deep-index.moralis.io/api/v2/${walletAddress}/erc20?chain=${chain}`, {
       headers: {
         "Content-Type": "application/json",

@@ -1,28 +1,24 @@
 import { useMemo } from "react";
 import useActiveWeb3React from "hooks/useActiveWeb3React";
 
-import { ChevronDownSVG } from "components/dashboard/assets/svgs";
+import { ChevronCircleDownSVG, InfoSVG } from "components/dashboard/assets/svgs";
 import "react-tooltip/dist/react-tooltip.css";
 import StyledButton from "views/directory/StyledButton";
 import { NetworkOptions } from "config/constants/networks";
-import { BrewlabsPair } from "config/constants/types";
 import { useClaim } from "hooks/swap/useClaim";
 import { useCurrency } from "hooks/Tokens";
 import { CurrencyLogo } from "components/logo";
-import { usePair } from "data/Reserves";
-import { defaultMarketData } from "@hooks/useTokenMarketChart";
+import { rewardInUSD } from ".";
 
-const Pair = ({ pair, marketData }) => {
+const Pair = ({ pair, token0Price, token1Price, reward, pairDayData }) => {
   const { token0, token1 } = pair;
   const currency0 = useCurrency(token0);
   const currency1 = useCurrency(token1);
-  const [pairState, pairContext] = usePair(currency0, currency1);
-  const { usd: token0Price } = marketData[token0?.toLowerCase()] || defaultMarketData;
-  const { usd: token1Price } = marketData[token1?.toLowerCase()] || defaultMarketData;
 
   const volumeUSD =
-    Number(token0Price) * Number(pairContext?.reserve0.toExact() ?? "0") +
-    Number(token1Price) * Number(pairContext?.reserve1.toExact() ?? "0");
+    Number(token0Price) * Number(pairDayData?.dailyVolumeToken0 ?? "0") +
+    Number(token1Price) * Number(pairDayData?.dailyVolumeToken1 ?? "0");
+  const rewardUSD = rewardInUSD(currency0, currency1, token0Price, token1Price, reward);
   
   const { claim } = useClaim();
   const { chainId } = useActiveWeb3React();
@@ -51,8 +47,14 @@ const Pair = ({ pair, marketData }) => {
           }}
         >
           <div className="text-xs leading-none">Harvest</div>
-          <div className="absolute right-2 scale-125 text-[#EEBB19]">{ChevronDownSVG}</div>
+          <div className="absolute right-2 scale-125 text-[#EEBB19]">{ChevronCircleDownSVG}</div>
         </StyledButton>
+        <div className="absolute -bottom-5 left-2 flex items-center">
+            <div className="mr-2 scale-125 text-white">
+              <InfoSVG />
+            </div>
+            <div className="text-xs text-[#FFFFFF80]">${rewardUSD.toFixed(4)} USD</div>
+          </div>
       </div>
     </div>
   );

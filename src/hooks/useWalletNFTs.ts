@@ -5,6 +5,7 @@ import multicall from "utils/multicall";
 import NFTABI from "config/abi/NFTABI.json";
 import { AnkrProvider } from "@ankr.com/ankr.js";
 import { useSlowRefreshEffect } from "./useRefreshEffect";
+import { UNMARSHAL_API_KEYS } from "config";
 
 const useWalletNFTs = (account: string) => {
   const [bscNFTs, setBSCNFTs] = useState([]);
@@ -31,20 +32,26 @@ const useWalletNFTs = (account: string) => {
     try {
       let nfts = [],
         result,
-        offset = 0;
+        offset = 0,
+        apiKeyIndex = 0;
       do {
         const query = new URLSearchParams({
           offset: offset.toString(),
           pageSize: "100",
-          auth_key: "5yA1HYPCmf4xpXjZQMOAa5BJPnupBs45eLE3D7O1",
+          auth_key: UNMARSHAL_API_KEYS[apiKeyIndex],
         }).toString();
 
         const address = account;
         const chain = "bsc";
-        const resp = await fetch(`https://api.unmarshal.com/v3/${chain}/address/${address}/nft-assets?${query}`, {
+        let resp;
+        resp = await fetch(`https://api.unmarshal.com/v3/${chain}/address/${address}/nft-assets?${query}`, {
           method: "GET",
         });
-
+        if (resp.status === 429) {
+          apiKeyIndex++;
+          if (apiKeyIndex === UNMARSHAL_API_KEYS.length) break;
+          continue;
+        }
         result = await resp.json();
         if (!result.nft_assets) break;
         nfts = [...nfts, ...result.nft_assets];

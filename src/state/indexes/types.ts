@@ -6,9 +6,16 @@ interface IndexConfigBaseProps {
   pid: number;
   chainId: ChainId;
   address: string;
-  nft: string;
+  name?: string;
+  category?: number;
+  nft?: string;
+  indexNft?: string;
+  deployerNft?: string;
+  deployerNftId?: number;
   numTokens: number;
-  fee: string;
+  fee?: number;
+  depositFee: string;
+  commissionFee: string;
   createdAt: string;
   sortOrder?: number;
   version?: Version;
@@ -16,7 +23,9 @@ interface IndexConfigBaseProps {
   isServiceFee?: boolean;
   isFinished?: boolean;
   visible?: boolean;
+  owner?: string;
   deployer?: string;
+  feeWallet?: string;
 }
 
 export interface SerializedIndexConfig extends IndexConfigBaseProps {
@@ -39,7 +48,7 @@ export interface IndexHistory {
 
 export type NFTInfo = {
   tokenId: number;
-  level: number;
+  level?: number;
   amounts: string[];
   usdAmount: string;
 };
@@ -50,11 +59,13 @@ export interface DeserializedIndex extends DeserializedIndexConfig {
   userData?: {
     allowance: boolean; // nft allowance
     ethBalance: BigNumber;
-    nftItems: NFTInfo[];
+    indexNftItems: NFTInfo[];
+    deployerNftItem?: NFTInfo;
     stakedUsdAmount: string;
     stakedBalances: BigNumber[];
     histories: IndexHistory[];
   };
+  tvl?: number;
   TVLData?: number[];
   performanceFees?: number[];
   commissions?: number[];
@@ -71,7 +82,8 @@ export interface SerializedIndex extends SerializedIndexConfig {
   userData?: {
     allowance: boolean; // nft allowance
     ethBalance: string;
-    nftItems: NFTInfo[];
+    indexNftItems: NFTInfo[];
+    deployerNftItem?: NFTInfo;
     stakedUsdAmount: string;
     stakedBalances: string[];
     histories: IndexHistory[];

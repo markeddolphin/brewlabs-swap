@@ -1,62 +1,66 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { WNATIVE } from "@brewlabs/sdk";
 import styled from "styled-components";
-import StyledButton from "../../StyledButton";
-import { useEffect, useState } from "react";
-import ChainSelect from "../ChainSelect";
-import RouterSelect from "../RouterSelect";
-import { useActiveChainId } from "hooks/useActiveChainId";
-import { PlusSVG } from "@components/dashboard/assets/svgs";
 
-const SelectToken = ({ step, setStep }) => {
-  const [contractAddress, setContractAddress] = useState(new Array(5).fill(""));
-  const [tokenAddress, setTokenAddress] = useState(null);
-  const [routerAddress, setRouterAddress] = useState(null);
+import { PlusSVG } from "components/dashboard/assets/svgs";
+
+import contracts from "config/constants/contracts";
+import { useActiveChainId } from "hooks/useActiveChainId";
+
+import StyledButton from "../../StyledButton";
+import ChainSelect from "../ChainSelect";
+import TokenSelect from "../TokenSelect";
+
+const SelectToken = ({ setStep, tokens, setTokens }) => {
   const { chainId } = useActiveChainId();
 
-  useEffect(() => {
-    if (contractAddress.length) setTokenAddress("0x330518cc95c92881bCaC1526185a514283A5584D");
-    else setTokenAddress(null);
-  }, [contractAddress]);
+  const isSupportedChain = Object.keys(contracts.indexFactory).includes(chainId.toString());
+  const isDuplicated = tokens
+    .map((t) => `${t?.chainId}-${t?.address}`)
+    .some((item, idx) => tokens.map((t) => `${t?.chainId}-${t?.address}`).indexOf(item) !== idx);
+
+  const handleTokenSelected = (index, currency) => {
+    let _tokens = tokens;
+    _tokens[index] = currency.address ? currency : WNATIVE[currency.chainId];
+    setTokens(_tokens);
+  };
+  const addToken = () => {
+    setTokens([...tokens, undefined]);
+  };
 
   return (
     <div>
       <div>
         <div className="mt-2 text-white">
           <div className="mb-1">1.Select deployment network:</div>
-          {/* <ChainSelect id="chain-select" /> */}
           <ChainSelect />
         </div>
-        <div className={tokenAddress ? "text-white" : "text-[#FFFFFF40]"}>
+        <div className="text-white">
           <div className="mb-1">2. Select token:</div>
-          {["", "", "", "", ""].map((data, i) => {
-            return (
-              <div key={i}>
-                <div className="flex items-center rounded-lg bg-[#FFFFFF0D] p-[0px_14px]">
-                  <StyledInput
-                    placeholder={`Search by contract address...`}
-                    value={contractAddress[i]}
-                    onChange={(e) => {
-                      let temp = [...contractAddress];
-                      temp[i] = e.target.value;
-                      setContractAddress(temp);
-                    }}
-                  />
-                  <CircleImage className="h-8 w-8" />
-                </div>
-                {i !== 4 ? (
-                  <div className="my-2 flex w-full scale-150 justify-center text-[#5D616A]">{PlusSVG}</div>
-                ) : (
-                  ""
-                )}
-              </div>
-            );
-          })}
+
+          {tokens.map((token, i) => (
+            <div className="my-2" key={i}>
+              <TokenSelect selectedCurrency={token} setSelectedCurrency={(c) => handleTokenSelected(i, c)} />
+            </div>
+          ))}
+          {tokens.length < 5 && (
+            <div
+              className="mt-4 flex w-full scale-150 cursor-pointer justify-center text-[#5D616A] hover:text-white"
+              onClick={addToken}
+            >
+              {PlusSVG}
+            </div>
+          )}
         </div>
       </div>
       <div className="mb-5 mt-8 h-[1px] w-full bg-[#FFFFFF80]" />
       <div className="mx-auto h-12 max-w-[500px]">
-        <StyledButton type="primary" onClick={() => setStep(2)} disabled={!tokenAddress}>
-          Next
+        <StyledButton
+          type="primary"
+          onClick={() => setStep(2)}
+          disabled={!isSupportedChain || isDuplicated || tokens.length == 0 || tokens.filter((t) => !t).length > 0}
+        >
+          {isSupportedChain ? "Next" : "Not support current chain"}
         </StyledButton>
       </div>
     </div>

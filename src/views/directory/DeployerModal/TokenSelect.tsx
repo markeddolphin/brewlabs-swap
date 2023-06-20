@@ -10,10 +10,11 @@ import getTokenLogoURL from "utils/getTokenLogoURL";
 
 import CurrencySelector from "components/CurrencySelector";
 import { DrawSVG } from "components/dashboard/assets/svgs";
+import TokenLogo from "@components/logo/TokenLogo";
 
 const TokenSelect = ({ selectedCurrency, setSelectedCurrency }) => {
   const { chainId } = useActiveChainId();
-  const { tokens, tokenList: supportedTokens }: any = useContext(DashboardContext);
+  const { tokenList: supportedTokens }: any = useContext(DashboardContext);
 
   const dropdownRef: any = useRef();
   const [isOpen, setIsOpen] = useGlobalState("userSidebarOpen");
@@ -21,21 +22,10 @@ const TokenSelect = ({ selectedCurrency, setSelectedCurrency }) => {
 
   const filteredTokenList = useMemo(
     () =>
-      tokens
-        .filter((t) => supportedTokens.map((st) => st.address.toLowerCase()).includes(t.address.toLowerCase()))
-        .map(
-          (t) =>
-            new Token(
-              chainId,
-              getAddress(t.address),
-              t.decimals,
-              t.symbol,
-              t.name,
-              undefined,
-              supportedTokens.find((st) => st.address.toLowerCase() === t.address.toLowerCase())?.logoURI
-            )
-        ),
-    [supportedTokens.length, tokens.length]
+      supportedTokens
+        .filter((t) => t.chainId === chainId && t.address)
+        .map((t) => new Token(chainId, getAddress(t.address), t.decimals, t.symbol, t.name, undefined, t.logoURI)),
+    [supportedTokens.length]
   );
 
   function onUserInput(input, currency) {}
@@ -46,7 +36,7 @@ const TokenSelect = ({ selectedCurrency, setSelectedCurrency }) => {
   return (
     <div className="relative z-20" ref={dropdownRef}>
       <div
-        className={`flex h-[36px] cursor-pointer items-center justify-between overflow-hidden primary-shadow rounded-md bg-[#B9B8B81A] pl-3.5`}
+        className={`primary-shadow flex h-[36px] cursor-pointer items-center justify-between overflow-hidden rounded-md bg-[#B9B8B81A] pl-3.5`}
         onClick={() => {
           setIsOpen(isOpen === 1 ? 1 : 2);
           setSidebarContent(
@@ -63,11 +53,9 @@ const TokenSelect = ({ selectedCurrency, setSelectedCurrency }) => {
       >
         {selectedCurrency ? (
           <div className="flex flex-1 items-center overflow-hidden text-ellipsis whitespace-nowrap">
-            <img
+            <TokenLogo
               src={getTokenLogoURL(selectedCurrency.address, chainId, selectedCurrency.logo)}
-              alt={""}
-              className="h-6 w-6 rounded-full"
-              onError={(e: any) => (e.target.src = "/images/unknown.png")}
+              classNames="h-6 w-6"
             />
             <div className="mx-4 w-[100px] xsm:w-[140px]">
               <div className="overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[#FFFFFFBF]">

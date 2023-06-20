@@ -1,16 +1,19 @@
-import { InfoSVG } from "./assets/svgs";
-import "react-tooltip/dist/react-tooltip.css";
+import { useRef } from "react";
+import { useRouter } from "next/router";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import styled from "styled-components";
-import { useIndexes } from "state/indexes/hooks";
-import getTokenLogoURL from "utils/getTokenLogoURL";
-import { getChainLogo, getIndexName } from "utils/functions";
-import { SkeletonComponent } from "components/SkeletonComponent";
 import Carousel from "react-multi-carousel";
+
+import "react-tooltip/dist/react-tooltip.css";
 import "react-multi-carousel/lib/styles.css";
-import { useRef, useState } from "react";
-import { useRouter } from "next/router";
+import TokenLogo from "@components/logo/TokenLogo";
+import { SkeletonComponent } from "components/SkeletonComponent";
 import { useGlobalState } from "state";
+import { useIndexes } from "state/indexes/hooks";
+import { getChainLogo, getIndexName } from "utils/functions";
+import getTokenLogoURL from "utils/getTokenLogoURL";
+
+import { InfoSVG } from "./assets/svgs";
 
 const responsive = {
   desktop: {
@@ -52,7 +55,7 @@ const IndexPerformance = () => {
         </div>
         <ReactTooltip anchorId={"Top9"} place="right" content="Top 9 Brewlabs Indexes based on performance." />
       </div>
-      <div className="w-full mx-auto sm:max-w-[676px] max-w-[652px]">
+      <div className="mx-auto w-full max-w-[652px] sm:max-w-[676px]">
         <Carousel
           arrows={false}
           responsive={responsive}
@@ -75,9 +78,9 @@ const IndexPerformance = () => {
                   return (
                     <div
                       key={i}
-                      className="flex cursor-pointer items-center justify-between rounded sm:p-[12px_12px_12px_24px] p-[12px_4px_12px_8px] transition hover:bg-[rgba(50,50,50,0.4)] "
+                      className="flex cursor-pointer items-center justify-between rounded p-[12px_4px_12px_8px] transition hover:bg-[rgba(50,50,50,0.4)] sm:p-[12px_12px_12px_24px] "
                       onClick={() => {
-                        router.push(`/indexes/${data.pid}`);
+                        router.push(`/indexes/${data.chainId}/${data.pid}`);
                         setIsOpen(0);
                       }}
                     >
@@ -85,12 +88,10 @@ const IndexPerformance = () => {
                         <div className="flex w-[60px]">
                           {data.tokens.map((data, i) => {
                             return (
-                              <img
-                                src={getTokenLogoURL(data.address, data.chainId)}
-                                className={"-mr-3 h-6 w-6 rounded-full"}
-                                onError={(e: any) => (e.target.src = "/images/unknown.png")}
-                                alt={""}
+                              <TokenLogo
                                 key={i}
+                                src={getTokenLogoURL(data.address, data.chainId, data.logo)}
+                                classNames="-mr-3 h-6 w-6"
                               />
                             );
                           })}

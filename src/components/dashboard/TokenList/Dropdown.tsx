@@ -8,12 +8,14 @@ const DropDown = ({
   values,
   width = "w-32",
   type = "primary",
+  className,
 }: {
   setValue?: any;
   value: number;
   values: any;
   width?: string;
   type?: string;
+  className?: string;
 }) => {
   const dropdownRef: any = useRef();
   const [open, setOpen] = useState(false);
@@ -27,14 +29,14 @@ const DropDown = ({
   }, []);
 
   return (
-    <div className={`dropdown ${width} `} onClick={() => setOpen(!open)} ref={dropdownRef}>
+    <div className={`dropdown ${width}`} onClick={() => setOpen(!open)} ref={dropdownRef}>
       <label
         tabIndex={0}
         className={`btn-sm btn flex w-full justify-between ${
           type === "primary"
-            ? " active:bg-brand dark:hover:bg-dark dark:hover:text-brand bg-amber-400  dark:text-zinc-800"
-            : "bg-[rgb(42,48,60)] text-[rgb(166,173,186)] hover:text-gray-400 h-fit p-2 text-base normal-case font-normal"
-        }`}
+            ? " bg-amber-400 active:bg-brand dark:text-zinc-800 dark:hover:bg-dark  dark:hover:text-brand"
+            : "h-fit bg-[rgb(42,48,60)] p-2 text-base font-normal text-[rgb(166,173,186)] hover:text-gray-400"
+        }  ${className}`}
       >
         {values[value]}
         {!open ? <ChevronDownIcon className="h-3" /> : <ChevronUpIcon className="h-3" />}

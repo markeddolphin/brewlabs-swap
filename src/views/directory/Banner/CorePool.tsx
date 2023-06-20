@@ -36,9 +36,12 @@ const CorePool = ({
             </div>
           </div>
           <div className="flex flex-wrap justify-between text-base">
-            <div className="flex">
+            <div className="flex max-w-full">
               Stake <span className="mx-1 text-primary">{data ? data.stakingToken.symbol : <SkeletonComponent />}</span>
-              earn <span className="ml-1 text-primary">{data ? data.earningToken.symbol : <SkeletonComponent />}</span>
+              earn{" "}
+              <span className="ml-1 overflow-hidden text-ellipsis text-primary">
+                {data ? data.earningToken.symbol : <SkeletonComponent />}
+              </span>
             </div>
             <div className="text-primary">
               {data ? (
@@ -85,18 +88,14 @@ const CorePool = ({
   };
 
   return (
-    <div className="rounded border border-[#FFFFFF40] bg-[#B9B8B80D] py-[22px] px-3 sm:px-5">
+    <div className="rounded border border-[#FFFFFF40] bg-[#B9B8B80D] px-3 py-[22px] sm:px-5">
       <div className="flex max-w-[1120px] items-center justify-between">
         <LogoIcon classNames="w-24 min-w-[96px] text-dark dark:text-brand sm:ml-6 ml-0" />
 
         {CreatePoolInfoPanel("pc")}
 
         <div className="w-[50%] max-w-[200px] md:w-[340px] md:max-w-full">
-          <a
-            href={`${BASE_URL}/swap?outputCurrency=${data?.stakingToken.address}`}
-            target={"_blank"}
-            rel="noreferrer"
-          >
+          <a href={`${BASE_URL}/swap?outputCurrency=${data?.stakingToken.address}`} target={"_blank"} rel="noreferrer">
             <div className="h-[50px]">
               <StyledButton>
                 <span className="mr-1">Get</span> {data ? data.stakingToken.symbol : <SkeletonComponent />}

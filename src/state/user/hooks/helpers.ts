@@ -12,6 +12,7 @@ export function serializeToken(token: Currency | any): SerializedToken {
     symbol: token.symbol,
     name: token.name,
     projectLink: token.projectLink,
+    logo: token.logo
   };
 }
 
@@ -26,7 +27,8 @@ export function deserializeToken(serializedToken: SerializedToken): Currency {
     serializedToken.decimals,
     serializedToken.symbol,
     serializedToken.name,
-    serializedToken.projectLink
+    serializedToken.projectLink,
+    serializedToken.logo
   );
 }
 

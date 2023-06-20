@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 import { WNATIVE } from "@brewlabs/sdk";
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
@@ -12,10 +11,12 @@ import { useAccount } from "wagmi";
 import { chevronLeftSVG, lockSVG } from "components/dashboard/assets/svgs";
 import Container from "components/layout/Container";
 import PageHeader from "components/layout/PageHeader";
+import TokenLogo from "@components/logo/TokenLogo";
 import { SkeletonComponent } from "components/SkeletonComponent";
 import WordHighlight from "components/text/WordHighlight";
 
 import { AppId, Chef } from "config/constants/types";
+import { CHAIN_ICONS } from "config/constants/networks";
 import { earningTokens, quoteTokens, tokens } from "config/constants/tokens";
 import { DashboardContext } from "contexts/DashboardContext";
 import { useTranslation } from "contexts/localization";
@@ -35,6 +36,7 @@ import {
 } from "state/zap";
 import { useSushiPrice } from "state/zap/sushiswap/hooks";
 import { numberWithCommas } from "utils/functions";
+import getTokenLogoURL from "utils/getTokenLogoURL";
 
 import useHarvestFarm from "./hooks/useHarvestFarm";
 import useTotalStakedHistory from "./hooks/useTotalStakedHistory";
@@ -48,8 +50,6 @@ import ProgressBar from "./ProgressBar";
 import StyledButton from "../StyledButton";
 import TotalStakedChart from "./TotalStakedChart";
 import { RewardType } from "./types";
-import getTokenLogoURL from "utils/getTokenLogoURL";
-import { CHAIN_ICONS } from "config/constants/networks";
 
 const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
   const { open, setOpen, data, cakePrice, bananaPrice } = detailDatas;
@@ -131,10 +131,6 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
       dispatch(fetchSushiFarmUserDataAsync(account));
       dispatch(fetchSushiFarmsPublicDataAsync(chainId));
     }
-  };
-
-  const onError = (data) => {
-    data.target.src = "/images/unknown.png";
   };
 
   return (
@@ -232,19 +228,22 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                     </div>
                   </div>
                   <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
-                    <div className="flex w-[160px] items-center justify-center md:mb-0 mb-4 mt-4">
-                      <img
+                    <div className="mb-4 mt-4 flex w-[160px] items-center justify-center md:mb-0">
+                      <TokenLogo
                         src={getTokenLogoURL(data.token.address, data.token.chainId, data.token.logo, data.appId)}
-                        onError={onError}
-                        alt={""}
-                        className="w-[70px] rounded-full"
+                        classNames="w-[70px]"
+                        large
                       />
-                      <img
-                        src={getTokenLogoURL(data.quoteToken.address, data.quoteToken.chainId, data.token.logo, data.appId)}
-                        onError={onError}
-                        alt={""}
-                        className="-ml-3 w-[70px] rounded-full"
-                      />
+                      <TokenLogo
+                        src={getTokenLogoURL(
+                          data.quoteToken.address,
+                          data.quoteToken.chainId,
+                          data.quoteToken.logo,
+                          data.appId
+                        )}
+                        classNames="-ml-3 w-[70px]"
+                        large
+                      />                      
                     </div>
                     <div className="flex flex-1 flex-wrap justify-end xl:flex-nowrap">
                       <InfoPanel

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ethers } from "ethers";
 
-import IndexAbi from "config/abi/indexes/index.json";
+import IndexAbi from "config/abi/indexes/indexImpl.json";
 
 import { API_URL, MULTICALL_FETCH_LIMIT } from "config/constants";
 import multicall from "utils/multicall";
@@ -46,6 +46,36 @@ export const fetchIndexesTotalStaking = async (chainId, indexes) => {
             data.push({ pid: pool.pid, totalStaked });
           }
         }
+
+        // calls = [];
+        // for (let pool of batch.filter((p) => p.category >= 0)) {
+        //   calls.push(
+        //     { address: pool.address, name: "totalCommissions" },
+        //     { address: pool.address, name: "getPendingCommissions" }
+        //   );
+        // }
+        // const commissions = await multicall(IndexAbi, calls, chainId);
+        // if (commissions) {
+        //   let idx = 0;
+        //   for (let pool of batch.filter((p) => p.category >= 0)) {
+        //     let index = data.findIndex((d) => d.pid === pool.pid);
+        //     let pendingCommissions = [];
+        //     for (let i = 0; i < pool.numTokens; i++) {
+        //       pendingCommissions.push(ethers.utils.formatUnits(totalStakes[2 * idx + 1][i], pool.tokens[i].decimals));
+        //     }
+        //     if (index >= 0) {
+        //       data[index]["totalCommissions"] = ethers.utils.parseEther(commissions[2 * idx][0]);
+        //       data[index]["pendingCommissions"] = pendingCommissions;
+        //     } else {
+        //       data.push({
+        //         pid: pool.pid,
+        //         totalCommissions: ethers.utils.parseEther(commissions[2 * idx][0]),
+        //         pendingCommissions,
+        //       });
+        //     }
+        //     idx++;
+        //   }
+        // }
       } catch (e) {
         // eslint-disable-next-line no-console
         console.log(e);

@@ -3,7 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 
-const OptionDropdown = ({ data, setValue }: { data: any; setValue: any }) => {
+const OptionDropdown = ({ values, setValue, status }: { values: string[]; setValue: any; status?: any[] }) => {
   const [open, setOpen] = useState(false);
   const dropRef: any = useRef();
 
@@ -24,13 +24,15 @@ const OptionDropdown = ({ data, setValue }: { data: any; setValue: any }) => {
     >
       <div>Index Options</div>
       <div>{!open ? <ChevronDownIcon className={"h-3"} /> : <ChevronUpIcon className={"h-3 "} />}</div>
-      <DropDownBody className={"primary-shadow absolute transition-all"} open={open} length={data.length}>
-        {data.map((data, i) => {
+      <DropDownBody className={"primary-shadow absolute transition-all"} open={open}>
+        {values.map((data, i) => {
           return (
             <div
               key={i}
-              className="flex h-8 cursor-pointer items-center justify-center transition-all hover:bg-[#424444bf] text-center"
-              onClick={() => setValue(i)}
+              className={`flex h-8 cursor-pointer items-center justify-center text-center text-xs transition-all hover:bg-[#424444bf] ${
+                status[i] ? "" : "hidden"
+              }`}
+              onClick={() => status[i] && setValue(i)}
             >
               {data}
             </div>
@@ -51,8 +53,8 @@ const StyledDropDown = styled.div<{ open: boolean }>`
   padding: 0 8px 0 12px;
 `;
 
-const DropDownBody = styled.div<{ open: boolean; length: number }>`
-  height: ${({ open, length }) => (open ? `${32 * length}px` : 0)};
+const DropDownBody = styled.div<{ open: boolean }>`
+  height: ${({ open }) => (open ? `auto` : 0)};
   overflow: hidden;
   background: rgb(46, 47, 56);
   border-bottom-left-radius: 4px;

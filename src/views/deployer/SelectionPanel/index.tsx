@@ -47,12 +47,18 @@ const SelectionPanel = ({
     <>
       Yield Farms <span className="text-[11px]">({counts[2]})</span>
     </>,
-    // <>
-    //   Indexes <span className="text-[11px]">({counts[3]})</span>
-    // </>,
+    <>
+      Indexes <span className="text-[11px]">({counts[3]})</span>
+    </>,
   ];
 
-  let filteredPools = pools.filter((data) => data.type === 2);
+  let filteredPools = pools.filter(
+    (data) =>
+      curFilter === Category.ALL ||
+      data.type === curFilter ||
+      (curFilter === Category.MY_POSITION &&
+        (data.type === Category.INDEXES ? +data.userData?.stakedUsdAmount > 0 : data.userData?.stakedBalance.gt(0)))
+  );
 
   let activityCnts = {
     active: filterPoolsByStatus(filteredPools, currentBlocks, "active").length,
@@ -74,7 +80,7 @@ const SelectionPanel = ({
         <div className="hidden flex-1 md:flex">
           {filters.map((data, i) => {
             return (
-              <FilterButton key={i} active={curFilter === i} onClick={() => setCurFilter(i)}>
+              <FilterButton key={i} active={curFilter === i + 2} onClick={() => setCurFilter(i + 2)}>
                 {data}
               </FilterButton>
             );
