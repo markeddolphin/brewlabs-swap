@@ -33,11 +33,7 @@ export default function CreateLiquidityOption() {
       >
         View and&nbsp;<span className="text-white">harvest</span>
         &nbsp;my&nbsp;<span className="dark:text-primary">Brew</span>
-        <span className="text-white">Swap</span>&nbsp;rewards
-      </OutlinedButton>
-
-      <OutlinedButton href="https://earn.brewlabs.info/liquidity" image="/images/swap/logout.svg" className="mt-2" small>
-        Visit my pools
+        <span className="text-white">Swap</span>&nbsp;fees
       </OutlinedButton>
     </>
   ) : addLiquidityStep === 1 ? (
@@ -52,11 +48,12 @@ export default function CreateLiquidityOption() {
           setAddLiquidityStep(2);
         }}
         borderDotted
-        description="Regular pool"
       >
-        Create a&nbsp;<span className="text-white">basic</span>
-        &nbsp;liquidity pool on&nbsp;<span className="dark:text-primary">Brew</span>
-        <span className="text-white">Swap</span>
+        <div className = 'flex flex-wrap justify-center'>
+          Create a&nbsp;<span className="text-white">basic</span>
+          &nbsp;liquidity pool on&nbsp;<span className="dark:text-primary">Brew</span>
+          <span className="text-white">Swap</span>
+        </div>
       </OutlinedButton>
 
       <OutlinedButton
@@ -66,12 +63,19 @@ export default function CreateLiquidityOption() {
           e.preventDefault();
           setAddLiquidityStep(3);
         }}
-        description="Regular pool + yield farm"
         borderDotted
       >
-        Create a&nbsp;<span className="text-white">bundle</span>
-        &nbsp;liquidity pool on&nbsp;<span className="dark:text-primary">Brew</span>
-        <span className="text-white">Swap</span>
+        <div className="flex flex-col items-center">
+          <div className="flex flex-wrap">
+            <div className="whitespace-nowrap">Create a</div>&nbsp;<span className="text-white">bundle</span>
+            &nbsp;<div className="whitespace-nowrap">liquidity pool</div>&nbsp;&
+          </div>
+          <div className="flex flex-wrap">
+            <div className="whitespace-nowrap">yield farm on</div>&nbsp;
+            <span className="dark:text-primary">Brew</span>
+            <span className="text-white">Swap</span>
+          </div>
+        </div>
       </OutlinedButton>
 
       <OutlinedButton

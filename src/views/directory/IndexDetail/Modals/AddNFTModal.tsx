@@ -2,26 +2,30 @@
 import { useContext, useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
+import { ethers } from "ethers";
 import { AnimatePresence, motion } from "framer-motion";
+import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import styled from "styled-components";
+import { useAccount } from "wagmi";
 
 import { checkSVG, chevronLeftSVG } from "components/dashboard/assets/svgs";
 import LogoIcon from "components/LogoIcon";
+import TokenLogo from "@components/logo/TokenLogo";
 import { DashboardContext } from "contexts/DashboardContext";
 import { getNativeSybmol, handleWalletError } from "lib/bridge/helpers";
 import { useAppDispatch } from "state";
+import { updateNftAllowance } from "state/indexes";
 import { DeserializedIndex } from "state/indexes/types";
 import { getIndexName } from "utils/functions";
 import { formatAmount } from "utils/formatApy";
 import getTokenLogoURL from "utils/getTokenLogoURL";
 
 import useIndex from "../hooks/useIndex";
-import StyledButton from "../../StyledButton";
 import useNftApprove from "../hooks/useNftApprove";
-import { updateNftAllowance } from "state/indexes";
-import { useAccount } from "wagmi";
-import { ethers } from "ethers";
+import useIndexImpl from "../hooks/useIndexImpl";
+
+import StyledButton from "../../StyledButton";
 
 const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; data: DeserializedIndex }) => {
   const dispatch = useAppDispatch();
@@ -32,15 +36,16 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
 
   const [tokenId, setTokenId] = useState<number | undefined>();
 
-  const { onStakeNft } = useIndex(data.pid, data.address, data.performanceFee);
-  const { onApprove } = useNftApprove(data.nft);
+  const { onStakeNft: onStakeNftOld } = useIndex(data.pid, data.address, data.performanceFee);
+  const { onStakeNft } = useIndexImpl(data.pid, data.address, data.performanceFee);
+  const { onApprove } = useNftApprove(data.category === undefined ? data.nft : data.indexNft);
 
   useEffect(() => {
-    if (!userData.nftItems?.length) return;
-    if (userData.nftItems.map((n) => n.tokenId).includes(tokenId)) return;
+    if (!userData.indexNftItems?.length) return;
+    if (userData.indexNftItems.map((n) => n.tokenId).includes(tokenId)) return;
 
-    setTokenId(userData.nftItems[0].tokenId);
-  }, [userData.nftItems.length, data.pid]);
+    setTokenId(userData.indexNftItems[0].tokenId);
+  }, [userData.indexNftItems.length, data.pid]);
 
   const showError = (errorMsg: string) => {
     if (errorMsg) toast.error(errorMsg);
@@ -63,7 +68,11 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
   const handleStakeNft = async () => {
     setPending(true);
     try {
-      await onStakeNft(tokenId);
+      if (data.category >= 0) {
+        await onStakeNft(tokenId);
+      } else {
+        await onStakeNftOld(tokenId);
+      }
 
       toast.success(`Index NFT was unlocked`);
       setOpen(false);
@@ -79,7 +88,7 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
       <Dialog
         open={open}
         className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
-        onClose={() => setOpen(false)}
+        onClose={() => {}}
       >
         <div className="flex min-h-full items-center justify-center p-4 ">
           <motion.div
@@ -124,8 +133,8 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
                 <div className="mb-2 mt-6 text-xl text-[#FFFFFFBF]">Index NFT&apos;s Available</div>
                 <div className="flex flex-col justify-between xmd:flex-row">
                   <div className="mb-5 mr-0 min-h-[240px] flex-1 rounded border border-primary bg-[#B9B8B81A] px-3.5 py-3 xmd:mb-0 sm:mr-6">
-                    {userData.nftItems &&
-                      userData.nftItems.map((nft) => (
+                    {userData.indexNftItems &&
+                      userData.indexNftItems.map((nft) => (
                         <div
                           key={nft.tokenId}
                           className="flex cursor-pointer items-center justify-between"
@@ -145,15 +154,10 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
                   </div>
                   <div className="min-w-[180px]">
                     {tokens.map((token, index) => {
-                      const selectedNft = userData.nftItems?.find((nft) => nft.tokenId === tokenId);
+                      const selectedNft = userData.indexNftItems?.find((nft) => nft.tokenId === tokenId);
                       return (
                         <div className="mb-3 flex items-center" key={token.address}>
-                          <img
-                            src={getTokenLogoURL(token.address, token.chainId)}
-                            onError={(data) => (data.target["src"] = "/images/unknown.png")}
-                            alt={""}
-                            className="w-12 rounded-full"
-                          />
+                          <TokenLogo src={getTokenLogoURL(token.address, token.chainId)} classNames="w-12" large />
                           <div className="ml-3 leading-none">
                             <div className="text-xl text-[#FFFFFFBF]">
                               {selectedNft
@@ -162,7 +166,7 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
                             </div>
                             <div className="text-xs text-[#FFFFFF80]">
                               $
-                              {selectedNft && tokenPrices
+                              {selectedNft && tokenPrices?.[index]
                                 ? formatAmount(
                                     +ethers.utils.formatUnits(selectedNft.amounts[index], token.decimals) *
                                       tokenPrices[index]
@@ -183,12 +187,24 @@ const AddNFTModal = ({ open, setOpen, data }: { open: boolean; setOpen: any; dat
                     type="quinary"
                     disabled={
                       pending ||
-                      !userData.nftItems?.length ||
-                      !userData.nftItems?.map((n) => n.tokenId).includes(tokenId)
+                      !userData.indexNftItems?.length ||
+                      !userData.indexNftItems?.map((n) => n.tokenId).includes(tokenId)
                     }
                     onClick={userData?.allowance ? handleStakeNft : handleApproveNft}
                   >
                     {userData?.allowance ? `Add Index NFT` : "Approve Index NFT"}
+                    {pending && (
+                      <div className="absolute right-2 top-0 flex h-full items-center">
+                        <Oval
+                          width={21}
+                          height={21}
+                          color={"white"}
+                          secondaryColor="black"
+                          strokeWidth={3}
+                          strokeWidthSecondary={3}
+                        />
+                      </div>
+                    )}
                   </StyledButton>
                 </div>
               </div>

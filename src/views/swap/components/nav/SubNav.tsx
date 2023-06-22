@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 
 import { SwapContext } from "../../../../contexts/SwapContext";
 import MobileNav from "./MobileNav";
+import Link from "next/link";
 
 type Props = {
   openSettingModal: () => void;
@@ -30,9 +31,14 @@ const SubNav = ({ openSettingModal }: Props) => {
         >
           Add liquidity
         </button>
-        <button className={`tab px-3 ${swapTab === 2 ? "tab-active" : ""}`} onClick={() => setSwapTab(2)} disabled>
-          Swap Rewards
-        </button>
+        <Link href={"/tradingPairs"}>
+          <button
+            className={`tab px-3 ${swapTab === 2 ? "tab-active" : ""}`}
+            //  onClick={() => setSwapTab(2)}
+          >
+            Swap Rewards
+          </button>
+        </Link>
       </div>
       <MobileNav></MobileNav>
       <div className="absolute right-7 top-6" onClick={openSettingModal}>

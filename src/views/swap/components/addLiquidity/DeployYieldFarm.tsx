@@ -52,7 +52,7 @@ export default function DeployYieldFarm({
 
   const txConfirmed = useMemo(() => {
     return !attemptingTxn && hash;
-  }, [attemptingTxn, hash])
+  }, [attemptingTxn, hash]);
 
   const onBack = (e) => {
     e.preventDefault();
@@ -83,14 +83,14 @@ export default function DeployYieldFarm({
       key: "Tokens required",
       value: "10,000,000.00",
     },
-    {
-      key: "Yield farm launch",
-      value: "1.00 ETH",
-    },
-    {
-      key: "Deployment fee",
-      value: "1,600.00 USDC",
-    },
+    // {
+    //   key: "Yield farm launch",
+    //   value: "1.00 ETH",
+    // },
+    // {
+    //   key: "Deployment fee",
+    //   value: "1,600.00 USDC",
+    // },
   ];
 
   const summaryData = [
@@ -136,7 +136,7 @@ export default function DeployYieldFarm({
       </div>
 
       <div className="mt-4 px-0 sm:px-4">
-        <div className="rounded-3xl border border-gray-600 px-5 pb-8 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
+        <div className="primary-shadow rounded-3xl px-5 pb-8 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
           <div className="mb-3 flex justify-between">
             <div className="text-base text-gray-300 sm:text-xl">New yield farm metrics</div>
             <div className="flex min-w-[100px] items-center justify-center">
@@ -174,7 +174,7 @@ export default function DeployYieldFarm({
             </div>
           ))}
 
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-8 flex items-center justify-between">
             <div className={`${!justEntered ? "text-[#2FD35D]" : ""}`}>
               {attemptingTxn ? "Deploying..." : hash ? "Deployed" : "Deployment transactions remaining"}
             </div>
@@ -185,7 +185,7 @@ export default function DeployYieldFarm({
             </div>
           </div>
         </div>
-        <div className="mb-6 mt-2 rounded-3xl border border-gray-600 px-5 pb-4 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
+        <div className="primary-shadow mb-6 mt-2 rounded-3xl px-5 pb-4 pt-3 font-['Roboto'] text-xs font-bold sm:text-sm">
           <div className="text-lg text-gray-300">Summary</div>
           {!txConfirmed ? (
             <div>Available after deployment</div>

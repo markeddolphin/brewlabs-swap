@@ -18,7 +18,7 @@ const ApproveModal = ({ open, onClose, onApprove }: ModalProps): ReactElement | 
       {open && (
         <Dialog
           open={open}
-          onClose={onClose}
+          onClose={() => {}}
           className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 dark:bg-zinc-900 dark:bg-opacity-80 font-brand"
         >
           <div className="flex min-h-full items-center justify-center p-4 text-center">

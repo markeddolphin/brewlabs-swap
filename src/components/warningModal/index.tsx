@@ -107,5 +107,4 @@ const WarningModal = ({ open, setOpen, type, onClick }) => {
   );
 };
 
-const StyledPanel = styled.div``;
 export default WarningModal;

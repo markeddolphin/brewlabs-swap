@@ -24,13 +24,13 @@ const OutlinedButton = ({
   return (
     <a
       className={`flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-gray-600 px-2 text-center font-['Roboto'] text-sm !text-gray-400 transition hover:border-primary ${
-        className ?? ""
+        className ?? "" 
       } ${borderDotted ? "border-dotted" : ""} ${small ? "py-3" : "py-12"}`}
       href={href}
       onClick={onClick}
       {...(href ? { target: "_blank", rel: "noreferrer" } : {})}
     >
-      <div className="flex">
+      <div className="flex items-start">
         {image && <img src={image} className="mr-1 w-4" alt=""></img>}
         {children}
       </div>

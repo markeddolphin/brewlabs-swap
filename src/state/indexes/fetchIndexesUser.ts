@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 
 import IndexAbi from "config/abi/indexes/index.json";
 import IndexNftAbi from "config/abi/indexes/indexNft.json";
+import DeployerNftAbi from "config/abi/indexes/deployerNft.json";
 
 import { MULTICALL_FETCH_LIMIT } from "config/constants";
 import multicall from "utils/multicall";
@@ -63,11 +64,13 @@ export const fetchUserNftAllowance = async (account, chainId, indexes) => {
       try {
         let calls = [];
         for (let pool of batch) {
-          calls.push({
-            address: pool.nft,
-            name: "isApprovedForAll",
-            params: [account, pool.address],
-          });
+          calls.push(
+            {
+              address: pool.category === undefined ? pool.nft : pool.indexNft,
+              name: "isApprovedForAll",
+              params: [account, pool.address],
+            }
+          );
         }
 
         const allowances = await multicall(IndexNftAbi, calls, chainId);
@@ -94,7 +97,7 @@ export const fetchUserBalance = async (account, chainId) => {
   return ethBalance;
 };
 
-export const fetchUserNftData = async (account, chainId, nftAddr) => {
+export const fetchUserIndexNftData = async (account, chainId, nftAddr) => {
   if (!nftAddr) return [];
 
   let calls = [{ address: nftAddr, name: "balanceOf", params: [account] }];
@@ -126,6 +129,41 @@ export const fetchUserNftData = async (account, chainId, nftAddr) => {
         amounts,
         usdAmount,
         indexAddress: nftInfo[index][3] ?? "0x11ff513ED9770C2eB02655777EF55F123a17ec00",
+      };
+    });
+  }
+};
+
+export const fetchUserDeployerNftData = async (account, chainId, nftAddr) => {
+  if (!nftAddr) return [];
+
+  let calls = [{ address: nftAddr, name: "balanceOf", params: [account] }];
+  const [balance] = await multicall(DeployerNftAbi, calls, chainId);
+  if (balance[0].eq(0)) return [];
+
+  if (balance[0].gt(0)) {
+    calls = [];
+    for (let i = 0; i < balance[0].toNumber(); i++) {
+      calls.push({ address: nftAddr, name: "tokenOfOwnerByIndex", params: [account, i] });
+    }
+
+    let tokenIds = [];
+    const result = await multicall(DeployerNftAbi, calls, chainId);
+    for (let i = 0; i < balance[0].toNumber(); i++) {
+      tokenIds.push(result[i][0].toNumber());
+    }
+
+    calls = tokenIds.map((tokenId) => ({ address: nftAddr, name: "getIndexInfo", params: [tokenId] }));
+    const indexInfo = await multicall(DeployerNftAbi, calls, chainId);
+
+    return tokenIds.map((tokenId, index) => {
+      let usdAmount = ethers.utils.formatEther(indexInfo[index][2]);
+      let amounts = indexInfo[index][3].map((amount) => amount.toString());
+      return {
+        tokenId,
+        amounts,
+        usdAmount,
+        indexAddress: indexInfo[index][0],
       };
     });
   }

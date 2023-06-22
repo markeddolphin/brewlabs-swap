@@ -11,9 +11,10 @@ interface TradeCardProps {
   price: any;
   buyTax?: number;
   sellTax?: number;
+  noLiquidity?: boolean;
 }
 
-const TradeCard: React.FC<TradeCardProps> = ({ data, slippage, price, buyTax, sellTax }) => {
+const TradeCard: React.FC<TradeCardProps> = ({ data, slippage, price, buyTax, sellTax, noLiquidity }) => {
   const { chainId } = useActiveWeb3React();
   const { t } = useTranslation();
 
@@ -28,9 +29,10 @@ const TradeCard: React.FC<TradeCardProps> = ({ data, slippage, price, buyTax, se
   const formattedInvertedPrice = formatDecimals(price?.invert()?.toSignificant(6) ?? "0.0");
 
   const adapters = useMemo(() => {
+    if (!data) return [];
     const usedAdapters = Adapters[chainId].filter((x) => data.adapters.includes(x.address));
     return usedAdapters.filter((x, i) => usedAdapters.findIndex((y) => y.name == x.name) == i);
-  }, [data.adapters, chainId]);
+  }, [data, chainId]);
 
   return (
     <>
@@ -71,19 +73,29 @@ const TradeCard: React.FC<TradeCardProps> = ({ data, slippage, price, buyTax, se
               </p>
             </div>
             <div className="flex items-center" onClick={() => setTradePanelToggled(!tradePanelToggled)}>
-              {adapters.length > 1 && (
-                <button className="btn-protocol-shadow mr-2 hidden rounded rounded-2xl bg-primary px-3 text-xs text-black sm:block">
-                  MULTI
-                </button>
-              )}
-              {adapters.map((adapter, index) => (
+              {noLiquidity ? (
+                <>
+                {adapters.length > 1 && (
+                  <button className="btn-protocol-shadow mr-2 hidden rounded rounded-2xl bg-primary px-3 text-xs text-black sm:block">
+                    MULTI
+                  </button>
+                )}
+                {adapters.map((adapter, index) => (
+                  <img
+                    className={`${index > 0 ? "-ml-2" : ""} h-6 w-6 rounded-full`}
+                    src={adapter.logo}
+                    alt={adapter.name}
+                    key={index}
+                  />
+                ))}
+                </>
+              ) : (
                 <img
-                  className={`${index > 0 ? "-ml-2" : ""} h-6 w-6 rounded-full`}
-                  src={adapter.logo}
-                  alt={adapter.name}
-                  key={index}
-                />
-              ))}
+                  className={`h-6 w-6 rounded-full`}
+                  src={"/images/brewlabs.png"}
+                  alt={"brewlabs"}
+              />
+              )}
             </div>
           </div>
         </div>

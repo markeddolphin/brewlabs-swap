@@ -1,6 +1,6 @@
 import { ChainId, WNATIVE } from "@brewlabs/sdk";
 import { ethers } from "ethers";
-import { EXPLORER_NAMES, EXPLORER_URLS } from "config/constants/networks";
+import { CHAIN_ICONS, EXPLORER_LOGO, EXPLORER_NAMES, EXPLORER_URLS } from "config/constants/networks";
 import { getNativeSybmol } from "lib/bridge/helpers";
 import { DEX_LOGOS } from "config/constants/swap";
 
@@ -79,23 +79,8 @@ export const priceFormat = (str) => {
   return { count: c - 1, value };
 };
 
-const CHAIN_LOGO = {
-  1: "/images/networks/eth.svg",
-  56: "/images/networks/bsc.png",
-};
-export const getChainLogo = (chainId) => {
-  return CHAIN_LOGO[chainId];
-};
-
-const EXPLORER_LOGO = {
-  1: "/images/explorer/etherscan.png",
-  56: "/images/explorer/bscscan.png",
-};
-
-export const getExplorerLogo = (chainId) => {
-  return EXPLORER_LOGO[chainId];
-};
-
+export const getChainLogo = (chainId) => CHAIN_ICONS[chainId] ?? "/images/networks/unkown.png";
+export const getExplorerLogo = (chainId) => EXPLORER_LOGO[chainId] ?? "/images/networks/unkown.png";
 export const getDexLogo = (exchange) => DEX_LOGOS[exchange];
 
 export const getIndexName = (tokens) => {
@@ -116,4 +101,13 @@ export const formatIPFSString = (url) => {
   else if (url.includes("ipfs://ipfs/"))
     _url = "https://maverickbl.mypinata.cloud/ipfs/" + _url.replace("ipfs://ipfs/", "");
   return _url;
+};
+
+export const getRarityColor = (rarity) => {
+  switch (rarity) {
+    case "common":
+      return "text-white";
+    case "rare":
+      return "text-[#1A82FF]";
+  }
 };

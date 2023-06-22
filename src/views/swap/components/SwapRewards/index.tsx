@@ -1,5 +1,5 @@
-import { ChevronDownSVG, InfoSVG, downSVG } from "components/dashboard/assets/svgs";
-import { useState, useMemo, useCallback } from "react";
+import { ChevronCircleDownSVG, InfoSVG, downSVG } from "components/dashboard/assets/svgs";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import styled from "styled-components";
@@ -13,8 +13,31 @@ import { filterTokens } from "components/searchModal/filtering";
 import { useTokenBalancesWithLoadingIndicator } from "state/wallet/hooks";
 import { useLiquidityPools } from "@hooks/swap/useLiquidityPools";
 import useTokenMarketChart, { defaultMarketData } from "@hooks/useTokenMarketChart";
-import { usePendingLPRewards } from "@hooks/swap/usePendingLPRewards";
+import { usePendingRewards } from "@hooks/swap/usePendingRewards";
 import { useTokens } from "@hooks/Tokens";
+import { BigNumber } from "ethers";
+import { getPairDayDatas } from "lib/swap/pairs";
+import { useGraphEndPoint } from "@hooks/swap/useGraphEndPoint";
+
+export const rewardInUSD = (token0, token1, token0Price, token1Price, reward) => {
+  const { lpRewards, ownerRewards, referralRewards } = reward || {};
+
+  const token0Amount = new TokenAmount(
+    token0,
+    BigNumber.from(lpRewards?.amount0 ?? 0)
+      .add(ownerRewards?.amount0 ?? 0)
+      .add(referralRewards?.amount0 ?? 0)
+      .toString()
+  ).toExact();
+  const token1Amount = new TokenAmount(
+    token1,
+    BigNumber.from(lpRewards?.amount1 ?? 0)
+      .add(ownerRewards?.amount1 ?? 0)
+      .add(referralRewards?.amount1 ?? 0)
+      .toString()
+  ).toExact();
+  return Number(token0Price) * Number(token0Amount) + Number(token1Price) * Number(token1Amount);
+};
 
 const SwapRewards = () => {
   const { chainId, account } = useActiveWeb3React();
@@ -48,25 +71,34 @@ const SwapRewards = () => {
     );
   }, [account, pairs]);
 
+  const graphEndPoint = useGraphEndPoint();
+  const [pairDayDatas, setPairDayDatas] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (ownedPairs.length == 0 || !graphEndPoint) return;
+      (async () => {
+        const pairDayDatas = await getPairDayDatas(graphEndPoint.router, ownedPairs.map((pair) => pair.id));        
+        setPairDayDatas(pairDayDatas);
+      })();
+  }, [ownedPairs, graphEndPoint])
   const pairTokenAddresses = useMemo(
     () => [...new Set([].concat.apply([], ownedPairs.map((pair) => [pair.token0, pair.token1]) as ConcatArray<any>[]))],
     [ownedPairs]
   );
   const pairTokens = useTokens(pairTokenAddresses);
-  const rewards = usePendingLPRewards(ownedPairs);
-  const lpRewardInUSD = useMemo(() => {
+  const rewards = usePendingRewards(ownedPairs);
+  const totalRewards = useMemo(() => {
     if (Object.keys(pairTokens ?? {}).length === 0) return 0;
-    return ownedPairs.reduce((sum, pair, index) => {
+    return ownedPairs.reduce((sum, pair) => {
       const { token0, token1 } = pair;
       const { usd: token0Price } = tokenMarketData[token0?.toLowerCase()] || defaultMarketData;
       const { usd: token1Price } = tokenMarketData[token1?.toLowerCase()] || defaultMarketData;
-      sum +=
-        Number(token0Price) * Number(new TokenAmount(pairTokens[token0], rewards[index]?.amount0 ?? 0).toExact()) +
-        Number(token1Price) * Number(new TokenAmount(pairTokens[token1], rewards[index]?.amount1 ?? 0).toExact());
+      sum += rewardInUSD(pairTokens[token0], pairTokens[token1], token0Price, token1Price, rewards[pair.id]);
       return sum;
     }, 0);
   }, [ownedPairs, rewards, tokenMarketData, pairTokens]);
 
+  // const totalRewards = 0;
   const eligiblePairs = useMemo(() => ownedPairs.filter(inputFilter), [ownedPairs]);
 
   const pairsOfReferrer = eligiblePairs.filter((pair) => pair.referrer === account);
@@ -115,13 +147,13 @@ const SwapRewards = () => {
             <div className="text-xs leading-none">
               Harvest <span className="text-[#EEBB19]">All</span>
             </div>
-            <div className="absolute right-2 scale-125 text-[#EEBB19]">{ChevronDownSVG}</div>
+            <div className="absolute right-2 scale-125 text-[#EEBB19]">{ChevronCircleDownSVG}</div>
           </StyledButton>
           <div className="absolute -bottom-5 left-2 flex items-center">
             <div className="mr-2 scale-125 text-white">
               <InfoSVG />
             </div>
-            <div className="text-xs text-[#FFFFFF80]">${lpRewardInUSD.toFixed(2)} USD</div>
+            <div className="text-xs text-[#FFFFFF80]">${totalRewards.toFixed(4)} USD</div>
           </div>
         </div>
       </div>
@@ -137,9 +169,19 @@ const SwapRewards = () => {
       <div className="mt-2  w-full ">
         <SearchInput placeholder="Search token..." value={criteria} onChange={(e) => setCriteria(e.target.value)} />
       </div>
-      {filteredPairs.map((pair, index) => (
-        <Pair pair={pair} key={index} marketData={tokenMarketData} />
-      ))}
+      {filteredPairs.map((pair, index) => {
+        const { token0, token1 } = pair;
+        const { usd: token0Price } = tokenMarketData[token0?.toLowerCase()] || defaultMarketData;
+        const { usd: token1Price } = tokenMarketData[token1?.toLowerCase()] || defaultMarketData;
+        const pairDayData = pairDayDatas.filter(data => data.pairAddress.toLowerCase() === pair.id.toLowerCase()).reduce((result, data) => {
+          result.dailyVolumeToken0 += Number(data.dailyVolumeToken0);
+          result.dailyVolumeToken1 += Number(data.dailyVolumeToken1);
+          return result;
+        }, {dailyVolumeToken0: 0, dailyVolumeToken1: 0})
+        return (
+          <Pair pair={pair} key={index} token0Price={token0Price} token1Price={token1Price} reward={rewards[pair.id]} pairDayData={pairDayData} />
+        );
+      })}
       <div className="mt-8">
         <OutlinedButton href="https://brewlabs.info/" className="mt-2" small>
           Back

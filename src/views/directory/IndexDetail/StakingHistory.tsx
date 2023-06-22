@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
+import TokenLogo from "@components/logo/TokenLogo";
 import { formatAmount } from "utils/formatApy";
 import { getBlockExplorerLink, getBlockExplorerLogo, numberWithCommas } from "utils/functions";
 import getTokenLogoURL from "utils/getTokenLogoURL";
@@ -76,12 +77,10 @@ const StakingHistory = ({ data, history, setOpen }: { data: any; history: any; s
     profit -= +item.realUsdAmount;
 
     return (
-      <span className={`${profit >= 0 ? "text-green" : "text-danger"}`}>${numberWithCommas(Math.abs(profit).toFixed(3))}</span>
+      <span className={`${profit >= 0 ? "text-green" : "text-danger"}`}>
+        ${numberWithCommas(Math.abs(profit).toFixed(3))}
+      </span>
     );
-  };
-
-  const onError = (data) => {
-    data.target.src = "/images/unknown.png";
   };
 
   return (
@@ -102,11 +101,9 @@ const StakingHistory = ({ data, history, setOpen }: { data: any; history: any; s
                 <div className="min-w-[100px]">
                   {tokens.map((token, index) => (
                     <div key={index} className="flex items-center leading-none">
-                      <img
-                        src={getTokenLogoURL(token.address, token.chainId)}
-                        onError={onError}
-                        alt={""}
-                        className="mr-1 w-3 rounded-full"
+                      <TokenLogo
+                        src={getTokenLogoURL(token.address, token.chainId, token.logo)}
+                        classNames="mr-1 w-3"
                       />
                       <div className="text-[#FFFFFFBF]">{formatAmount(item.amounts[index], 6)}</div>
                     </div>

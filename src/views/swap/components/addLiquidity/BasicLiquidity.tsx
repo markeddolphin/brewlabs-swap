@@ -34,25 +34,15 @@ export default function BasicLiquidity() {
 
   const liquidityProviderFee = 0.25;
   const tokenHoldersFee = 0.0;
-  const referralFee = 0.0;
   const brewlabsFee = 0.05;
   const tokenOwnerFee = 0.0;
 
   // mint state
   const { independentField, typedValue, otherTypedValue } = useMintState();
-  const {
-    dependentField,
-    currencies,
-    pair,
-    pairState,
-    currencyBalances,
-    parsedAmounts,
-    price,
-    noLiquidity,
-    liquidityMinted,
-    poolTokenPercentage,
-    error,
-  } = useDerivedMintInfo(undefined, undefined);
+  const { dependentField, currencies, pair, currencyBalances, parsedAmounts, noLiquidity, error } = useDerivedMintInfo(
+    undefined,
+    undefined
+  );
 
   const { onFieldAInput, onFieldBInput, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
@@ -80,16 +70,6 @@ export default function BasicLiquidity() {
       return {
         ...accumulator,
         [field]: maxAmountSpend(currencyBalances[field]),
-      };
-    },
-    {}
-  );
-
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? "0"),
       };
     },
     {}
@@ -228,10 +208,6 @@ export default function BasicLiquidity() {
       value: `$${marketcap.toFixed(2)}`,
     },
     {
-      key: "Pool fee for token owner",
-      value: tokenOwnerFee.toFixed(2) + "%",
-    },
-    {
       key: "Pool fee for liquidity providers",
       value: liquidityProviderFee.toFixed(2) + "%",
     },
@@ -240,8 +216,23 @@ export default function BasicLiquidity() {
       value: "0.05%",
     },
     {
-      key: "Total pool fee",
+      key: "Total fixed pool fee",
       value: (tokenOwnerFee + tokenHoldersFee + liquidityProviderFee + brewlabsFee).toFixed(2) + "%",
+    },
+  ];
+
+  const dynamicData = [
+    {
+      key: "Pool fee directed to referral/burn address ",
+      value: `0.00%`,
+    },
+    {
+      key: "Pool fee directed to staking pool ",
+      value: `0.00%`,
+    },
+    {
+      key: "Pool fee directed to project team",
+      value: `0.00%`,
     },
   ];
 
@@ -293,10 +284,10 @@ export default function BasicLiquidity() {
               ></CurrencyInputPanel>
             </div>
 
-            <div className="mb-6 mt-3 rounded-3xl border border-gray-300 px-5 py-3 font-['Roboto'] text-xs font-bold text-gray-400 sm:px-8 sm:text-sm ">
+            <div className="primary-shadow mb-6 mt-3 rounded-3xl px-3 py-3 font-['Roboto'] text-xs font-bold text-gray-400 xsm:px-5 sm:px-8 sm:text-sm ">
               <div className="mb-3 flex justify-between">
                 <div className="text-base text-gray-300 sm:text-xl">New pool metrics</div>
-                <div className="flex min-w-[100px] items-center">
+                <div className="flex min-w-[60px] items-center justify-center">
                   {currencies[Field.CURRENCY_A] && <CurrencyLogo currency={currencies[Field.CURRENCY_A]} size="30px" />}
                   {currencies[Field.CURRENCY_B] && (
                     <div className="-ml-2">
@@ -305,11 +296,31 @@ export default function BasicLiquidity() {
                   )}
                 </div>
               </div>
-              {data.map((item) => (
-                <div key={item.key} className="mt-1 flex justify-between">
+              {data.map((item, i) => (
+                <div
+                  key={item.key}
+                  className={`mt-1 flex justify-between ${data.length - 1 === i ? "text-white" : ""}`}
+                >
                   <div>{item.key}</div>
-                  <div className="ml-2 flex min-w-[120px]">
-                    <div className="ml-[12px]">{item.value}</div>
+                  <div className="ml-2 flex min-w-[60px] justify-center">
+                    <div>{item.value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="primary-shadow mb-6 mt-3 rounded-3xl px-3 py-3 font-['Roboto'] text-xs font-bold text-gray-400 xsm:px-5 sm:px-8 sm:text-sm ">
+              <div className="flex justify-between">
+                <div className="text-base text-gray-300">Dynamic pool fees</div>
+              </div>
+              {dynamicData.map((item, i) => (
+                <div
+                  key={item.key}
+                  className={`mt-1 flex justify-between ${data.length - 1 === i ? "text-white" : ""}`}
+                >
+                  <div>{item.key}</div>
+                  <div className="ml-2 flex min-w-[60px] justify-center">
+                    <div>{item.value}</div>
                   </div>
                 </div>
               ))}

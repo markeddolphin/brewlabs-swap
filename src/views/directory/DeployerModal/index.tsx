@@ -70,12 +70,12 @@ const HeroSection = ({
           customRightArrow={<CustomRightArrow onClick={undefined} />}
           customLeftArrow={<CustomLeftArrow onClick={undefined} />}
         >
-          {[ "Yield Farm"].map((data, i) => {
+          {[/*"Staking Pool",*/ "Yield Farm", "Index" /*, "Token"*/].map((data, i) => {
             return (
               <DeployItem
                 key={i}
                 className="primary-shadow flex h-[140px] w-[140px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#FFFFFFBF] transition-all hover:border-solid hover:border-primary"
-                onClick={() => setDeployType("Yield Farm")}
+                onClick={() => setDeployType(data)}
                 active={deployType === data}
               >
                 <div>{data}</div>
@@ -113,7 +113,7 @@ const DeployerModal = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
       <Dialog
         open={open}
         className="fixed inset-0 z-10 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
-        onClose={() => step <= 2 && setOpen(false)}
+        onClose={() => {}}
       >
         <div className="flex min-h-full items-center justify-center p-4 ">
           <motion.div
@@ -150,7 +150,7 @@ const DeployerModal = ({ open, setOpen }: { open: boolean; setOpen: any }) => {
               ) : deployType === "Yield Farm" ? (
                 <FarmDeployer setOpen={setOpen} step={step} setStep={setStep} />
               ) : deployType === "Index" ? (
-                <IndexDeployer setOpen={setOpen} />
+                <IndexDeployer setOpen={setOpen} step={step} setStep={setStep} />
               ) : (
                 ""
               )}
@@ -183,7 +183,7 @@ const CarouselPanel = styled.div`
   margin: 0 auto;
   .react-multi-carousel-list {
     position: unset !important;
-    padding : 8px 0;
+    padding: 8px 0;
   }
   position: relative;
   .react-multi-carousel-item {

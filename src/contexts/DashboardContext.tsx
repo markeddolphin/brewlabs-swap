@@ -235,6 +235,7 @@ const DashboardContextProvider = ({ children }: any) => {
     ethBalance = await multicallContract.getEthBalance(address);
     let data: any = [];
     if (chainId === 1) {
+      
       const result = await axios.get(`https://api.blockchain.info/v2/eth/data/account/${address}/tokens`);
       const nonZeroBalances = result.data.tokenAccounts.filter((data: any) => data.balance / 1 > 0);
       data = await Promise.all(

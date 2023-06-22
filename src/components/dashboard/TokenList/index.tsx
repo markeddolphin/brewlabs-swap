@@ -235,10 +235,10 @@ const TokenList = ({
         <LogoPanel className={"flex flex-col pt-1 "} showShadow={showBoxShadow.toString()}>
           {showData.map((data: any, i: number) => {
             const logoFilter: any = tokenList.filter(
-              (logo: any) => data.address && logo.address.toLowerCase() === data.address.toLowerCase()
+              (logo: any) => data.address && logo.address?.toLowerCase() === data.address.toLowerCase()
             );
             const logo =
-              data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+              data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" || !data.address
                 ? getChainLogo(chainId)
                 : logoFilter.length
                 ? logoFilter[0].logoURI

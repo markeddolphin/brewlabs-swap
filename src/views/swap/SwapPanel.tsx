@@ -59,8 +59,9 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
   const [userSlippageTolerance] = useUserSlippageTolerance();
 
   const noLiquidity = useMemo(() => {
-    if (chainId === ChainId.BSC_TESTNET) return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
-    return true; // use aggregator for non bsc testnet
+    if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.POLYGON)
+      return currencies[Field.INPUT] && currencies[Field.OUTPUT] && !trade;
+    return true; // use aggregator for non bsc testnet & polygon network
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT], trade]);
 
   const [approval, approveCallback] = useApproveCallbackFromTrade(
@@ -272,7 +273,7 @@ export default function SwapPanel({ type = "swap", disableChainSelect = false })
           buyTax={buyTax}
           sellTax={sellTax}
           currencies={currencies}
-          disable={noLiquidity}
+          noLiquidity={noLiquidity}
         />
       </div>
       {account &&

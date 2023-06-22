@@ -22,7 +22,7 @@ interface CurrencyOutputPanelProps {
   buyTax?: number;
   sellTax?: number;
   currencies: any;
-  disable?: boolean;
+  noLiquidity?: boolean;
 }
 
 const CurrencyOutputPanel = ({
@@ -38,7 +38,7 @@ const CurrencyOutputPanel = ({
   buyTax,
   sellTax,
   currencies,
-  disable = false,
+  noLiquidity = false,
 }: CurrencyOutputPanelProps) => {
   const { chainId } = useActiveWeb3React();
   const tokenAddress = currency?.wrapped?.address?.toLowerCase();
@@ -57,7 +57,7 @@ const CurrencyOutputPanel = ({
                 onUserInput(val);
               }}
               decimals={currency?.decimals}
-              disable={disable}
+              disable={noLiquidity}
             />
             <CurrencySelectButton inputCurrencySelect={false} currencies={currencies} />
           </div>
@@ -96,7 +96,7 @@ const CurrencyOutputPanel = ({
           </div>
         )}
       </div>
-      {data && Object.keys(data).length ? (
+      {price ? (
         <div className="mx-6 mt-3 mb-2">
           <TradeCard
             data={data}
@@ -104,6 +104,7 @@ const CurrencyOutputPanel = ({
             price={price}
             buyTax={buyTax}
             sellTax={sellTax}
+            noLiquidity={noLiquidity}
           />
         </div>
       ) : null}

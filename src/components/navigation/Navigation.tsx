@@ -55,7 +55,7 @@ const Navigation = ({ slim }: { slim?: boolean }) => {
                       className={clsx(
                         slim
                           ? "flex h-5 w-5 scale-[85%] items-center justify-center text-gray-500 dark:text-gray-400"
-                          : "mr-3 flex h-7 w-7 items-center justify-center text-gray-600 group-hover:text-gray-500 dark:text-gray-500"
+                          : "mr-3 flex items-center justify-center text-gray-600 group-hover:text-gray-500 dark:text-gray-500 [&>*:first-child]:!w-[22px] [&>*:first-child]:!h-fit w-7 h-7"
                       )}
                     >
                       {item.svg}

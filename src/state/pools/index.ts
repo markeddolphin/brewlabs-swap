@@ -3,6 +3,7 @@ import { ChainId } from "@brewlabs/sdk";
 import axios from "axios";
 
 import { API_URL } from "config/constants";
+import { PAGE_SUPPORTED_CHAINS } from "config/constants/networks";
 import { Category } from "config/constants/types";
 import { BIG_ZERO } from "utils/bigNumber";
 import { PoolsState } from "state/types";
@@ -58,7 +59,9 @@ export const fetchPoolsPublicDataFromApiAsync = () => async (dispatch) => {
   axios.post(`${API_URL}/pools`).then((res) => {
     let pools = [];
     if (res.data) {
-      pools = res.data.map((pool) => ({ type: Category.POOL, ...pool }));
+      pools = res.data
+        .filter((p) => PAGE_SUPPORTED_CHAINS["staking"].includes(p.chainId))
+        .map((pool) => ({ type: Category.POOL, ...pool }));
     }
     dispatch(setPoolsPublicData(pools));
 

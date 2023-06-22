@@ -180,7 +180,7 @@ export const Adapters = {
     {
       address: "0x8433f9865c197a9E4954Ebd5c0C69a24cE50c6dC",
       name: "Brewswap",
-      logo: "/logo.png"
+      logo: "/images/brewlabs.png"
     },
   ],
 };

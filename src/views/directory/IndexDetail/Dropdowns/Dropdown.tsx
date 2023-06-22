@@ -53,7 +53,7 @@ const StyledDropDown = styled.div<{ open: boolean }>`
 `;
 
 const DropDownBody = styled.div<{ open: boolean }>`
-  height: ${({ open }) => (open ? "60px" : 0)};
+  height: ${({ open }) => (open ? "auto" : 0)};
   overflow: hidden;
   background: rgb(46, 52, 62);
   border-bottom-left-radius: 12px;

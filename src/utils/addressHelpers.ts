@@ -20,6 +20,9 @@ export const getMulticallAddress = (chainId: ChainId) => {
 export const getFarmFactoryAddress = (chainId: ChainId) => {
   return getAddress(addresses.farmFactory, chainId);
 };
+export const getIndexFactoryAddress = (chainId: ChainId) => {
+  return getAddress(addresses.indexFactory, chainId);
+};
 export const getLpManagerAddress = (chainId: ChainId) => {
   return getAddress(addresses.lpManager, chainId);
 };

@@ -209,11 +209,11 @@ export const BridgeProvider: FC<React.PropsWithChildren<unknown>> = ({ children 
         });
         return true;
       } catch (tokenDetailsError) {
-        toast.error(
-          !isQueryToken
-            ? "Cannot fetch token details. Wait for a few minutes and reload the application"
-            : "Token not found."
-        );
+        // toast.error(
+        //   !isQueryToken
+        //     ? "Cannot fetch token details. Wait for a few minutes and reload the application"
+        //     : "Token not found."
+        // );
         console.error({ tokenDetailsError });
         return false;
       }

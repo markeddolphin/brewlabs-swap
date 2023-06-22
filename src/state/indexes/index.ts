@@ -3,10 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 import { API_URL } from "config/constants";
+import { PAGE_SUPPORTED_CHAINS } from "config/constants/networks";
 import { Category } from "config/constants/types";
 import { IndexesState } from "state/types";
 import { fetchIndexPerformance, fetchIndexesTotalStaking } from "./fetchIndexes";
-import { fetchUserBalance, fetchUserNftAllowance, fetchUserNftData, fetchUserStakings } from "./fetchIndexesUser";
+import {
+  fetchUserBalance,
+  fetchUserNftAllowance,
+  fetchUserIndexNftData,
+  fetchUserStakings,
+  fetchUserDeployerNftData,
+} from "./fetchIndexesUser";
 
 import { SerializedIndex } from "./types";
 
@@ -19,7 +26,9 @@ export const fetchIndexesFromApiAsync = () => async (dispatch) => {
   axios.post(`${API_URL}/indexes`).then((res) => {
     let indexes = [];
     if (res.data) {
-      indexes = res.data.map((pool) => ({ type: Category.INDEXES, ...pool }));
+      indexes = res.data
+        .filter((p) => PAGE_SUPPORTED_CHAINS["indexes"].includes(p.chainId))
+        .map((pool) => ({ type: Category.INDEXES, ...pool }));
     }
     dispatch(setIndexesPublicData(indexes));
 
@@ -116,15 +125,37 @@ export const fetchIndexesUserDataAsync = (account: string, chainId: ChainId) => 
   fetchUserBalance(account, chainId).then((ethBalance) => {
     dispatch(setIndexesUserData(indexes.map((pool) => ({ pid: pool.pid, ethBalance: ethBalance.toString() }))));
   });
-  fetchUserNftData(account, chainId, indexes[0]?.nft).then((nftInfo) =>
+  fetchUserIndexNftData(account, chainId, indexes.filter((index) => index.category === undefined)[0]?.nft).then(
+    (nftInfo) =>
+      dispatch(
+        setIndexesUserData(
+          indexes.filter((index) => index.category === undefined).map((pool) => ({
+            pid: pool.pid,
+            indexNftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+          }))
+        )
+      )
+  );
+  fetchUserIndexNftData(account, chainId, indexes.filter((index) => index.category >= 0)[0]?.indexNft).then((nftInfo) =>
     dispatch(
       setIndexesUserData(
-        indexes.map((pool) => ({
+        indexes.filter((index) => index.category >= 0).map((pool) => ({
           pid: pool.pid,
-          nftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+          indexNftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
         }))
       )
     )
+  );
+  fetchUserDeployerNftData(account, chainId, indexes.filter((index) => index.category >= 0)[0]?.deployerNft).then(
+    (nftInfo) =>
+      dispatch(
+        setIndexesUserData(
+          indexes.filter((index) => index.category >= 0).map((pool) => ({
+            pid: pool.pid,
+            deployerNftItem: nftInfo.find((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+          }))
+        )
+      )
   );
 };
 
@@ -170,16 +201,52 @@ export const updateUserBalance = (account: string, chainId: ChainId) => async (d
   dispatch(setIndexesUserData(indexes.map((pool) => ({ pid: pool.pid, ethBalance: ethBalance.toString() }))));
 };
 
-export const updateUserNftInfo = (account: string, chainId: ChainId) => async (dispatch, getState) => {
+export const updateUserIndexNftInfo = (account: string, chainId: ChainId) => async (dispatch, getState) => {
   const indexes = getState().indexes.data.filter((p) => p.chainId === chainId);
   if (indexes.length === 0) return;
 
-  const nftInfo = await fetchUserNftData(account, chainId, indexes[0].nft);
+  let nftInfo = await fetchUserIndexNftData(
+    account,
+    chainId,
+    indexes.filter((index) => index.category === undefined)[0]?.nft
+  );
   dispatch(
     setIndexesUserData(
       indexes.map((pool) => ({
         pid: pool.pid,
-        nftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+        indexNftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+      }))
+    )
+  );
+
+  nftInfo = await fetchUserIndexNftData(account, chainId, indexes.filter((index) => index.category >= 0)[0]?.indexNft);
+  dispatch(
+    setIndexesUserData(
+      indexes.map((pool) => ({
+        pid: pool.pid,
+        indexNftItems: nftInfo.filter((data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()),
+      }))
+    )
+  );
+};
+
+export const updateUserDeployerNftInfo = (account: string, chainId: ChainId) => async (dispatch, getState) => {
+  const indexes = getState().indexes.data.filter((p) => p.chainId === chainId);
+  if (indexes.length === 0) return;
+
+  const deployerNftInfo = await fetchUserDeployerNftData(
+    account,
+    chainId,
+    indexes.filter((index) => index.category >= 0)[0]?.deployerNft
+  );
+
+  dispatch(
+    setIndexesUserData(
+      indexes.map((pool) => ({
+        pid: pool.pid,
+        deployerNftItem: deployerNftInfo.find(
+          (data) => data.indexAddress.toLowerCase() === pool.address.toLowerCase()
+        ),
       }))
     )
   );

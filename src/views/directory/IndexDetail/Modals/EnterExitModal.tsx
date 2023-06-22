@@ -5,12 +5,14 @@ import { ethers } from "ethers";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { chevronLeftSVG } from "components/dashboard/assets/svgs";
 import IndexLogo from "components/logo/IndexLogo";
 import LogoIcon from "components/LogoIcon";
+import TokenLogo from "@components/logo/TokenLogo";
 
 import { DashboardContext } from "contexts/DashboardContext";
 import useTokenPrice from "hooks/useTokenPrice";
@@ -20,9 +22,11 @@ import { formatAmount } from "utils/formatApy";
 import { getIndexName, numberWithCommas } from "utils/functions";
 import getTokenLogoURL from "utils/getTokenLogoURL";
 
+import useIndex from "../hooks/useIndex";
+import useIndexImpl from "../hooks/useIndexImpl";
+
 import StyledButton from "../../StyledButton";
 import StyledSlider from "./StyledSlider";
-import useIndex from "../hooks/useIndex";
 
 const EnterExitModal = ({
   open,
@@ -39,12 +43,14 @@ const EnterExitModal = ({
   const [amount, setAmount] = useState("");
   const [insufficient, setInsufficient] = useState(false);
   const [maxPressed, setMaxPressed] = useState(false);
+  const [isZapOut, setZapout] = useState(false);
 
   const [percent, setPercent] = useState(100 - (data.numTokens - 1) * Math.floor(100 / data.numTokens));
   const [percents, setPercents] = useState(new Array(data.numTokens - 1).fill(Math.floor(100 / data.numTokens)));
 
   const { pending, setPending }: any = useContext(DashboardContext);
-  const { onZapIn, onZapOut, onClaim } = useIndex(data.pid, data.address, data.performanceFee);
+  const { onZapOut: onZapOutOld, onClaim: onClaimOld } = useIndex(data.pid, data.address, data.performanceFee);
+  const { onZapIn, onZapOut, onClaim } = useIndexImpl(data.pid, data.address, data.performanceFee);
 
   const ethbalance = ethers.utils.formatEther(userData.ethBalance);
   const stakedBalances = userData.stakedBalances?.length
@@ -151,9 +157,14 @@ const EnterExitModal = ({
       return;
     }
 
+    if (data.category === undefined) {
+      toast.warn("This version is no longer supported.");
+      return;
+    }
+
     setPending(true);
     try {
-      await onZapIn(amount, [percent, ...percents]);
+      await onZapIn(ethers.constants.AddressZero, amount, [percent, ...percents]);
 
       toast.success(`Zapped in successfully`);
       setOpen(false);
@@ -166,8 +177,13 @@ const EnterExitModal = ({
 
   const handleZapOut = async () => {
     setPending(true);
+    setZapout(true);
     try {
-      await onZapOut();
+      if (data.category >= 0) {
+        await onZapOut(ethers.constants.AddressZero);
+      } else {
+        await onZapOutOld();
+      }
 
       toast.success(`Zapped out successfully`);
       setOpen(false);
@@ -175,13 +191,18 @@ const EnterExitModal = ({
       console.log(e);
       handleWalletError(e, showError, getNativeSybmol(data.chainId));
     }
+    setZapout(false);
     setPending(false);
   };
 
   const handleClaimTokens = async () => {
     setPending(true);
     try {
-      await onClaim(percent);
+      if (data.category >= 0) {
+        await onClaim(percent);
+      } else {
+        await onClaimOld(percent);
+      }
 
       toast.success(`Claimed ${percent}% tokens`);
       setOpen(false);
@@ -197,7 +218,7 @@ const EnterExitModal = ({
       <Dialog
         open={open}
         className="fixed inset-0 z-50 overflow-y-auto bg-gray-300 bg-opacity-90 font-brand dark:bg-zinc-900 dark:bg-opacity-80"
-        onClose={() => setOpen(false)}
+        onClose={() => {}}
       >
         <div className="flex min-h-full items-center justify-center p-4 ">
           <motion.div
@@ -300,12 +321,7 @@ const EnterExitModal = ({
 
               <div className="mx-auto mb-4 mt-4 flex w-full max-w-[480px] items-center">
                 {type === "enter" ? (
-                  <img
-                    src={getTokenLogoURL(tokens[0].address, tokens[0].chainId)}
-                    onError={(data) => (data.target["src"] = "/images/unknown.png")}
-                    alt={""}
-                    className="w-14 rounded-full"
-                  />
+                  <TokenLogo src={getTokenLogoURL(tokens[0].address, tokens[0].chainId)} classNames="w-14" large />
                 ) : (
                   <IndexLogo tokens={tokens} classNames="mr-0 scale-125" />
                 )}
@@ -327,12 +343,7 @@ const EnterExitModal = ({
               {type === "enter" ? (
                 tokens.slice(1).map((token, index) => (
                   <div key={token.address} className="mx-auto mb-4 mt-4 flex w-full max-w-[480px] items-center">
-                    <img
-                      src={getTokenLogoURL(token.address, token.chainId)}
-                      onError={(data) => (data.target["src"] = "/images/unknown.png")}
-                      alt={""}
-                      className="w-14 rounded-full"
-                    />
+                    <TokenLogo src={getTokenLogoURL(token.address, token.chainId)} classNames="w-14" large />
                     <StyledSlider
                       value={percents[index]}
                       setValue={(v) => percentChanged(index + 1, v)}
@@ -359,6 +370,18 @@ const EnterExitModal = ({
                   <div className="h-12">
                     <StyledButton type="quaternary" onClick={handleZapIn} disabled={!amount || pending || insufficient}>
                       {insufficient ? `Insufficient balance` : `Enter ${getIndexName(tokens)} Index`}
+                      {pending && (
+                        <div className="absolute right-2 top-0 flex h-full items-center">
+                          <Oval
+                            width={21}
+                            height={21}
+                            color={"white"}
+                            secondaryColor="black"
+                            strokeWidth={3}
+                            strokeWidthSecondary={3}
+                          />
+                        </div>
+                      )}
                     </StyledButton>
                   </div>
                 ) : (
@@ -369,6 +392,18 @@ const EnterExitModal = ({
                       disabled={pending || !percent || +userData.stakedUsdAmount <= 0}
                     >
                       Exit {renderProfit()} Profit
+                      {pending /*&& !isZapOut*/ && (
+                        <div className="absolute right-2 top-0 flex h-full items-center">
+                          <Oval
+                            width={21}
+                            height={21}
+                            color={"white"}
+                            secondaryColor="black"
+                            strokeWidth={3}
+                            strokeWidthSecondary={3}
+                          />
+                        </div>
+                      )}
                     </StyledButton>
                     <div className="mx-1" />
                     <StyledButton
@@ -377,6 +412,18 @@ const EnterExitModal = ({
                       disabled={pending || +userData.stakedUsdAmount <= 0}
                     >
                       Zap Out
+                      {pending /*&& isZapOut*/ && (
+                        <div className="absolute right-2 top-0 flex h-full items-center">
+                          <Oval
+                            width={21}
+                            height={21}
+                            color={"white"}
+                            secondaryColor="black"
+                            strokeWidth={3}
+                            strokeWidthSecondary={3}
+                          />
+                        </div>
+                      )}
                     </StyledButton>
                   </div>
                 )}

@@ -2491,6 +2491,13 @@
       "logoURI": "https://raw.githubusercontent.com/brewlabs-code/assets/master/blockchains/cronos/assets/0xc21223249CA28397B4B6541dfFaEcC539BfF0c59/logo.png"
     },
     {
+      "name": "TestToken",
+      "symbol": "TEST",
+      "address": "0x8428b19C97acCD93fA10f19cbbdfF4FB71C4D175",
+      "chainId": 97,
+      "decimals": 18
+    },
+    {
       "name": "TOKENA",
       "symbol": "TOKENA",
       "address": "0xC15BA1a077F6B2ecF51b8AAfbC31E04dC9CbC578",

@@ -101,7 +101,7 @@ const StyledButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`bg-primary font-semibold text-black enabled:hover:opacity-70 disabled:opacity-70 ${base}`}
+      className={`bg-primary font-semibold text-black enabled:hover:opacity-70 disabled:opacity-70 ${base} ${className}`}
     >
       {children}
     </button>

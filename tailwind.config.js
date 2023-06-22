@@ -29,6 +29,7 @@ module.exports = {
         yellow: "#ffde00",
         grey: "#CFCFCF",
         danger: "#D9563A",
+        tailwind: "#3F3F46",
       },
       boxShadow: {
         inner: "inset 0px 0px 6px #000000",

@@ -43,7 +43,7 @@ import { usePollFarmsPublicDataFromApi, usePollFarmsWithUserData } from "state/f
 import { useFetchPoolsWithUserData, useFetchPublicPoolsData, usePollPoolsPublicDataFromApi } from "state/pools/hooks";
 import { useFetchIndexesWithUserData, useFetchPublicIndexesData, usePollIndexesFromApi } from "state/indexes/hooks";
 import { UserContextProvider } from "contexts/UserContext";
-import { usePollFarmFactoryData } from "state/deploy/hooks";
+import { usePollFarmFactoryData, usePollIndexFactoryData } from "state/deploy/hooks";
 import LoadingPage from "@components/LoadingPage";
 
 const Bubbles = lazy(() => import("components/animations/Bubbles"));
@@ -64,6 +64,7 @@ function GlobalHooks() {
   useFetchIndexesWithUserData();
 
   usePollFarmFactoryData();
+  usePollIndexFactoryData()
 
   return null;
 }

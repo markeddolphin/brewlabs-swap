@@ -7,13 +7,13 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useAccount } from "wagmi";
-import styled from "styled-components";
 
 import "react-tooltip/dist/react-tooltip.css";
 
 import { chevronLeftSVG, LinkSVG, warningFarmerSVG } from "components/dashboard/assets/svgs";
 import Container from "components/layout/Container";
 import PageHeader from "components/layout/PageHeader";
+import TokenLogo from "@components/logo/TokenLogo";
 import { SkeletonComponent } from "components/SkeletonComponent";
 import WordHighlight from "components/text/WordHighlight";
 
@@ -24,15 +24,17 @@ import { TokenPriceContext } from "contexts/TokenPriceContext";
 import { useActiveChainId } from "hooks/useActiveChainId";
 import { useSwitchNetwork } from "hooks/useSwitchNetwork";
 import useTokenPrice from "hooks/useTokenPrice";
-import { getNativeSybmol, getNetworkLabel, handleWalletError } from "lib/bridge/helpers";
+import { getExplorerLink, getNativeSybmol, getNetworkLabel, handleWalletError } from "lib/bridge/helpers";
 import { useAppDispatch } from "state";
+import { useIndexFactory } from "state/deploy/hooks";
 import { fetchIndexFeeHistories } from "state/indexes/fetchIndexes";
 import {
   fetchIndexUserHistoryDataAsync,
   setIndexesPublicData,
   updateNftAllowance,
   updateUserBalance,
-  updateUserNftInfo,
+  updateUserDeployerNftInfo,
+  updateUserIndexNftInfo,
   updateUserStakings,
 } from "state/indexes";
 import { formatDollar, getIndexName, numberWithCommas } from "utils/functions";
@@ -40,76 +42,91 @@ import { formatAmount, formatTvl } from "utils/formatApy";
 import getCurrencyId from "utils/getCurrencyId";
 import getTokenLogoURL from "utils/getTokenLogoURL";
 
-import useIndex from "./hooks/useIndex";
+import useIndexImpl from "./hooks/useIndexImpl";
 
 import StyledButton from "../StyledButton";
 import DropDown from "./Dropdowns/Dropdown";
 import OptionDropdown from "./Dropdowns/OptionDropdown";
 import AddNFTModal from "./Modals/AddNFTModal";
 import EnterExitModal from "./Modals/EnterExitModal";
-import IndexLogo from "./IndexLogo";
-import StakingHistory from "./StakingHistory";
-import TotalStakedChart from "./TotalStakedChart";
 import UpdateFeeModal from "./Modals/UpdateFeeModal";
 import MintIndexOwnershipNFT from "./Modals/MintIndexOwnershipNFT";
 import StakeIndexOwnershipNFT from "./Modals/StakeIndexOwnershipNFT";
+import UnstakeIndexOwnershipNFT from "./Modals/UnstakeIndexOwnershipNFT";
+
+import IndexLogo from "./IndexLogo";
+import StakingHistory from "./StakingHistory";
+import TotalStakedChart from "./TotalStakedChart";
 
 const aprTexts = ["24hrs", "7D", "30D"];
+const availableActions = [
+  "Mint Index NFT",
+  "Add Index NFT",
+  "Update Fee Address",
+  "Mint Ownership NFT",
+  "Stake Ownership NFT",
+  "Unstake Ownership NFT",
+];
 
-const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
+const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
   const { data } = detailDatas;
   const { tokens, userData, priceHistories } = data;
+
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [stakingModalOpen, setStakingModalOpen] = useState(false);
   const [addNFTModalOpen, setAddNFTModalOpen] = useState(false);
   const [updateFeeOpen, setUpdateFeeOpen] = useState(false);
-  const [mintIndexNFTOpen, setMintIndexNFTOpen] = useState(false);
-  const [stakeIndexNFTOpen, setStakeIndexNFTOpen] = useState(false);
+  const [mintDeployerNftOpen, setMintDeployerNftOpen] = useState(false);
+  const [stakeDeployerNftOpen, setStakeDeployerNftOpen] = useState(false);
+  const [unstakeDeployerNftOpen, setUnstakeDeployerNftOpen] = useState(false);
 
   const [curType, setCurType] = useState("enter");
   const [curGraph, setCurGraph] = useState(2);
   const [curAPR, setCurAPR] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
 
-  const router = useRouter();
-  const { address } = useAccount();
+  const { address: account } = useAccount();
   const { chainId } = useActiveChainId();
   const { canSwitch, switchNetwork } = useSwitchNetwork();
   const { pending, setPending }: any = useContext(DashboardContext);
   const { tokenPrices } = useContext(TokenPriceContext);
   const nativeTokenPrice = useTokenPrice(data.chainId, WNATIVE[data.chainId].address);
 
-  const { onMintNft } = useIndex(data.pid, data.address, data.performanceFee);
+  const isMintable =
+    !data.deployerNftId &&
+    !userData?.deployerNftItem?.tokenId &&
+    data.deployer?.toLowerCase() === account?.toLowerCase();
+  const isUnstakable =
+    data.deployerNftId &&
+    !userData?.deployerNftItem?.tokenId &&
+    data.feeWallet?.toLowerCase() === account?.toLowerCase();
+  const isStakable = userData?.deployerNftItem?.tokenId;
+
+  const factory = useIndexFactory(chainId);
+  const { onMintNft } = useIndexImpl(data.pid, data.address, data.performanceFee);
 
   useEffect(() => {
     const fetchFeeHistoriesAsync = async () => {
       const { performanceFees, commissions } = await fetchIndexFeeHistories(data);
-
-      dispatch(
-        setIndexesPublicData([
-          {
-            pid: data.pid,
-            performanceFees,
-            commissions,
-          },
-        ])
-      );
+      dispatch(setIndexesPublicData([{ pid: data.pid, performanceFees, commissions }]));
     };
 
     fetchFeeHistoriesAsync();
   }, [data.pid]);
 
   useEffect(() => {
-    if (address) {
-      dispatch(updateNftAllowance(data.pid, address, data.chainId));
-      dispatch(updateUserStakings(data.pid, address, data.chainId));
-      dispatch(updateUserBalance(address, data.chainId));
-      dispatch(updateUserNftInfo(address, data.chainId));
+    if (account) {
+      dispatch(updateNftAllowance(data.pid, account, data.chainId));
+      dispatch(updateUserStakings(data.pid, account, data.chainId));
+      dispatch(updateUserBalance(account, data.chainId));
+      dispatch(updateUserIndexNftInfo(account, data.chainId));
+      dispatch(updateUserDeployerNftInfo(account, data.chainId));
 
-      dispatch(fetchIndexUserHistoryDataAsync(data.pid, address));
+      dispatch(fetchIndexUserHistoryDataAsync(data.pid, account));
     }
-  }, [data.pid, address]);
+  }, [data.pid, account]);
 
   const graphData = () => {
     let _graphData;
@@ -150,7 +167,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
   const renderProfit = (isProfit = false) => {
     let profit = getProfit();
 
-    const profitChanged = (profit ? profit / userData.stakedUsdAmount : 0) * 100;
+    const profitChanged = (profit ? profit / +userData.stakedUsdAmount : 0) * 100;
     if (!userData?.stakedBalances?.length || !priceHistories?.length)
       return (
         <span className="mr-1 text-green">
@@ -167,12 +184,13 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
       );
     return (
       <span className={`${profit >= 0 ? "text-green" : "text-danger"} mr-1`}>
-        ${numberWithCommas(Math.abs(profit).toFixed(2))} <span className="text-[#FFFFFF80]">earned</span>
+        ${numberWithCommas(isNaN(profit) ? "0.00" : Math.abs(profit).toFixed(2))}{" "}
+        <span className="text-[#FFFFFF80]">earned</span>
         {isProfit ? (
           <>
             <br />
             <span className={`${profitChanged >= 0 ? "text-green" : "text-danger"}`}>
-              {Math.abs(profitChanged).toFixed(2)}%&nbsp;
+              {isNaN(profitChanged) ? "0.00" : Math.abs(profitChanged).toFixed(2)}%&nbsp;
               <span className="text-[#FFFFFF80]">{profitChanged >= 0 ? "gain" : "loss"}</span>
             </span>
           </>
@@ -188,6 +206,12 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
   };
 
   const handleMintNft = async () => {
+    if (pending) return;
+    if (data.category === undefined) {
+      toast.warn("This version is no longer supported.");
+      return;
+    }
+
     setPending(true);
     try {
       await onMintNft();
@@ -208,13 +232,8 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
     navigator.clipboard.writeText(`${BASE_URL}${location.pathname}`);
   };
 
-  const indexOptions =
-    data?.deployer === address.toLowerCase()
-      ? ["Mint Index NFT", "Add Index NFT", "Update Fee Address", "Mint Ownership NFT", "Stake Ownership NFT"]
-      : ["Mint Index NFT", "Add Index NFT"];
-
-  function onIndexOption(i) {
-    switch (i) {
+  const onIndexOption = (index) => {
+    switch (index) {
       case 0:
         handleMintNft();
         break;
@@ -225,20 +244,21 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
         setUpdateFeeOpen(true);
         break;
       case 3:
-        setMintIndexNFTOpen(true);
+        setMintDeployerNftOpen(true);
         break;
       case 4:
-        setStakeIndexNFTOpen(true);
+        setStakeDeployerNftOpen(true);
+        break;
+      case 5:
+        setUnstakeDeployerNftOpen(true);
         break;
       default:
-        break;
     }
-  }
+  };
 
   return (
     <>
       <AnimatePresence exitBeforeEnter>
-        (
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -246,13 +266,15 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
           transition={{ duration: 0.3 }}
         >
           <div className="absolute left-0 top-0 max-h-screen w-full overflow-x-hidden overflow-y-scroll pb-[150px]">
-            {address && data && (
+            {account && data && (
               <EnterExitModal open={stakingModalOpen} setOpen={setStakingModalOpen} type={curType} data={data} />
             )}
             <AddNFTModal open={addNFTModalOpen} setOpen={setAddNFTModalOpen} data={data} />
-            <UpdateFeeModal open={updateFeeOpen} setOpen={setUpdateFeeOpen} name={getIndexName(tokens)} />
-            <MintIndexOwnershipNFT open={mintIndexNFTOpen} setOpen={setMintIndexNFTOpen} />
-            <StakeIndexOwnershipNFT open={stakeIndexNFTOpen} setOpen={setStakeIndexNFTOpen} />
+            <UpdateFeeModal open={updateFeeOpen} setOpen={setUpdateFeeOpen} data={data} />
+            <MintIndexOwnershipNFT open={mintDeployerNftOpen} setOpen={setMintDeployerNftOpen} data={data} />
+            <StakeIndexOwnershipNFT open={stakeDeployerNftOpen} setOpen={setStakeDeployerNftOpen} data={data} />
+            <UnstakeIndexOwnershipNFT open={unstakeDeployerNftOpen} setOpen={setUnstakeDeployerNftOpen} data={data} />
+
             <PageHeader
               title={
                 <div className="text-[40px]">
@@ -297,9 +319,23 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           <div className="flex items-center">
                             <div className="mr-1.5">{isCopied ? "Copied" : "Share Index"}</div> {LinkSVG}
                           </div>
+                          {/* <div className="absolute -right-3 -top-2 z-10 flex h-4 w-10 items-center justify-center rounded-[30px] bg-primary font-roboto text-xs font-bold text-black">
+                            Soon
+                          </div> */}
                         </StyledButton>
                         <div className="mt-2" />
-                        <OptionDropdown data={indexOptions} setValue={onIndexOption} />
+                        <OptionDropdown
+                          values={data.category >= 0 ? availableActions : availableActions.slice(0, 2)}
+                          setValue={onIndexOption}
+                          status={[
+                            true,
+                            true,
+                            data.feeWallet?.toLowerCase() === account?.toLowerCase() && !data.userData?.deployerNftItem,
+                            isMintable && !pending,
+                            isStakable && !pending,
+                            isUnstakable && !pending,
+                          ]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -309,10 +345,10 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       <StyledButton
                         className="!h-8 !w-[140px] flex-1 bg-[#B9B8B81A] px-2 font-roboto font-semibold text-primary hover:text-white xl:flex"
                         type={"default"}
-                        onClick={() => router.push(`/indexes/profile/${data.deployer}`)}
+                        onClick={() => router.push(`/indexes/profile/${ethers.utils.getAddress(data.deployer)}`)}
                       >
                         <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                          View {data.deployer}
+                          View {ethers.utils.getAddress(data.deployer)}
                         </div>
                         <div className="ml-2">{LinkSVG}</div>
                       </StyledButton>
@@ -327,10 +363,10 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         <StyledButton
                           className="!h-8 !w-[140px] flex-1 bg-[#B9B8B81A] px-2 font-roboto font-semibold text-primary hover:border-white hover:text-white xl:flex"
                           type={"default"}
-                          onClick={() => router.push(`/indexes/profile/${data.deployer}`)}
+                          onClick={() => router.push(`/indexes/profile/${ethers.utils.getAddress(data.deployer)}`)}
                         >
                           <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                            View {data.deployer}
+                            View {ethers.utils.getAddress(data.deployer)}
                           </div>
                           <div className="ml-2">{LinkSVG}</div>
                         </StyledButton>
@@ -349,7 +385,18 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       </StyledButton>
                       <div className="mr-4 mt-2 hidden xl:mt-0 xl:block" />
                       <div className="hidden xl:block">
-                        <OptionDropdown data={indexOptions} setValue={onIndexOption} />
+                        <OptionDropdown
+                          values={data.category >= 0 ? availableActions : availableActions.slice(0, 2)}
+                          setValue={onIndexOption}
+                          status={[
+                            true,
+                            true,
+                            data.feeWallet?.toLowerCase() === account?.toLowerCase() && !data.userData?.deployerNftItem,
+                            isMintable,
+                            isStakable,
+                            isUnstakable,
+                          ]}
+                        />
                       </div>
                       <a
                         className=" ml-0 h-[32px] w-[140px] xl:ml-4 "
@@ -373,18 +420,30 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       <div className="flex flex-wrap justify-between text-xl">
                         <div className="mr-4 whitespace-nowrap">
                           <span className="mr-1 hidden sm:inline-block">Index: </span>
-                          {getIndexName(tokens)}
+                          {data.name && data.name !== "" ? data.name : getIndexName(tokens)}
+
+                          <a
+                            className="absolute left-[8px] top-[22px]"
+                            href={getExplorerLink(data.chainId, "address", data.address)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {LinkSVG}
+                          </a>
                         </div>
                         <div className="ml-auto flex items-center">
                           {/* Performance:&nbsp; */}
                           {data.priceChanges !== undefined ? (
                             <span className={data.priceChanges[curAPR].percent >= 0 ? "text-green" : "text-danger"}>
-                              {data.priceChanges[curAPR].percent.toFixed(2)}%
+                              {isNaN(data.priceChanges[curAPR].percent)
+                                ? "0.00"
+                                : data.priceChanges[curAPR].percent.toFixed(2)}
+                              %
                             </span>
                           ) : (
                             <SkeletonComponent />
                           )}
-                          <div className="ml-2 w-[60px]">
+                          <div className="ml-1 w-[60px]">
                             <DropDown value={curAPR} setValue={setCurAPR} data={aprTexts} />
                           </div>
                         </div>
@@ -403,7 +462,8 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       </div>
                       <div className="text-xs leading-none text-[#FFFFFF80]">
                         <div className="relative mt-1 flex">
-                          Deposit Fee {data.fee}% {getNativeSybmol(data.chainId)}
+                          Deposit Fee {data.category >= 0 ? data.depositFee + factory?.brewsFee ?? 0 : data.fee}%{" "}
+                          {getNativeSybmol(data.chainId)}
                           <ReactTooltip
                             anchorId={"Depositfees"}
                             place="right"
@@ -414,7 +474,8 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                           </div>
                         </div>
                         <div className="relative mt-1 flex">
-                          Withdrawal Fee 0.00% / In Profit Withdrawal Fee {data.fee ?? ""}% of Profit
+                          Withdrawal Fee 0.00% / In Profit Withdrawal Fee{" "}
+                          {data.category >= 0 ? data.commissionFee + factory?.brewsFee ?? 0 : data.fee}% of Profit
                           <ReactTooltip
                             anchorId={"Withdrawfees"}
                             place="right"
@@ -455,19 +516,14 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         <div className="mb-1 text-xl">Tokens</div>
                         {tokens.map((token, index) => (
                           <div className="mt-1 flex items-center leading-none" key={token.address}>
-                            <img
-                              src={getTokenLogoURL(token.address, token.chainId)}
-                              onError={(data) => (data.target["src"] = "/images/unknown.png")}
-                              alt={""}
-                              className="mr-1 w-3 rounded-full"
-                            />
+                            <TokenLogo src={getTokenLogoURL(token.address, token.chainId)} classNames="mr-1 w-3" />
                             <div className="flex text-[#FFFFFFBF]">
                               {userData?.stakedBalances.length ? (
                                 `${formatAmount(
                                   ethers.utils.formatUnits(userData.stakedBalances[index], token.decimals),
                                   4
                                 )}`
-                              ) : address ? (
+                              ) : account ? (
                                 <SkeletonComponent />
                               ) : (
                                 "0.00"
@@ -512,7 +568,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       <div className="flex text-[#FFFFFF80]">
                         {data.priceChanges !== undefined ? (
                           <span className={data.priceChanges[0].percent < 0 ? "text-danger" : "text-green"}>
-                            {data.priceChanges[0].percent.toFixed(2)}%
+                            {isNaN(data.priceChanges[0].percent) ? "0.00" : data.priceChanges[0].percent.toFixed(2)}%
                           </span>
                         ) : (
                           <SkeletonComponent />
@@ -520,7 +576,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         &nbsp;
                         <div>
                           {data.priceChanges !== undefined ? (
-                            `(${formatDollar(data.priceChanges[0].value, 2)})`
+                            `(${
+                              isNaN(data.priceChanges[0].value) ? "0.00" : formatDollar(data.priceChanges[0].value, 2)
+                            })`
                           ) : (
                             <SkeletonComponent />
                           )}
@@ -581,7 +639,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                       </div>
                       <div className="flex text-[#FFFFFF80]">
                         $
-                        {data.commissions?.length
+                        {data.commissions?.length && nativeTokenPrice
                           ? formatAmount(+data.commissions[data.commissions.length - 1] * nativeTokenPrice)
                           : "0.00"}
                       </div>
@@ -598,9 +656,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         }}
                       />
                     </div>
-                    <div className="relative bottom-0 left-0 mt-2 flex h-12 w-full md:absolute">
+                    <div className="relative bottom-0 left-0 mt-2 flex h-fit w-full flex-col sm:flex-row md:absolute">
                       {data.chainId !== chainId ? (
-                        <div className="flex-1">
+                        <div className="h-12 flex-none sm:flex-1">
                           <StyledButton
                             type={"quaternary"}
                             disabled={!canSwitch}
@@ -613,26 +671,26 @@ const IndexDetail = ({ detailDatas }: { detailDatas: any }) => {
                         </div>
                       ) : (
                         <>
-                          <div className="mr-5 flex-1">
+                          <div className="mr-0 h-12 flex-none sm:mr-5 sm:flex-1">
                             <StyledButton
                               type={"quaternary"}
                               onClick={() => {
                                 setStakingModalOpen(true);
                                 setCurType("enter");
                               }}
-                              disabled={pending || !address}
+                              disabled={pending || !account}
                             >
                               Enter {getIndexName(tokens)} Index
                             </StyledButton>
                           </div>
-                          <div className="flex-1">
+                          <div className="h-12 sm:flex-1 flex-none sm:mt-0 mt-2">
                             <StyledButton
                               type={"quaternary"}
                               onClick={() => {
                                 setStakingModalOpen(true);
                                 setCurType("exit");
                               }}
-                              disabled={pending || !address || +userData.stakedUsdAmount <= 0}
+                              disabled={pending || !account || +userData.stakedUsdAmount <= 0}
                             >
                               Exit &nbsp;{renderProfit()} Profit
                             </StyledButton>
