@@ -119,11 +119,17 @@ const FindOutMore = () => {
   ];
 
   const [curRarity, setCurRarity] = useState(0);
+<<<<<<< HEAD
   const [mintOpen, setMintOpen] = useState(false);
 
   return (
     <PageWrapper>
       <MintNFTModal open={mintOpen} setOpen={setMintOpen} />
+=======
+
+  return (
+    <PageWrapper>
+>>>>>>> dcfe4e4b5123e3964b53bb47bdbf3b654c3ee6b7
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0, scale: 0.75 }}
@@ -139,6 +145,7 @@ const FindOutMore = () => {
                     <WordHighlight content="Brewlabs NFT Information" />
                   </div>
                 </h1>
+<<<<<<< HEAD
                 <div className="hidden lg:flex">
                   <StyledButton className="!w-fit p-[10px_12px] !font-normal" onClick={() => setMintOpen(true)}>
                     Mint Brewlabs NFT
@@ -165,6 +172,16 @@ const FindOutMore = () => {
                     Back to NFT
                   </StyledButton>
                 </Link>
+=======
+                <StyledButton className="hidden !w-fit p-[10px_12px] !font-normal md:block">
+                  Mint Brewlabs NFT
+                </StyledButton>
+              </header>
+            </Container>
+            <Container className="font-roboto">
+              <div className="mb-6 flex w-full justify-end md:hidden">
+                <StyledButton className="!w-fit p-[10px_12px] !font-normal">Mint Brewlabs NFT</StyledButton>
+>>>>>>> dcfe4e4b5123e3964b53bb47bdbf3b654c3ee6b7
               </div>
               <div className="hidden w-full flex-wrap justify-evenly md:flex xl:flex-nowrap xl:justify-between">
                 {rarities.map((data, i) => {
