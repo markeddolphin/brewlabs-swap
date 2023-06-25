@@ -69,7 +69,7 @@ const SelectionPanel = ({
   let activityCnts = {
     active: filterPoolsByStatus(filteredPools, currentBlocks, "active").length,
     finished: filterPoolsByStatus(filteredPools, currentBlocks, "finished").length,
-    new: filterPoolsByStatus(filteredPools, currentBlocks, "new").length
+    new: filterPoolsByStatus(filteredPools, currentBlocks, "new").length,
   };
 
   return (
@@ -100,7 +100,9 @@ const SelectionPanel = ({
         </div>
       </div>
       <div className="ml-4 block w-[160px] xsm:ml-10  md:hidden">
-        <DropDown value={curFilter} setValue={setCurFilter} data={filters} />
+        <div className="hidden xsm:block">
+          <DropDown value={curFilter} setValue={setCurFilter} data={filters} />
+        </div>
         <div className="mt-2 w-full">
           <ActivityDropdown value={activity} setValue={setActivity} counts={activityCnts} />
         </div>

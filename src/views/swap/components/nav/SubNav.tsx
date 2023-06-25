@@ -4,13 +4,17 @@ import { useContext, useState } from "react";
 import { SwapContext } from "../../../../contexts/SwapContext";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
+import Notification from "@components/Notification";
+import { useOwnedLiquidityPools } from "@hooks/swap/useLiquidityPools";
 
 type Props = {
   openSettingModal: () => void;
 };
 
 const SubNav = ({ openSettingModal }: Props) => {
-  const { swapTab, setSwapTab, setAddLiquidityStep }: any = useContext(SwapContext);
+  const { swapTab, setSwapTab, setAddLiquidityStep, swapFeeData }: any = useContext(SwapContext);
+
+  const { collectiblePairs } = swapFeeData;
 
   const [toggle, setToggle] = useState(false);
 
@@ -22,21 +26,22 @@ const SubNav = ({ openSettingModal }: Props) => {
           <img src="/images/logo-vector.svg" className="ml-3" alt="Brew swap" />
         </button>
         <button
-          className={`tab px-3 ${swapTab === 1 ? "tab-active" : ""}`}
+          className={`tab px-3 ${swapTab === 1 ? "tab-active" : ""} relative`}
           onClick={() => {
             setSwapTab(1);
-            setAddLiquidityStep(0);
+            setAddLiquidityStep("default");
           }}
           // disabled
         >
-          Add liquidity
+          Liquidity tools
+          <Notification count={collectiblePairs.length} />
         </button>
         <Link href={"/tradingPairs"}>
           <button
             className={`tab px-3 ${swapTab === 2 ? "tab-active" : ""}`}
             //  onClick={() => setSwapTab(2)}
           >
-            Swap Rewards
+            Pools & analytics
           </button>
         </Link>
       </div>

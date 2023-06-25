@@ -16,6 +16,8 @@ import { SWRConfig } from "swr";
 
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import "react-tooltip/dist/react-tooltip.css";
+import "react-multi-carousel/lib/styles.css";
 
 import { BridgeProvider } from "contexts/BridgeContext";
 import { WagmiProvider } from "contexts/wagmi";
@@ -64,7 +66,7 @@ function GlobalHooks() {
   useFetchIndexesWithUserData();
 
   usePollFarmFactoryData();
-  usePollIndexFactoryData()
+  usePollIndexFactoryData();
 
   return null;
 }
@@ -150,7 +152,7 @@ function MyApp(props: AppProps<{ initialReduxState: any }>) {
                                 <NavigationMobile />
                                 <UserSidebar />
 
-                                <div className="flex flex-1 flex-col relative">
+                                <div className="relative flex flex-1 flex-col">
                                   <HeaderMobile />
                                   <LazyMotion features={domAnimation}>
                                     <AnimatePresence exitBeforeEnter>

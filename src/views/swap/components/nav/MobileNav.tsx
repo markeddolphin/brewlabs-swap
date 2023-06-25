@@ -49,11 +49,11 @@ export default function MobileNav() {
                       } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       onClick={() => {
                         setSwapTab(1);
-                        setAddLiquidityStep(0);
+                        setAddLiquidityStep("default");
                       }}
                       disabled
                     >
-                      Add liquidity
+                      Liquidity tools
                     </button>
                   )}
                 </Menu.Item>
@@ -67,7 +67,7 @@ export default function MobileNav() {
                         // onClick={() => setSwapTab(2)}
                         // disabled
                       >
-                        Swap Rewards
+                        Pools & analytics
                       </button>
                     </Link>
                   )}

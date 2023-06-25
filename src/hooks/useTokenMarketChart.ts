@@ -16,16 +16,13 @@ export const defaultMarketData = {
 };
 
 const useTokenMarketChart = (chainId: ChainId): TokenMarketData => {
-
   const [data, setData] = useState({});
   useEffect(() => {
     axios
-      .get(
-        `${API_URL}/cg/prices?chainId=${chainId}`
-      )
+      .get(`${API_URL}/cg/prices?chainId=${chainId}`)
       .then((res) => {
         if (res.data) {
-          const {prices} = res.data;
+          const { prices } = res.data;
           setData(prices);
         }
       })

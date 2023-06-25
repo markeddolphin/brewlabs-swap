@@ -54,6 +54,7 @@ const TotalStakedChart = ({ data, symbol }: { data: any; symbol: string }) => {
       },
       stroke: {
         curve: "smooth",
+        width :1
       },
       xaxis: {
         labels: {

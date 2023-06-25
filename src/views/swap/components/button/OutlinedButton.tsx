@@ -23,7 +23,7 @@ const OutlinedButton = ({
 }: OutlinedButtonProps) => {
   return (
     <a
-      className={`flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-gray-600 px-2 text-center font-['Roboto'] text-sm !text-gray-400 transition hover:border-primary ${
+      className={`flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-gray-600 px-2 text-center font-brand text-sm !text-gray-400 transition hover:border-primary ${
         className ?? "" 
       } ${borderDotted ? "border-dotted" : ""} ${small ? "py-3" : "py-12"}`}
       href={href}

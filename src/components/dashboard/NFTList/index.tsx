@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import "react-tooltip/dist/react-tooltip.css";
+
 import { getChainLogo } from "utils/functions";
 import { LinkSVG } from "../assets/svgs";
 import { useContext, useEffect, useRef, useState } from "react";
 import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+
 import styled from "styled-components";
 import { DashboardContext } from "contexts/DashboardContext";
 import { UserContext } from "contexts/UserContext";

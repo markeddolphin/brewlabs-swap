@@ -12,7 +12,7 @@ export const useClaim = () => {
     (pairs) => {
       if (feeManagerContract) {
         const pairAddresses = pairs.map((pair) => pair.id);
-        feeManagerContract.claimAll(pairAddresses);
+        feeManagerContract.claimAll(pairAddresses).catch((e: string) => console.log(e));
       }
     },
     [feeManagerContract]
@@ -22,7 +22,7 @@ export const useClaim = () => {
     (pair) => {
       if (feeManagerContract) {
         const pairAddress = pair.id;
-        feeManagerContract.claim(pairAddress);
+        feeManagerContract.claim(pairAddress).catch((e: string) => console.log(e));
       }
     },
     [feeManagerContract]

@@ -1,8 +1,10 @@
 import { CurrencyAmount, Price } from "@brewlabs/sdk";
+import { useOwnedLiquidityPools } from "@hooks/swap/useLiquidityPools";
 import { slippageDefault } from "config/constants";
 import { BigNumber } from "ethers";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDefaultsFromURLSearch } from "state/swap/hooks";
+import { getStringfy } from "utils/functions";
 
 const SwapContext: any = React.createContext({
   quoteData: {},
@@ -19,8 +21,9 @@ const SwapContext: any = React.createContext({
   verified: false,
   apporveStep: 0,
   swapTab: 0,
-  addLiquidityStep: 0,
+  addLiquidityStep: "default",
   openSettingModal: false,
+  swapFeeData: "",
   setQuoteData: () => {},
   setOutputAmount: () => {},
   setSlippageInput: () => {},
@@ -55,10 +58,32 @@ const SwapContextProvider = ({ children }: any) => {
   const [apporveStep, setApproveStep] = useState(0);
 
   const [swapTab, setSwapTab] = useState(0);
-  const [addLiquidityStep, setAddLiquidityStep] = useState(0);
+  const [addLiquidityStep, setAddLiquidityStep] = useState("default");
   const [openSettingModal, setOpenSettingModal] = useState(false);
 
+  const [swapFeeData, setSwapFeeData] = useState({
+    eligiblePairs: [],
+    ownedPairs: [],
+    lpBalances: {},
+    collectiblePairs: [],
+    rewards: [],
+    pairTokens: {},
+  });
+
   useDefaultsFromURLSearch();
+
+  const { eligiblePairs, ownedPairs, lpBalances, collectiblePairs, rewards, pairTokens } = useOwnedLiquidityPools();
+
+  const s_eligiblePairs = getStringfy(eligiblePairs);
+  const s_ownedPairs = getStringfy(ownedPairs);
+  const s_lpBalances = getStringfy(lpBalances);
+  const s_collectiblePairs = getStringfy(collectiblePairs);
+  const s_rewards = getStringfy(rewards);
+  const s_pairTokens = getStringfy(pairTokens);
+
+  useEffect(() => {
+    setSwapFeeData({ eligiblePairs, ownedPairs, lpBalances, collectiblePairs, rewards, pairTokens });
+  }, [s_eligiblePairs, s_ownedPairs, s_lpBalances, s_collectiblePairs, s_rewards, s_pairTokens]);
 
   return (
     <SwapContext.Provider
@@ -79,6 +104,7 @@ const SwapContextProvider = ({ children }: any) => {
         swapTab,
         addLiquidityStep,
         openSettingModal,
+        swapFeeData,
         setQuoteData,
         setOutputAmount,
         setSlippageInput,

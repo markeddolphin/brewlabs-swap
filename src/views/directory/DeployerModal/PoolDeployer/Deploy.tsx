@@ -54,9 +54,9 @@ const Deploy = ({ step, setStep, setOpen }) => {
             <div className="ml-4">TICKER Staking Pool</div>
           </div>
         </div>
-        <div className="hidden sm:block">{makePendingText()}</div>
+        {/* <div className="hidden sm:block">{makePendingText()}</div> */}
       </div>
-      <div className=" mb-5 mt-3 flex w-full justify-end sm:hidden">{makePendingText()}</div>
+      {/* <div className=" mb-5 mt-3 flex w-full justify-end sm:hidden">{makePendingText()}</div> */}
 
       <div className="mt-4  text-sm font-semibold text-[#FFFFFF80]">
         <div className="ml-4 flex flex-col items-center justify-between xs:flex-row xs:items-start">

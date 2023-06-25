@@ -11,11 +11,14 @@ import { useActiveChainId } from "hooks/useActiveChainId";
 import { useAccount, useSigner } from "wagmi";
 import { DashboardContext } from "contexts/DashboardContext";
 import { BigNumberFormat, getBlockExplorerLink, getChainLogo } from "utils/functions";
-import "react-tooltip/dist/react-tooltip.css";
+
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useSwapActionHandlers } from "state/swap/hooks";
 import { Field } from "state/swap/actions";
-import { Token, NATIVE_CURRENCIES } from "@brewlabs/sdk";
+import { Token, NATIVE_CURRENCIES, WNATIVE } from "@brewlabs/sdk";
+import { DEX_GURU_WETH_ADDR } from "config/constants";
+import { isAddress } from "utils";
+import getTokenLogoURL from "utils/getTokenLogoURL";
 
 const emptyLogos = {
   1: "/images/dashboard/tokens/empty-token-eth.webp",
@@ -234,15 +237,6 @@ const TokenList = ({
       <div className={"flex items-center justify-between"}>
         <LogoPanel className={"flex flex-col pt-1 "} showShadow={showBoxShadow.toString()}>
           {showData.map((data: any, i: number) => {
-            const logoFilter: any = tokenList.filter(
-              (logo: any) => data.address && logo.address?.toLowerCase() === data.address.toLowerCase()
-            );
-            const logo =
-              data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" || !data.address
-                ? getChainLogo(chainId)
-                : logoFilter.length
-                ? logoFilter[0].logoURI
-                : emptyLogos[chainId];
             return (
               <StyledLink
                 key={i}
@@ -277,7 +271,7 @@ const TokenList = ({
                     onClick={() => {
                       // let t = new Token(chainId, data.address, data.decimals);
                       let t: any;
-                      if (data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") t = NATIVE_CURRENCIES[chainId];
+                      if (data.address === DEX_GURU_WETH_ADDR) t = NATIVE_CURRENCIES[chainId];
                       else t = new Token(chainId, data.address, data.decimals);
                       // t.address = data.address;
                       // t.isNative = data.address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -287,7 +281,15 @@ const TokenList = ({
                     rel="noreferrer"
                     className="flex items-center"
                   >
-                    <img src={logo} alt="" className="mx-2.5 h-[15px] w-[15px] overflow-hidden rounded-full" />
+                    <img
+                      src={getTokenLogoURL(
+                        isAddress(data.address === DEX_GURU_WETH_ADDR ? WNATIVE[data.chainId].address : data.address),
+                        data.chainId
+                      )}
+                      alt=""
+                      className="mx-2.5 h-[15px] w-[15px] overflow-hidden rounded-full"
+                      onError={(e: any) => (e.target.src = "/images/unknown.png")}
+                    />
                     <div>
                       <div className="flex items-center text-white">
                         <StyledDiv className={"overflow-hidden text-ellipsis whitespace-nowrap"}>{data.name}</StyledDiv>
@@ -307,7 +309,8 @@ const TokenList = ({
         <ValuePanel className={"pt-1"} onScroll={(e: any) => setCurScroll(e.target.scrollLeft)} ref={valueRef}>
           <div>
             {showData.map((data: any, i: number) => {
-              const priceUp = data.priceList[data.priceList.length - 1] >= data.priceList[0];
+              // const priceUp = data.priceList[data.priceList.length - 1] >= data.priceList[0];
+              const priceUp = true;
               return (
                 <ColoredLink
                   key={i}

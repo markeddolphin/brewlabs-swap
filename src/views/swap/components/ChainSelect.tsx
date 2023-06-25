@@ -28,7 +28,7 @@ const ChainSelect = ({ id }: ChainSelectProps) => {
 
   return (
     <>
-      <motion.div className="mb-4 rounded-full border border-gray-600 border-transparent bg-opacity-60 py-2 pl-2 pr-4 font-brand text-gray-400 focus-within:border-amber-300 hover:border-amber-300 dark:bg-zinc-900 dark:bg-opacity-60 dark:text-white">
+      <motion.div className="mb-4 rounded-full border border-gray-600  bg-opacity-60 py-2 pl-2 pr-4 font-brand text-gray-400 focus-within:border-amber-300 hover:border-amber-300 dark:bg-zinc-900 dark:bg-opacity-60 dark:text-white">
         <button
           className="flex w-full items-center justify-between"
           onClick={() => {

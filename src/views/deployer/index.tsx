@@ -42,6 +42,7 @@ const Deployer = ({ page }: { page: number }) => {
   const { data: farms } = useFarms();
   const { indexes } = useIndexes();
   const { address: account } = useAccount();
+  // const account = "0xcd3b71d65d1f03f0b2c5a4e67a17347dc71141f7";
 
   const { tokenPrices, lpPrices } = useContext(TokenPriceContext);
   const currentBlocks = useChainCurrentBlocks();
@@ -122,6 +123,7 @@ const Deployer = ({ page }: { page: number }) => {
       )
       .filter((data: any) => data.type === curFilter);
   }
+
   chosenPools = sortPools(filterPoolsByStatus(chosenPools, currentBlocks, status));
 
   const renderDetailPage = () => {

@@ -24,6 +24,7 @@ const FindOutMore = () => {
         data: ["Extended favourites in BrewCharts", "Complete trending heatmap"],
       },
       chainId: 1,
+      logo: "/images/nfts/brewlabs-flask-nfts/brewlabs-flask-common.mp4",
     },
     {
       type: "Uncommon",
@@ -40,6 +41,7 @@ const FindOutMore = () => {
         data: ["Some advertising across BrewCharts", "Extended favourites in BrewCharts", "Complete trending heatmap"],
       },
       chainId: 1,
+      logo: "/images/nfts/brewlabs-flask-nfts/brewlabs-flask-uncommon.mp4",
     },
     {
       type: "Rare",
@@ -63,6 +65,7 @@ const FindOutMore = () => {
         ],
       },
       chainId: 1,
+      logo: "/images/nfts/brewlabs-flask-nfts/brewlabs-flask-rare.mp4",
     },
     {
       type: "Epic",
@@ -89,6 +92,7 @@ const FindOutMore = () => {
         ],
       },
       chainId: 1,
+      logo: "/images/nfts/brewlabs-flask-nfts/brewlabs-flask-epic.mp4",
     },
     {
       type: "Legendary / Moderator",
@@ -115,6 +119,7 @@ const FindOutMore = () => {
         ],
       },
       chainId: 1,
+      logo: "/images/nfts/brewlabs-flask-nfts/brewlabs-flask-legendary.mp4",
     },
   ];
 
@@ -210,7 +215,7 @@ const FindOutMore = () => {
                 </div>
               </div>
 
-              <div className="relative mb-20 mt-7 flex font-medium text-tailwind">
+              <div className="relative mb-20 mt-7 flex font-medium text-white">
                 <div className="absolute top-0.5 scale-125">
                   <InfoSVG opacity="1" />
                 </div>

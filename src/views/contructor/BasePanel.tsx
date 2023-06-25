@@ -1,11 +1,9 @@
-
 import { EXCHANGE_MAP } from "@brewlabs/sdk";
 import { useEffect, useState } from "react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import styled from "styled-components";
 import { useAccount, useConnect } from "wagmi";
 
-import "react-tooltip/dist/react-tooltip.css";
 import { useActiveChainId } from "hooks/useActiveChainId";
 import { isAddress } from "utils";
 import { getChainLogo, getDexLogo, numberWithCommas } from "utils/functions";
@@ -48,7 +46,11 @@ export function TokenItem({ data, i, setCurAction, setSelectedLP }) {
       <div className="flex items-center justify-between ">
         <div className="mx-auto flex items-center xmd:mx-0">
           <img src={getChainLogo(data.chainId)} alt={""} className="h-10 w-10 rounded-full border border-black" />
-          <img src={getDexLogo(EXCHANGE_MAP[data.chainId][0]?.id)} alt={""} className="-ml-3 mr-3 h-10 w-10 rounded-full sm:mr-5" />
+          <img
+            src={getDexLogo(EXCHANGE_MAP[data.chainId][0]?.id)}
+            alt={""}
+            className="-ml-3 mr-3 h-10 w-10 rounded-full sm:mr-5"
+          />
 
           <div className="relative mr-3 hidden w-[34px] flex-col items-center text-[#EEBB19] xmd:flex sm:mr-5">
             {isNew ? (
@@ -98,7 +100,7 @@ export function TokenItem({ data, i, setCurAction, setSelectedLP }) {
             <div className="-ml-4 font-brand text-xs leading-none">Remove</div>
             <div className="absolute right-2 scale-125 text-[#EEBB19]">{CircleRightSVG}</div>
           </StyledButton>
-          <div className="absolute left-2 -bottom-[18px] flex items-center">
+          <div className="absolute -bottom-[18px] left-2 flex items-center">
             <div className="text-white" id={"appValue" + i}>
               <InfoSVG />
             </div>
@@ -115,7 +117,7 @@ export function TokenItem({ data, i, setCurAction, setSelectedLP }) {
         ) : (
           ""
         )}
-        <div className="relative mx-auto mt-5 mb-3 h-[36px] w-full max-w-[160px]">
+        <div className="relative mx-auto mb-3 mt-5 h-[36px] w-full max-w-[160px]">
           <StyledButton
             type={"quinary"}
             onClick={() => {

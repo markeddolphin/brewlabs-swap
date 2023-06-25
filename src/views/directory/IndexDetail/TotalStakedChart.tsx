@@ -56,7 +56,7 @@ const TotalStakedChart = ({
                   {
                     offset: 0,
                     color: "#2FD35D",
-                    opacity: 0.75,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
@@ -68,11 +68,11 @@ const TotalStakedChart = ({
                   {
                     offset: 0,
                     color: "#ea3943",
-                    opacity: 0.4,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
-                    color: "#ea3943",
+                    color: "#d9563a",
                     opacity: 0,
                   },
                 ],
@@ -90,6 +90,7 @@ const TotalStakedChart = ({
       },
       stroke: {
         curve: "smooth",
+        width: 1,
       },
       xaxis: {
         labels: {

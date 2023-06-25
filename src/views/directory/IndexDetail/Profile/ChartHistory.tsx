@@ -35,7 +35,7 @@ const DrawChart = ({ data, type }: { data: any; type: string }) => {
                   {
                     offset: 0,
                     color: "#2FD35D",
-                    opacity: 0.75,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
@@ -47,7 +47,7 @@ const DrawChart = ({ data, type }: { data: any; type: string }) => {
                   {
                     offset: 0,
                     color: "#ea3943",
-                    opacity: 0.4,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
@@ -69,6 +69,7 @@ const DrawChart = ({ data, type }: { data: any; type: string }) => {
       },
       stroke: {
         curve: "smooth",
+        width :1
       },
       xaxis: {
         labels: {
@@ -111,11 +112,7 @@ const ChartHistory = ({ data, type }: { data: any; type: string }) => {
   let curData = data[period];
   let pricechange = curData[curData.length - 1] - curData[0];
   return (
-    <div
-      className={`ml-2 h-full w-[270px] rounded-lg border border-dashed ${
-        pricechange >= 0 ? "border-green" : "border-danger"
-      } px-2 py-1.5`}
-    >
+    <div className={`ml-2 h-full w-[270px] rounded-lg bg-[#B9B8B80D] px-2 py-1.5`}>
       <div className="flex items-center justify-between text-sm">
         <div>
           {type === "fee" ? "Fee performance" : "Historic performance"}:{" "}

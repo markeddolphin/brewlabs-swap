@@ -16,14 +16,14 @@ import { getNetworkGasPrice } from "utils/getGasPrice";
 
 const zapIn = async (indexContract, token, amount, percents, gasPrice) => {
   const value = parseEther(amount);
-console.log('precomputeZapIn', token, percents.map((p) => (p * 100).toFixed(0)))
+ 
   const queries = await indexContract.precomputeZapIn(
     token,
     value,
     percents.map((p) => (p * 100).toFixed(0))
   );
   // if (token != ethers.constants.AddressZero && queries[0].adapters.length === 0) return;
-console.log('zapIn queries', queries)
+
   let trades = [];
   for (let i = 0; i < queries.length; i++) {
     // if (queries[i].adapters.length === 0) return;
@@ -36,7 +36,6 @@ console.log('zapIn queries', queries)
     ]);
   }
 
-  console.log('ZapIn estimating')
   let gasLimit = await indexContract.estimateGas.zapIn(
     token,
     value,
@@ -47,7 +46,6 @@ console.log('zapIn queries', queries)
     }
   );
   gasLimit = calculateGasMargin(gasLimit);
-  console.log('ZapIn gasLimit', gasLimit)
 
   const tx = await indexContract.zapIn(
     token,
@@ -158,7 +156,6 @@ const useIndexImpl = (pid, contractAddress, performanceFee) => {
 
   const handleZapIn = useCallback(
     async (token, amount, percents) => {
-      console.log('ZapIn', amount, percents)
       const gasPrice = await getNetworkGasPrice(library, chainId);
       const receipt = await zapIn(indexContract, token, amount, percents, gasPrice);
 

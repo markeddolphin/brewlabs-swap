@@ -82,31 +82,36 @@ const PoolCard = ({
               />
             </div>
           )}
-          <div>
+          <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
             {data.type === Category.INDEXES ? (
-              <div className="text-sm leading-none">{getIndexName(data.tokens)}</div>
+              <div className="overflow-hidden text-ellipsis text-sm leading-none">{getIndexName(data.tokens)}</div>
             ) : data.type === Category.ZAPPER ? (
-              <div className="text-sm leading-none">
+              <div className="text-sm leading-none ">
                 <div>{getIndexName([data.token, data.quoteToken])}</div>
                 <div>Earning : {data.earningToken.symbol}</div>
               </div>
             ) : (
-              <div className="leading-none">
+              <div className="overflow-hidden text-ellipsis leading-none">
                 <span className="text-primary">Earn</span> {data.earningToken.symbol}
               </div>
             )}
-            <div className="text-xs">
+            <div className="overflow-hidden text-ellipsis text-xs">
               {poolNames[data.type]} -{" "}
               {data.poolCategory === PoolCategory.CORE || data.type !== Category.POOL
                 ? "Flexible"
-                : `${data.duration} days lock`}
+                : `${data.duration ? data.duration : "__"} days lock`}
             </div>
-            <div className="text-xs leading-none">
+            <div className="text-xs leading-none ">
               {data.type === Category.INDEXES ? (
                 data.priceChanges ? (
-                  <div className={data.priceChanges[0].percent >= 0 ? "text-success" : "text-danger"}>
+                  <div
+                    className={`${
+                      data.priceChanges[0].percent >= 0 ? "text-success" : "text-danger"
+                    } overflow-hidden text-ellipsis`}
+                  >
                     Performance -{" "}
-                    {isNaN(data.priceChanges[0].percent) ? "0.00" : data.priceChanges[0].percent.toFixed(2)}% 24hrs
+                    {isNaN(data.priceChanges[0].percent) ? "0.00" : Math.abs(data.priceChanges[0].percent).toFixed(2)}%
+                    24hrs
                   </div>
                 ) : (
                   <SkeletonComponent />

@@ -7,7 +7,19 @@ import styled from "styled-components";
 import { warningFillSVG } from "@components/dashboard/assets/svgs";
 import StyledButton from "views/directory/StyledButton";
 
-const WarningModal = ({ open, setOpen, type, onClick }) => {
+const WarningModal = ({
+  open,
+  setOpen,
+  type,
+  onClick,
+  data,
+}: {
+  open: boolean;
+  setOpen: any;
+  type: string;
+  onClick?: any;
+  data?: any;
+}) => {
   let warningText;
 
   switch (type) {
@@ -35,6 +47,13 @@ const WarningModal = ({ open, setOpen, type, onClick }) => {
         </div>
       );
       break;
+    case "burn":
+      warningText = (
+        <div>
+          <div>Are you sure you want to burn the liquidity tokens for {data.pair.name}?</div>
+          <div className="my-2">This cannot be undone do you wish to continue?</div>
+        </div>
+      );
     default:
       break;
   }

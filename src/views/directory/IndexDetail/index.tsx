@@ -8,9 +8,7 @@ import { toast } from "react-toastify";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useAccount } from "wagmi";
 
-import "react-tooltip/dist/react-tooltip.css";
-
-import { chevronLeftSVG, LinkSVG, warningFarmerSVG } from "components/dashboard/assets/svgs";
+import { chevronLeftSVG, LinkSVG, NFTSVG, warningFarmerSVG } from "components/dashboard/assets/svgs";
 import Container from "components/layout/Container";
 import PageHeader from "components/layout/PageHeader";
 import TokenLogo from "@components/logo/TokenLogo";
@@ -184,13 +182,14 @@ const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
       );
     return (
       <span className={`${profit >= 0 ? "text-green" : "text-danger"} mr-1`}>
-        ${numberWithCommas(isNaN(profit) ? "0.00" : Math.abs(profit).toFixed(2))}{" "}
+        ${numberWithCommas(isNaN(profit) ? "0.00" : `${profit < 0 ? "-" : ""}${Math.abs(profit).toFixed(2)}`)}{" "}
         <span className="text-[#FFFFFF80]">earned</span>
         {isProfit ? (
           <>
             <br />
             <span className={`${profitChanged >= 0 ? "text-green" : "text-danger"}`}>
-              {isNaN(profitChanged) ? "0.00" : Math.abs(profitChanged).toFixed(2)}%&nbsp;
+              {isNaN(profitChanged) ? "0.00" : `${profitChanged < 0 ? "-" : ""}${Math.abs(profitChanged).toFixed(2)}`}
+              %&nbsp;
               <span className="text-[#FFFFFF80]">{profitChanged >= 0 ? "gain" : "loss"}</span>
             </span>
           </>
@@ -339,9 +338,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-1 justify-end">
+                  <div className="flex flex-1 justify-end items-center">
                     <div className="hidden w-full max-w-[480px] items-center sm:flex">
-                      <img src={"/images/non-logo.png"} alt={""} className="mr-2 hidden h-10 w-10 rounded-full" />
+                      <img src={"/images/non-logo.png"} alt={""} className="mr-2 h-10 w-10 rounded-full" />
                       <StyledButton
                         className="!h-8 !w-[140px] flex-1 bg-[#B9B8B81A] px-2 font-roboto font-semibold text-primary hover:text-white xl:flex"
                         type={"default"}
@@ -370,6 +369,9 @@ const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
                           </div>
                           <div className="ml-2">{LinkSVG}</div>
                         </StyledButton>
+                      </div>
+                      <div className="mr-10 hidden cursor-pointer text-tailwind transition hover:text-white xl:block [&>*:first-child]:!h-5">
+                        {NFTSVG}
                       </div>
                       <StyledButton
                         className="hidden !h-8 !w-[140px] bg-[#B9B8B81A] font-roboto font-bold text-primary hover:border-white hover:text-white xl:flex"
@@ -414,16 +416,20 @@ const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
                 </div>
 
                 <div className="mt-2 flex flex-col items-center justify-between md:flex-row">
-                  <IndexLogo tokens={tokens} />
+                  <div className="relative">
+                    <IndexLogo tokens={tokens} />
+                    <div className="absolute -right-6 bottom-0 block cursor-pointer text-tailwind transition hover:text-white xl:hidden [&>*:first-child]:!h-5">
+                      {NFTSVG}
+                    </div>
+                  </div>
                   <div className="flex max-w-full flex-1 flex-wrap justify-end xl:flex-nowrap">
-                    <div className="primary-shadow relative mt-4 w-full max-w-full rounded bg-[#B9B8B80D] p-[14px_25px_8px_25px] md:max-w-[500px]">
+                    <div className="primary-shadow relative mt-4 w-full max-w-full rounded bg-[#B9B8B80D] p-[14px_25px_8px_40px] md:max-w-[500px]">
                       <div className="flex flex-wrap justify-between text-xl">
-                        <div className="mr-4 whitespace-nowrap">
+                        <div className="relative mr-4 whitespace-nowrap">
                           <span className="mr-1 hidden sm:inline-block">Index: </span>
                           {data.name && data.name !== "" ? data.name : getIndexName(tokens)}
-
                           <a
-                            className="absolute left-[8px] top-[22px]"
+                            className="absolute -left-4 top-2"
                             href={getExplorerLink(data.chainId, "address", data.address)}
                             target="_blank"
                             rel="noreferrer"
@@ -683,7 +689,7 @@ const IndexDetail = ({ detailDatas }: { detailDatas: { data: any } }) => {
                               Enter {getIndexName(tokens)} Index
                             </StyledButton>
                           </div>
-                          <div className="h-12 sm:flex-1 flex-none sm:mt-0 mt-2">
+                          <div className="mt-2 h-12 flex-none sm:mt-0 sm:flex-1">
                             <StyledButton
                               type={"quaternary"}
                               onClick={() => {

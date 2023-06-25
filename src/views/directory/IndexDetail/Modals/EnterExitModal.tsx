@@ -142,7 +142,7 @@ const EnterExitModal = ({
 
     return (
       <span className={`${profit >= 0 ? "text-green" : "text-danger"} mx-1`}>
-        ${numberWithCommas(profit.toFixed(3))}
+        ${numberWithCommas(isNaN(profit) ? "0.00" : `${profit < 0 ? "-" : ""}${Math.abs(profit).toFixed(3)}`)}
       </span>
     );
   };

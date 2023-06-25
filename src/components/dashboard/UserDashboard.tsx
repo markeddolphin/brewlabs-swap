@@ -8,7 +8,7 @@ import FullOpenVector from "./FullOpenVector";
 
 import { DashboardContext } from "contexts/DashboardContext";
 import NavButton from "./NavButton";
-import PriceList from "./PriceList";
+import FeaturedPriceList from "./FeaturedPriceList";
 import styled from "styled-components";
 import SwapBoard from "views/swap/SwapBoard";
 import IndexPerformance from "./IndexPerformance";
@@ -17,7 +17,7 @@ import NFTList from "./NFTList";
 const UserDashboard = () => {
   const [showType, setShowType] = useState(0);
   const [fullOpen, setFullOpen] = useState(false);
-  const { tokens, viewType, setViewType }: any = useContext(DashboardContext);
+  const { tokens, viewType, setViewType, chartPeriod, setChartPeriod }: any = useContext(DashboardContext);
   const [pageIndex, setPageIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(0);
   const [archives, setArchives] = useState<any>([]);
@@ -55,11 +55,22 @@ const UserDashboard = () => {
         {viewType === 0 ? (
           <ChartPanel>
             <div className={"mt-4"}>
-              <PerformanceChart tokens={filteredTokens} showType={showType} />
+              <PerformanceChart showType={showType} />
             </div>
-            <div className={"relative z-10 flex w-full justify-center"}>
-              <SwitchButton value={showType} setValue={setShowType} />
-            </div>{" "}
+            <div className={"relative z-10 flex w-full justify-between"}>
+              <SwitchButton
+                value={chartPeriod}
+                setValue={setChartPeriod}
+                values={["1D", "1W", "1M", "1Y", "ALL"]}
+                className="h-[25px] w-[240px]"
+              />
+              <SwitchButton
+                value={showType}
+                setValue={setShowType}
+                values={["My Wallet", "Total Market"]}
+                className="h-[25px] w-[220px]"
+              />
+            </div>
           </ChartPanel>
         ) : (
           ""
@@ -100,7 +111,7 @@ const UserDashboard = () => {
         <IndexPerformance />
       </div>
       <PricePanel className={`absolute bottom-10 w-full px-4 ${fullOpen ? "hidden" : ""}`} viewType={viewType}>
-        <PriceList />
+        <FeaturedPriceList />
       </PricePanel>
     </>
   );

@@ -112,7 +112,7 @@ const Directory = ({ page }: { page: number }) => {
       }),
     ...indexes
       .filter((p) => p.visible)
-      .sort((a, b) => b.category ?? 0 - a.category ?? 0)
+      .sort((a, b) => (b.category === undefined ? 0 : 1) - (a.category === undefined ? 0 : 1))
       .map((_index) => {
         let tvl = 0;
         for (let i = 0; i < _index.tokens.length; i++) {

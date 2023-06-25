@@ -68,7 +68,7 @@ export const navigationData = [
     svg: DeployerSVG,
   },
   {
-    name: "NFT",
+    name: "Brewlabs NFT",
     href: "/nft",
     external: false,
     // coming: true,

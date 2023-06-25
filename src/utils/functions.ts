@@ -1,4 +1,4 @@
-import { ChainId, WNATIVE } from "@brewlabs/sdk";
+import { ChainId, Currency, Token, WNATIVE } from "@brewlabs/sdk";
 import { ethers } from "ethers";
 import { CHAIN_ICONS, EXPLORER_LOGO, EXPLORER_NAMES, EXPLORER_URLS } from "config/constants/networks";
 import { getNativeSybmol } from "lib/bridge/helpers";
@@ -110,4 +110,14 @@ export const getRarityColor = (rarity) => {
     case "rare":
       return "text-[#1A82FF]";
   }
+};
+
+export const getAddLiquidityUrl = (token1: Currency, token2: Currency, chainId: number) => {
+  return `/add/${chainId}/${
+    token1.isNative || token1.symbol === WNATIVE[chainId].symbol ? getNativeSybmol(chainId) : token1.address
+  }/${token2.isNative || token2.symbol === WNATIVE[chainId].symbol ? getNativeSybmol(chainId) : token2.address}`;
+};
+
+export const getStringfy = (data: any) => {
+  return JSON.stringify(data);
 };

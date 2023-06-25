@@ -80,13 +80,18 @@ const SelectionPanel = ({
         <div className="mt-2 flex w-full flex-1 sm:mt-0">
           {filters.map((data, i) => {
             return (
-              <FilterButton key={i} active={curFilter === i} onClick={() => setCurFilter(i)}>
+              <FilterButton key={i} active={curFilter === i} onClick={() => setCurFilter(i)} className="primary-shadow">
                 {data}
               </FilterButton>
             );
           })}
           <div className="max-w-full flex-1 sm:max-w-[360px] ">
-            <SearchInput placeholder="Search index..." value={criteria} onChange={(e) => setCriteria(e.target.value)} />
+            <input
+              placeholder="Search index..."
+              value={criteria}
+              onChange={(e) => setCriteria(e.target.value)}
+              className="primary-shadow focusShadow h-fit w-full rounded border-none bg-[#D9D9D926] p-[7px_10px] text-sm leading-[1.2] text-white !outline-none"
+            />
           </div>
         </div>
         <div className="ml-0 block w-[130px] sm:ml-4">
@@ -96,19 +101,6 @@ const SelectionPanel = ({
     </div>
   );
 };
-
-const SearchInput = styled.input`
-  padding: 7px 10px;
-  background: rgba(217, 217, 217, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 4px;
-  color: white;
-  font-size: 14px;
-  width: 100%;
-  outline: none;
-  line-height: 100%;
-  height: fit-content;
-`;
 
 const FilterButton = styled.div<{ active: boolean }>`
   cursor: pointer;

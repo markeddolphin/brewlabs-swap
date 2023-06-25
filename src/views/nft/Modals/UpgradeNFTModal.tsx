@@ -7,7 +7,7 @@ import { LighteningSVG, QuestionSVG, checkCircleSVG, chevronLeftSVG } from "@com
 import StyledButton from "views/directory/StyledButton";
 import LogoIcon from "@components/LogoIcon";
 import CurrencyDropdown from "@components/CurrencyDropdown";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { tokens } from "config/constants/tokens";
 import ReactPlayer from "react-player";
 import DropDown from "@components/dashboard/TokenList/Dropdown";
@@ -22,6 +22,11 @@ const UpgradeNFTModal = ({ open, setOpen }) => {
 
   const currencies = [tokens[1].usdc, tokens[1].usdt];
   const isValid = true;
+
+  useEffect(() => {
+    setIsEnded(false);
+    setIsMinted(false);
+  }, []);
 
   return (
     <Dialog
@@ -73,10 +78,16 @@ const UpgradeNFTModal = ({ open, setOpen }) => {
               <div className="mt-2.5 flex h-[200px] w-[200px] items-center justify-center overflow-hidden rounded bg-[#B9B8B80D] text-tailwind">
                 {isMinted ? (
                   isEnded ? (
-                    <img
-                      src={"/images/nfts/brewlabs-flask-nfts/brewlabs-mint-animation-common.png"}
-                      alt={""}
-                      className="h-full w-full"
+                    <ReactPlayer
+                      className="!h-full !w-full"
+                      url={"/images/nfts/brewlabs-flask-nfts/brewlabs-flask-common.mp4"}
+                      playing={true}
+                      autoPlay={true}
+                      muted={true}
+                      loop={true}
+                      playsinline={true}
+                      controls={false}
+                      onEnded={() => setIsEnded(true)}
                     />
                   ) : (
                     <ReactPlayer

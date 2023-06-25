@@ -5,6 +5,7 @@ import { useSingleContractMultipleData } from "state/multicall/hooks";
 
 export const usePendingRewards = (pairs) => {
   const { chainId, account } = useActiveWeb3React();
+  // const account = "0xe1f1dd010bbc2860f81c8f90ea4e38db949bb16f";
   const contract = useBrewlabsFeeManager(chainId);
 
   const outputOfRewards = useSingleContractMultipleData(

@@ -1,11 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 
-const SwitchButton = ({ setValue, value }: { setValue?: any; value: number }) => {
+const SwitchButton = ({
+  setValue,
+  value,
+  values,
+  className,
+}: {
+  setValue?: any;
+  value: number;
+  values: any;
+  className?: string;
+}) => {
   return (
-    <StyledContainer value={value} className={"flex rounded bg-primary text-sm font-semibold text-black"}>
-      <div onClick={() => setValue(0)}>My Wallet</div>
-      <div onClick={() => setValue(1)}>Total Market</div>
+    <StyledContainer value={value} className={`flex rounded-md text-sm font-semibold ${className}`}>
+      {values.map((data, i) => {
+        return (
+          <div key={i} onClick={() => setValue(i)}>
+            {data}
+          </div>
+        );
+      })}
     </StyledContainer>
   );
 };
@@ -14,19 +29,20 @@ export default SwitchButton;
 
 const StyledContainer = styled.div<{ value: number }>`
   > div {
-    width: 50%;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
   }
-  width: 220px;
-  height: 25px;
-  > div:nth-child(${({ value }) => (value + 1 === 1 ? 2 : 1)}) {
+  background: #efbb19;
+  color: #18171c;
+  padding: 1px;
+  > div:nth-child(${({ value }) => value + 1}) {
     background: #18171c;
     color: white;
-    border: 1px solid #efbb19;
   }
+
   margin-top: -15px;
 `;

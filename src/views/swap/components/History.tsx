@@ -9,8 +9,6 @@ import useActiveWeb3React from "hooks/useActiveWeb3React";
 import { ETH_ADDRESSES } from "config/constants";
 import { getBlockExplorerLink, getBlockExplorerLogo } from "utils/functions";
 
-import Card from "./Card";
-
 const Row = (data: any) => {
   const {
     data: {

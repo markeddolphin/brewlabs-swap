@@ -4,8 +4,6 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import styled from "styled-components";
 import Carousel from "react-multi-carousel";
 
-import "react-tooltip/dist/react-tooltip.css";
-import "react-multi-carousel/lib/styles.css";
 import TokenLogo from "@components/logo/TokenLogo";
 import { SkeletonComponent } from "components/SkeletonComponent";
 import { useGlobalState } from "state";

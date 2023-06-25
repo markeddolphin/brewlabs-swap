@@ -84,6 +84,7 @@ const TotalStakedChart = ({
       },
       stroke: {
         curve: "smooth",
+        width :1
       },
       xaxis: {
         labels: {

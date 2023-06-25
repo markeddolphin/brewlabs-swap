@@ -15,7 +15,7 @@ import {
 import StyledButton from "views/directory/StyledButton";
 import LogoIcon from "@components/LogoIcon";
 import CurrencyDropdown from "@components/CurrencyDropdown";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { tokens } from "config/constants/tokens";
 import ReactPlayer from "react-player";
 
@@ -26,6 +26,11 @@ const MintNFTModal = ({ open, setOpen }) => {
   const [isEnded, setIsEnded] = useState(false);
   const currencies = [tokens[1].usdc, tokens[1].usdt];
   const isValid = true;
+
+  useEffect(() => {
+    setIsEnded(false);
+    setIsMinted(false);
+  }, []);
 
   return (
     <Dialog
@@ -77,10 +82,16 @@ const MintNFTModal = ({ open, setOpen }) => {
               <div className="mt-2.5 flex h-[200px] w-[200px] items-center justify-center overflow-hidden rounded bg-[#B9B8B80D] text-tailwind">
                 {isMinted ? (
                   isEnded ? (
-                    <img
-                      src={"/images/nfts/brewlabs-flask-nfts/brewlabs-mint-animation-common.png"}
-                      alt={""}
-                      className="h-full w-full"
+                    <ReactPlayer
+                      className="!h-full !w-full"
+                      url={"/images/nfts/brewlabs-flask-nfts/brewlabs-flask-common.mp4"}
+                      playing={true}
+                      autoPlay={true}
+                      muted={true}
+                      loop={true}
+                      playsinline={true}
+                      controls={false}
+                      onEnded={() => setIsEnded(true)}
                     />
                   ) : (
                     <ReactPlayer
@@ -199,7 +210,7 @@ const MintNFTModal = ({ open, setOpen }) => {
                     Congratulations you minted a RARE <span className="text-primary">BREWLABS</span> NFT
                   </div>
                   <div className="flex flex-col justify-center sm:flex-row">
-                    <StyledButton className="sm:!w-fit w-full p-[10px_12px]">
+                    <StyledButton className="w-full p-[10px_12px] sm:!w-fit">
                       <div className="flex items-center">
                         <div>
                           Next Mint&nbsp;<span className="font-normal">(5 remaining)</span>

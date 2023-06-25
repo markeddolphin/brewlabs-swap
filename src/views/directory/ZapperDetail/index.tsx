@@ -243,13 +243,10 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                         )}
                         classNames="-ml-3 w-[70px]"
                         large
-                      />                      
+                      />
                     </div>
                     <div className="flex flex-1 flex-wrap justify-end xl:flex-nowrap">
-                      <InfoPanel
-                        padding={"14px 25px 8px 25px"}
-                        className="relative mt-4 max-w-full md:max-w-[520px] xl:md:max-w-[470px]"
-                      >
+                      <div className="primary-shadow relative mt-4 w-full max-w-full rounded bg-[#B9B8B80D] p-[14px_25px_8px_25px] md:max-w-[520px] xl:md:max-w-[470px]">
                         <div className="flex justify-between text-xl">
                           <div>
                             Pool: <span className="text-primary">{data.lpSymbol}</span>
@@ -285,12 +282,9 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                             <SkeletonComponent />
                           )}
                         </div>
-                      </InfoPanel>
+                      </div>
 
-                      <InfoPanel
-                        padding={"6px 25px 8px 25px"}
-                        className="ml-0 mt-4 flex max-w-full flex-wrap justify-between md:ml-[30px] md:max-w-[520px]"
-                      >
+                      <div className="primary-shadow ml-0 mt-4 flex w-full max-w-full flex-wrap justify-between bg-[#B9B8B80D] p-[6px_25px_8px_25px] md:ml-[30px] md:max-w-[520px]">
                         <div className="mt-2">
                           <div className="text-xl">Pool Rewards</div>
                           <div className=" text-[#FFFFFF80]">
@@ -347,7 +341,7 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                             <SkeletonComponent />
                           )}
                         </div>
-                      </InfoPanel>
+                      </div>
                     </div>
                   </div>
                   <div className="mt-7">
@@ -356,10 +350,12 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                   <div className="mt-10 flex w-full flex-col justify-between md:flex-row">
                     <div className="w-full md:w-[40%]">
                       <TotalStakedChart data={history} symbol={lpSymbol} />
-                      <InfoPanel
-                        className="mt-20 flex cursor-pointer justify-between"
-                        type={"secondary"}
-                        boxShadow={curGraph === 0 ? "primary" : null}
+                      <div
+                        className={`primary-shadow mt-[80px] flex w-full cursor-pointer justify-between rounded transition ${
+                          curGraph === 0
+                            ? "bg-primary text-black"
+                            : "bg-[#B9B8B81A] text-[#FFFFFFBF] hover:bg-[#b9b8b82f]"
+                        } p-[12px_15px] lg:mt-20`}
                       >
                         <div>Total Zapper Position Value</div>
                         <div className="flex">
@@ -369,14 +365,14 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
                             <SkeletonComponent />
                           )}
                         </div>
-                      </InfoPanel>
+                      </div>
                     </div>
                     <div className="relative mt-10 w-full md:mt-0 md:w-[57%]">
                       <div className="flex w-full flex-col xsm:flex-row">
                         <div className="mr-0 flex-1 xsm:mr-[14px]">
                           <div className="text-xl text-[#FFFFFFBF]">Pool Rewards</div>
 
-                          <div className="mt-2 h-[56px] w-full">
+                          <div className="mt-1.5 h-[56px] w-full">
                             <StyledButton
                               type="teritary"
                               boxShadow={!(!account || !data.userData || !Number(data.userData.earnings))}
@@ -507,18 +503,3 @@ const ZapperDetail = ({ detailDatas }: { detailDatas: any }) => {
 };
 
 export default ZapperDetail;
-
-const InfoPanel = styled.div<{ padding?: string; type?: string; boxShadow?: string }>`
-  background: ${({ type }) => (type === "secondary" ? "rgba(185, 184, 184, 0.1)" : "rgba(185, 184, 184, 0.05)")};
-  border: 0.5px solid rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-  padding: ${({ padding, type }) => (type === "secondary" ? "12px 15px" : padding)};
-  width: 100%;
-  color: #ffffffbf;
-  box-shadow: ${({ boxShadow }) =>
-    boxShadow === "primary" ? "0px 2px 4px #EEBB19" : boxShadow === "secondary" ? "0px 1px 4px #EEBB19" : ""};
-  :hover {
-    border-color: ${({ type, boxShadow }) =>
-      type === "secondary" && !boxShadow ? "#EEBB19" : "rgba(255, 255, 255, 0.5)"};
-  }
-`;

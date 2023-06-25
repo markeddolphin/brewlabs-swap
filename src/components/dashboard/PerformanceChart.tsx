@@ -14,7 +14,7 @@ const Loading = () => {
   const { address } = useAccount();
   const innerHeight = window && window.innerHeight ? window.innerHeight : 0;
   return (
-    <div className={`flex ${innerHeight < 725 ? "h-[200px]" : "h-[250px]"} w-full items-center justify-center pt-10`}>
+    <div className={`flex ${innerHeight < 725 ? "h-[200px]" : "h-[220px]"} w-full items-center justify-center pt-10`}>
       <div style={{ marginTop: "-92px" }}>
         {address ? (
           <TailSpin width={50} height={50} color={"rgba(255,255,255,0.5"} />
@@ -25,23 +25,15 @@ const Loading = () => {
     </div>
   );
 };
-const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number }) => {
+const PerformanceChart = ({ showType }: { showType: number }) => {
   let pricehistory: any = [];
-  const { marketHistory }: any = useContext(DashboardContext);
+  const { marketHistory, walletHistories, chartPeriod }: any = useContext(DashboardContext);
   if (showType === 1) {
     if (!marketHistory.length) return <Loading />;
     pricehistory = marketHistory;
   } else {
-    if (!tokens.length || !tokens[0] || !tokens[0].priceList) return <Loading />;
-    for (let i = 0; i < tokens[0].priceList.length; i++) {
-      pricehistory[i] = 0;
-      for (let j = 0; j < tokens.length; j++) {
-        if (!tokens[j].priceList) continue;
-        const price = tokens[j].priceList[i] * tokens[j].balance;
-        if (isNaN(price)) continue;
-        pricehistory[i] += price;
-      }
-    }
+    if (!walletHistories.length) return <Loading />;
+    pricehistory = walletHistories;
   }
 
   const priceChange = pricehistory.length ? pricehistory[pricehistory.length - 1] - pricehistory[0] : 0;
@@ -72,7 +64,7 @@ const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number
                   {
                     offset: 0,
                     color: "rgb(110, 220, 181)",
-                    opacity: 0.4,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
@@ -84,7 +76,7 @@ const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number
                   {
                     offset: 0,
                     color: "#ea3943",
-                    opacity: 0.4,
+                    opacity: 0.2,
                   },
                   {
                     offset: 100,
@@ -106,6 +98,7 @@ const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number
       },
       stroke: {
         curve: "smooth",
+        width: 1,
       },
       xaxis: {
         labels: {
@@ -135,6 +128,7 @@ const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number
   };
 
   const innerHeight = window && window.innerHeight ? window.innerHeight : 0;
+  const periodTexts = { 0: "24hrs", 1: "1W", 2: "1M", 3: "1Y", 4: "ALL" };
 
   return (
     <StyledContainer down={(priceChange < 0).toString()}>
@@ -150,7 +144,7 @@ const PerformanceChart = ({ tokens, showType }: { tokens?: any; showType: number
               <StyledColor down={(priceChange < 0).toString()}>{priceChange >= 0 ? upSVG : downSVG}</StyledColor>
             </div>
           </div>
-          <div className={"text-grey opacity-70"}>24hrs</div>
+          <div className={"text-grey opacity-70"}>{periodTexts[chartPeriod]}</div>
         </div>
         <StyledColor down={(priceChange < 0).toString()}>
           {priceChange > 0 ? "+" : "-"}
