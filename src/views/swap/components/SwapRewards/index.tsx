@@ -36,13 +36,6 @@ export const rewardInUSD = (token0, token1, token0Price, token1Price, reward) =>
   return Number(token0Price) * Number(token0Amount) + Number(token1Price) * Number(token1Amount);
 };
 
-export const getLPPrice = (token0Price: number, token1Price: number, pair: Pair) => {
-  if (!pair) return 0;
-  const price =
-    (parseFloat(pair.reserve0.toExact()) * token0Price + parseFloat(pair.reserve1.toExact()) * token1Price) / 2;
-  return price;
-};
-
 const SwapRewards = () => {
   const { chainId, account } = useActiveWeb3React();
   // const account = "0xe1f1dd010bbc2860f81c8f90ea4e38db949bb16f";
@@ -195,7 +188,7 @@ const SwapRewards = () => {
               reward={rewards[pair.id]}
               pairDayData={pairDayData}
               isRemovable={pairsOfLpProvider.find((data) => pair.id === data.id)}
-              balance={parseFloat(lpBalances[pair.id].toExact() ?? 0)}
+              lpBalance={parseFloat(lpBalances[pair.id].toExact() ?? 0)}
             />
           );
         })}
