@@ -208,7 +208,7 @@
         "type": "address"
       }
     ],
-    "name": "getPoolFeInfo",
+    "name": "getPoolFeeInfo",
     "outputs": [
       {
         "components": [
@@ -263,14 +263,9 @@
             "internalType": "struct BrewlabsSwapFeeManager.FeeDistribution",
             "name": "feeDistribution",
             "type": "tuple"
-          },
-          {
-            "internalType": "uint256",
-            "name": "timeToOpen",
-            "type": "uint256"
           }
         ],
-        "internalType": "struct BrewlabsSwapFeeManager.PoolFeInfo",
+        "internalType": "struct BrewlabsSwapFeeManager.PoolFeeInfo",
         "name": "",
         "type": "tuple"
       }
@@ -595,24 +590,6 @@
       }
     ],
     "name": "setReferrer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "pair",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "time",
-        "type": "uint256"
-      }
-    ],
-    "name": "setTime2OpenPool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
